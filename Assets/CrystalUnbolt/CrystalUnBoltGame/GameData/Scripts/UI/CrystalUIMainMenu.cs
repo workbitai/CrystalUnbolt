@@ -112,7 +112,7 @@ namespace CrystalUnbolt
         private void OnEnable()
         {
             // IAPManager.PurchaseCompleted += OnAdPurchased; // IAP Removed!
-            
+            levelGrid.canvas.enabled = true;
             // Listen for login events
             if (authManager == null)
                 authManager = FindObjectOfType<CrystalLoginAuthManager>();
@@ -201,6 +201,7 @@ namespace CrystalUnbolt
             MyAdsAdapter.HideBanner();
             HidePlayButton();
             HideGameLogo();
+            levelGrid.ShowLevelGrid();
         }
 
         #region Show/Hide
@@ -224,6 +225,13 @@ namespace CrystalUnbolt
 
             CrystalUILevelNumberText.Show();
             playButtonText.text = "LEVEL " + (CrystalLevelController.MaxReachedLevelIndex + 1);
+
+            // Show level grid when main menu opens
+            if (levelGrid != null)
+            {
+                levelGrid.ShowGridOnMainMenu();
+                Debug.Log("[MainMenu] Called ShowGridOnMainMenu");
+            }
 
             // Update leaderboard button state on show
             UpdateLeaderboardButtonState();
@@ -458,6 +466,13 @@ namespace CrystalUnbolt
             HideGameLogo(); 
             coinsLabelScalable.Hide();
 
+            // Hide level grid canvas when main menu closes
+            if (levelGrid != null && levelGrid.canvas != null)
+            {
+                levelGrid.canvas.enabled = false;
+                Debug.Log("[MainMenu] Disabled GridPanel canvas");
+            }
+
             HideAdButton();
 
             showHideStoreAdButtonDelayTweenCase = Tween.DelayedCall(0.1f, delegate
@@ -605,7 +620,7 @@ namespace CrystalUnbolt
             }
 
             gameLogoRect.DOScale(Vector3.zero, 0.3f).SetEasing(Ease.Type.CubicIn);
-            gameBG.GetComponent<Image>().DOFade(0f, 0.5f).OnComplete(() => gameBG.SetActive(false));
+          //  gameBG.GetComponent<Image>().DOFade(0f, 0.5f).OnComplete(() => gameBG.SetActive(false));
         }
 
         #endregion
@@ -664,24 +679,10 @@ namespace CrystalUnbolt
            Haptic.Play(Haptic.HAPTIC_HARD);
 #endif
 
-            // Show level grid instead of loading level directly
-            if (levelGrid != null)
-            {
-                // Hide main menu UI elements
-                HidePlayButton();
-                HideGameLogo();
-                HideTapToPlayButton();
-                coinsLabelScalable.Hide();
-                
-                // Show level grid
-                levelGrid.ShowLevelGrid();
-            }
-            else
-            {
-                // Fallback: Load current level directly if grid not assigned
-                Debug.LogWarning("[MainMenu] Level Grid not assigned! Loading level directly.");
-                OnPlayTriggered(CrystalLevelController.MaxReachedLevelIndex);
-            }
+            Debug.Log("[MainMenu] Play button clicked - loading current level!");
+            
+            // Load the current level directly (grid is already visible)
+            OnPlayTriggered(CrystalLevelController.MaxReachedLevelIndex);
         }
         private void GamePlayButton()
         {

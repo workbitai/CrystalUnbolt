@@ -22,6 +22,7 @@ namespace CrystalUnbolt.Map
         
         [Header("Jelly Animation")]
         [SerializeField] private bool enableJellyAnimation = true;
+        [SerializeField] private bool isInGrid = false; // Set true when used in grid to prevent auto-start
         private CrystalJellyLevelAnimation jellyAnimation;
         
         [Header("Locked Level Shake")]
@@ -52,13 +53,14 @@ namespace CrystalUnbolt.Map
 
             button.gameObject.SetActive(true);
             
-            if (enableJellyAnimation)
+            // Only auto-start jelly animation if NOT in grid mode
+            if (enableJellyAnimation && !isInGrid)
             {
                 StartJellyAnimation();
             }
         }
         
-        private void StartJellyAnimation()
+        public void StartJellyAnimation()
         {
             jellyAnimation = GetComponent<CrystalJellyLevelAnimation>();
             if (jellyAnimation == null)

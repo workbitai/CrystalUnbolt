@@ -8,42 +8,44 @@ namespace CrystalUnbolt.Map
 {
     public class CrystalJellyLevelAnimation : MonoBehaviour
     {
-        [Header("Animation Settings")]
-        [SerializeField] private float jellyJumpHeight = 0.2f;
-        [SerializeField] private float jellyJumpDuration = 0.20f;
-        [SerializeField] private int jellyJumpCount = 3;
+        [Header("Animation Type")]
+        [SerializeField] private AnimationType animationType = AnimationType.Pulse;
 
-        [Header("Spin Animation")]
-        [SerializeField] private float spinHeight = 0.9f;
-        [SerializeField] private float spinDuration = 1.0f;
-        [SerializeField] private float spinRotations = 2f;
+        [Header("Pulse Animation (Gentle Heartbeat)")]
+        [SerializeField] private float pulseScaleMin = 1.0f;
+        [SerializeField] private float pulseScaleMax = 1.08f;
+        [SerializeField] private float pulseDuration = 0.4f; // Faster pulse
+        [SerializeField] private int pulseCount = 2; // Number of pulses before pause
 
-        [Header("Fall / Bounce")]
-        [SerializeField] private float fallDuration = 0.10f;   
-        [SerializeField] private float fallBounceIntensity = 0.1f;
+        [Header("Glow Animation (Scale + Slight Rotation)")]
+        [SerializeField] private float glowScale = 1.2f;
+        [SerializeField] private float glowDuration = 1.0f;
+        [SerializeField] private float glowRotationAngle = 10f; // Slight tilt
 
-        [Header("Wait (only at END)")]
-        [SerializeField] private float waitDuration = 1.5f;
+        [Header("Bounce Animation (Vertical Bounce)")]
+        [SerializeField] private float bounceHeight = 0.3f;
+        [SerializeField] private float bounceDuration = 0.5f;
+        [SerializeField] private int bounceCount = 2;
+
+        [Header("Wait Between Cycles")]
+        [SerializeField] private float waitDuration = 0.5f; // Shorter wait between cycles
 
         [Header("Animation Control")]
-        [SerializeField] private bool autoStart = true;
+        [SerializeField] private bool autoStart = false; // Changed to false for grid usage
         [SerializeField] private bool loopAnimation = true;
+        [SerializeField] private float delayBeforeStart = 0f; // Delay before animation starts
 
-        [Header("Landing Particles")]
-        [SerializeField] private ParticleSystem landingParticles;
-        [SerializeField] private bool particleInitiallyInactive = true;
-
-        [Header("Particles Toggle")]
-        [Tooltip("Fall start par particles ON, bounce ke baad OFF.")]
-        [SerializeField] private bool toggleParticlesDuringFall = true;
-        [SerializeField] private bool hideParticlesAfterBounce = true;
+        public enum AnimationType
+        {
+            Pulse,      // Gentle heartbeat scale effect
+            Glow,       // Scale up + slight rotation
+            Bounce,     // Simple vertical bounce
+            Float       // Gentle floating up and down
+        }
 
         [Header("Follow Scroll")]
         [Tooltip("Local-space tweens so the object scrolls with its parent chunk.")]
-        [SerializeField] private bool useLocalSpace = true;
-
-        [Header("Speed")]
-        [SerializeField] private float animationSpeed = 1f;  
+        [SerializeField] private bool useLocalSpace = true;  
 
         Vector3 basePos;
         Vector3 baseScale;
@@ -55,13 +57,23 @@ namespace CrystalUnbolt.Map
         void Awake()
         {
             CaptureBaseFromCurrent();
-            if (landingParticles && particleInitiallyInactive)
-                landingParticles.gameObject.SetActive(false);
         }
 
         void Start()
         {
-            if (autoStart) StartAnimation(); 
+            if (autoStart)
+            {
+                if (delayBeforeStart > 0)
+                    StartCoroutine(StartAnimationAfterDelay());
+                else
+                    StartAnimation();
+            }
+        }
+
+        IEnumerator StartAnimationAfterDelay()
+        {
+            yield return new WaitForSeconds(delayBeforeStart);
+            StartAnimation();
         }
 
         void OnEnable()
@@ -106,46 +118,22 @@ namespace CrystalUnbolt.Map
         {
             seq = DOTween.Sequence();
 
-            for (int i = 0; i < jellyJumpCount; i++)
+            // Choose animation based on selected type
+            switch (animationType)
             {
-                seq.Append(MoveY(GetBaseY() + jellyJumpHeight, jellyJumpDuration * 0.6f)
-                           .SetEase(DGEase.OutQuad));
-                seq.Join(Scale(baseScale * 1.1f, jellyJumpDuration * 0.6f)
-                           .SetEase(DGEase.OutQuad));
-                seq.Append(MoveY(GetBaseY(), jellyJumpDuration * 0.4f)
-                           .SetEase(DGEase.InBounce));
-                seq.Join(Scale(baseScale, jellyJumpDuration * 0.4f)
-                           .SetEase(DGEase.InBounce));
-
-                if (i < jellyJumpCount - 1) seq.AppendInterval(0.1f);
+                case AnimationType.Pulse:
+                    CreatePulseAnimation();
+                    break;
+                case AnimationType.Glow:
+                    CreateGlowAnimation();
+                    break;
+                case AnimationType.Bounce:
+                    CreateBounceAnimation();
+                    break;
+                case AnimationType.Float:
+                    CreateFloatAnimation();
+                    break;
             }
-
-            seq.Append(MoveY(GetBaseY() + spinHeight, spinDuration * 0.7f)
-                       .SetEase(DGEase.OutQuad));
-            seq.Join(Rotate(new Vector3(0, 0, 360f * spinRotations), spinDuration, RotateMode.FastBeyond360)
-                    .SetEase(DGEase.InOutQuad));
-
-            if (toggleParticlesDuringFall)
-                seq.AppendCallback(() => SetLandingParticlesActive(true)); 
-
-            var fallTween = MoveY(GetBaseY() - fallBounceIntensity, fallDuration)
-                            .SetEase(DGEase.InQuart);
-            fallTween.OnComplete(PlayLandingParticles); 
-            seq.Append(fallTween);
-
-            var bounceTween = MoveY(GetBaseY(), fallDuration * 0.5f)
-                              .SetEase(DGEase.OutBounce);
-            seq.Append(bounceTween);
-
-            if (hideParticlesAfterBounce)
-                seq.AppendCallback(() => SetLandingParticlesActive(false)); 
-
-            seq.AppendInterval(waitDuration);
-
-            seq.Append(Rotate(baseRot.eulerAngles, 0.20f, RotateMode.Fast)
-                       .SetEase(DGEase.OutQuad));
-
-            seq.timeScale = Mathf.Max(0.01f, animationSpeed);
 
             seq.OnComplete(() =>
             {
@@ -159,6 +147,79 @@ namespace CrystalUnbolt.Map
                     isAnimating = false;
                 }
             });
+        }
+
+        void CreatePulseAnimation()
+        {
+            // Gentle heartbeat pulse effect
+            for (int i = 0; i < pulseCount; i++)
+            {
+                // Scale up (pump)
+                seq.Append(Scale(baseScale * pulseScaleMax, pulseDuration * 0.5f)
+                    .SetEase(DGEase.OutQuad));
+                
+                // Return to normal
+                seq.Append(Scale(baseScale, pulseDuration * 0.5f)
+                    .SetEase(DGEase.InOutQuad));
+
+                if (i < pulseCount - 1)
+                    seq.AppendInterval(0.1f); // Quick pause between pulses
+            }
+
+            seq.AppendInterval(waitDuration);
+        }
+
+        void CreateGlowAnimation()
+        {
+            // Scale up + slight rotation glow effect
+            seq.Append(Scale(baseScale * glowScale, glowDuration * 0.5f)
+                .SetEase(DGEase.OutCubic));
+            seq.Join(Rotate(new Vector3(0, 0, baseRot.eulerAngles.z + glowRotationAngle), glowDuration * 0.5f, RotateMode.Fast)
+                .SetEase(DGEase.OutCubic));
+
+            // Hold
+            seq.AppendInterval(0.3f);
+
+            // Scale down + rotate back
+            seq.Append(Scale(baseScale, glowDuration * 0.5f)
+                .SetEase(DGEase.InCubic));
+            seq.Join(Rotate(baseRot.eulerAngles, glowDuration * 0.5f, RotateMode.Fast)
+                .SetEase(DGEase.InCubic));
+
+            seq.AppendInterval(waitDuration);
+        }
+
+        void CreateBounceAnimation()
+        {
+            // Simple vertical bounce animation
+            for (int i = 0; i < bounceCount; i++)
+            {
+                // Bounce up
+                seq.Append(MoveY(GetBaseY() + bounceHeight, bounceDuration * 0.4f)
+                    .SetEase(DGEase.OutQuad));
+                
+                // Fall down with bounce
+                seq.Append(MoveY(GetBaseY(), bounceDuration * 0.6f)
+                    .SetEase(DGEase.OutBounce));
+
+                if (i < bounceCount - 1)
+                    seq.AppendInterval(0.2f);
+            }
+
+            seq.AppendInterval(waitDuration);
+        }
+
+        void CreateFloatAnimation()
+        {
+            // Gentle floating up and down
+            seq.Append(MoveY(GetBaseY() + 0.15f, 1.0f)
+                .SetEase(DGEase.InOutSine));
+            seq.Append(MoveY(GetBaseY() - 0.15f, 1.0f)
+                .SetEase(DGEase.InOutSine));
+            seq.Append(MoveY(GetBaseY(), 1.0f)
+                .SetEase(DGEase.InOutSine));
+
+            seq.AppendInterval(waitDuration * 0.5f);
         }
 
         void CaptureBaseFromCurrent()
@@ -192,31 +253,6 @@ namespace CrystalUnbolt.Map
         Tweener Rotate(Vector3 euler, float d, RotateMode mode) =>
             DOShortcuts.DORotate(transform, euler, d, mode);
 
-        void PlayLandingParticles()
-        {
-            if (!landingParticles) return;
-            if (!landingParticles.gameObject.activeSelf)
-                landingParticles.gameObject.SetActive(true);
-            landingParticles.Play(true);
-        }
-
-        void SetLandingParticlesActive(bool active)
-        {
-            if (!landingParticles) return;
-
-            if (active)
-            {
-                if (!landingParticles.gameObject.activeSelf)
-                    landingParticles.gameObject.SetActive(true);
-                if (!landingParticles.isPlaying) landingParticles.Play(true);
-            }
-            else
-            {
-                landingParticles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-                landingParticles.gameObject.SetActive(false);
-            }
-        }
-
         void OnDisable()
         {
             if (seq != null) seq.Pause(); 
@@ -227,13 +263,19 @@ namespace CrystalUnbolt.Map
         public void SetLoopAnimation(bool loop)
         {
             loopAnimation = loop;
-          
         }
 
-        public void SetAnimationSpeed(float speed)
+        public void SetAnimationType(AnimationType type)
         {
-            animationSpeed = Mathf.Max(0.01f, speed);
-            if (seq != null) seq.timeScale = animationSpeed;
+            if (animationType != type)
+            {
+                animationType = type;
+                if (isAnimating)
+                {
+                    // Restart with new animation type
+                    StartAnimation();
+                }
+            }
         }
 
         public bool IsAnimating() => isAnimating;
