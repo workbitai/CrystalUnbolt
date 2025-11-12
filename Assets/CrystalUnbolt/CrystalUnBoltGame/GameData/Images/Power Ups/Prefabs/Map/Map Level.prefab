@@ -235,6 +235,9 @@ MonoBehaviour:
   openedCircle: {r: 0.38431373, g: 0.8784314, b: 0.47843137, a: 1}
   closedText: {r: 0.86522907, g: 0.86522907, b: 0.86522907, a: 1}
   closedCircle: {r: 1, g: 1, b: 1, a: 1}
+  enableJellyAnimation: 1
+  shakeStrength: 0.3
+  shakeDuration: 0.5
 --- !u!1 &6835996245064005295
 GameObject:
   m_ObjectHideFlags: 0
@@ -419,15 +422,17 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_enableWordWrapping: 0
+  m_TextWrappingMode: 0
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
+  m_ActiveFontFeatures: 6e72656b
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
+  m_EmojiFallbackSupport: 1
   m_parseCtrlCharacters: 1
   m_isOrthographic: 1
   m_isCullingEnabled: 0

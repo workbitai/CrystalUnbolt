@@ -78,6 +78,7 @@ namespace CrystalUnbolt
             bannerView.LoadAd(request);
             
             Debug.Log("[MyAds] Banner loaded!");
+            Debug.Log("Addd");
         }
         
         public void ShowBanner()

@@ -9,6 +9,8 @@ namespace CrystalUnbolt.Map
     {
         private static CrystalMapBehavior instance;
 
+        [Header("Chunk System (Legacy)")]
+        [SerializeField] private bool useChunkSystem = false; // Set to FALSE to disable chunks
         [SerializeField] CrystalMapData data;
 
         public List<CrystalMapChunkBehavior> loadedChunks;
@@ -95,6 +97,13 @@ namespace CrystalUnbolt.Map
 
         public void Show()
         {
+            // If chunk system is disabled, don't generate chunks
+            if (!useChunkSystem)
+            {
+                enabled = false; // Disable scrolling
+                return;
+            }
+
             enabled = true;
             isMouseDown = false;
 
@@ -201,6 +210,10 @@ namespace CrystalUnbolt.Map
 
         private void Update()
         {
+            // Don't run update if chunk system is disabled
+            if (!useChunkSystem)
+                return;
+
             if (ScreenManager.IsPopupOpened)
                 return;
 

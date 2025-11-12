@@ -39,6 +39,9 @@ namespace CrystalUnbolt
         [BoxGroup("Logo", "Logo")]
         [SerializeField] RectTransform spinImageRect; 
 
+        [BoxGroup("Level Grid", "Level Grid")]
+        [SerializeField] CrystalUILevelGrid levelGrid;
+
         [BoxGroup("Coins", "Coins")]
         [SerializeField] CrystalCurrencyUIPanelSimple coinsPanel;
 
@@ -660,7 +663,25 @@ namespace CrystalUnbolt
 #if MODULE_HAPTIC
            Haptic.Play(Haptic.HAPTIC_HARD);
 #endif
-            OnPlayTriggered(CrystalLevelController.MaxReachedLevelIndex);
+
+            // Show level grid instead of loading level directly
+            if (levelGrid != null)
+            {
+                // Hide main menu UI elements
+                HidePlayButton();
+                HideGameLogo();
+                HideTapToPlayButton();
+                coinsLabelScalable.Hide();
+                
+                // Show level grid
+                levelGrid.ShowLevelGrid();
+            }
+            else
+            {
+                // Fallback: Load current level directly if grid not assigned
+                Debug.LogWarning("[MainMenu] Level Grid not assigned! Loading level directly.");
+                OnPlayTriggered(CrystalLevelController.MaxReachedLevelIndex);
+            }
         }
         private void GamePlayButton()
         {
