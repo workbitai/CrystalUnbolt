@@ -1,0 +1,132 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9010e0ddeffdcf43abc4cd52330af57, type: 3}
+  m_Name: Default Plank Skin Data
+  m_EditorClassIdentifier: 
+  planks:
+  - type: 1
+    prefab: {fileID: 3355370785201252168, guid: 7020c6590fa7ef542ad1dc6571696ad4,
+      type: 3}
+    useInQuickMode: 1
+    quickModeSize: 1.48
+  - type: 2
+    prefab: {fileID: 3355370785201252168, guid: 018425d031e2d38459e1ef8019ccc2a2,
+      type: 3}
+    useInQuickMode: 1
+    quickModeSize: 3.17
+  - type: 3
+    prefab: {fileID: 3355370785201252168, guid: 45aee437d8d483d43a141de4f7948e32,
+      type: 3}
+    useInQuickMode: 1
+    quickModeSize: 4.82
+  - type: 4
+    prefab: {fileID: 3355370785201252168, guid: ce614e98de789c047a2f48fe6f96cd4d,
+      type: 3}
+    useInQuickMode: 1
+    quickModeSize: 6.17
+  - type: 5
+    prefab: {fileID: 3355370785201252168, guid: 93d32de5ce231cf4a9366ea84ef0a865,
+      type: 3}
+    useInQuickMode: 1
+    quickModeSize: 8.75
+  - type: 6
+    prefab: {fileID: 3355370785201252168, guid: c866a4c1ad29cbb40aa7c3ca1cb0cbd0,
+      type: 3}
+    useInQuickMode: 0
+    quickModeSize: 1
+  - type: 10
+    prefab: {fileID: 3355370785201252168, guid: 4285bec305df0164ab48504c5efde4df,
+      type: 3}
+    useInQuickMode: 0
+    quickModeSize: 2.9
+  - type: 11
+    prefab: {fileID: 3355370785201252168, guid: e519fdbb24998b84c84951134d9c09bc,
+      type: 3}
+    useInQuickMode: 0
+    quickModeSize: 2.12
+  - type: 12
+    prefab: {fileID: 3355370785201252168, guid: 64bd4b2f9040ae34abec101e301261aa,
+      type: 3}
+    useInQuickMode: 0
+    quickModeSize: 3.8
+  - type: 13
+    prefab: {fileID: 3355370785201252168, guid: b57be5f8ce351624db0fa33f07fc1fff,
+      type: 3}
+    useInQuickMode: 0
+    quickModeSize: 1
+  - type: 14
+    prefab: {fileID: 3355370785201252168, guid: 84eef65e774b2ac40bc6cc8d035cc68a,
+      type: 3}
+    useInQuickMode: 0
+    quickModeSize: 1
+  - type: 15
+    prefab: {fileID: 3355370785201252168, guid: 18c33d66f6cc5194b9ce725759f130ee,
+      type: 3}
+    useInQuickMode: 0
+    quickModeSize: 1
+  - type: 18
+    prefab: {fileID: 3355370785201252168, guid: 4c2e4719e20fdc14982fc75d66730edc,
+      type: 3}
+    useInQuickMode: 0
+    quickModeSize: 1
+  - type: 16
+    prefab: {fileID: 3355370785201252168, guid: c87a20d5cd7aab94fb4fedf5c6b524ad,
+      type: 3}
+    useInQuickMode: 0
+    quickModeSize: 1
+  - type: 17
+    prefab: {fileID: 3355370785201252168, guid: 69494b382f538d14a8a8d265a05905c5,
+      type: 3}
+    useInQuickMode: 0
+    quickModeSize: 1
+  - type: 19
+    prefab: {fileID: 3355370785201252168, guid: 685d98c8d8704c84dbf0c08fcb54218a,
+      type: 3}
+    useInQuickMode: 0
+    quickModeSize: 1
+  - type: 20
+    prefab: {fileID: 3355370785201252168, guid: 42096210eef89264196e2fb298b1334e,
+      type: 3}
+    useInQuickMode: 0
+    quickModeSize: 1
+  - type: 21
+    prefab: {fileID: 3355370785201252168, guid: 77926ff650a08d142b30bd04f306a416,
+      type: 3}
+    useInQuickMode: 0
+    quickModeSize: 1
+  - type: 22
+    prefab: {fileID: 3355370785201252168, guid: b1b7122633149a841a210fc3420daef4,
+      type: 3}
+    useInQuickMode: 0
+    quickModeSize: 1
+  - type: 23
+    prefab: {fileID: 3355370785201252168, guid: 592599b5d9a48a64f9d468189308f0c1,
+      type: 3}
+    useInQuickMode: 0
+    quickModeSize: 1
+  plankHolePrefab: {fileID: 7553608525549546757, guid: d03a531dbdf3fb8498340a7afa4770b8,
+    type: 3}
+  baseHolePrefab: {fileID: 7553608525549546757, guid: 387a3061b9382b7448e514f554452aab,
+    type: 3}
+  screwPrefab: {fileID: 281245748398564474, guid: 4662860265eaae2459b1a20c6e2fe977,
+    type: 3}
+  backPrefab: {fileID: 2760256733891159865, guid: 691898e307b01e942aad3368de262526,
+    type: 3}
+  layerColors:
+  - {r: 0.38140148, g: 0.63543826, b: 1, a: 1}
+  - {r: 1, g: 0.3529412, b: 0.3529412, a: 1}
+  - {r: 1, g: 0.8904875, b: 0, a: 1}
+  - {r: 0.7019608, g: 0.48235297, b: 1, a: 1}
+  - {r: 0.5960688, g: 1, b: 0.21960783, a: 1}
+  - {r: 1, g: 0.6511505, b: 0.0745098, a: 1}
+  - {r: 0.23045808, g: 1, b: 0.64747244, a: 1}
+  - {r: 1, g: 0.41568628, b: 0.77254903, a: 1}

@@ -1,0 +1,111 @@
+/*using System;
+using System.Linq;
+using System.Reflection;
+using UnityEngine;
+using CrystalUnbolt;
+
+[DefaultExecutionOrder(-9998)]
+public class CrystalRemoteIapToSettingsBinder : MonoBehaviour
+{
+    [Header("Assign your Monetization Settings asset")]
+    public MonetizationSettings monetizationSettings;
+
+    [Tooltip("Call IAPManager.Init with MonetizationSettings after inject")]
+    public bool initializeIapManagerHere = true;
+
+    // Map aliases to substring you use for product objects in your IAPSettings
+    [Header("Alias ? Name Hint (match by contains)")]
+    public string aliasNoAdsHint = "NoAds";
+    public string aliasGoldSmallHint = "GoldSmall";
+    public string aliasGoldMediumHint = "GoldMedium";
+    public string aliasGoldBigHint = "GoldBig";
+    public string aliasPowerupPackHint = "PowerUpPack";
+
+    private void OnEnable()
+    {
+        CrystalRemoteIapConfigLoader.OnRemoteIapApplied += ApplyNow;
+        Invoke(nameof(ApplyNow), 0.25f);
+    }
+
+    private void OnDisable()
+    {
+        CrystalRemoteIapConfigLoader.OnRemoteIapApplied -= ApplyNow;
+    }
+
+    public void ApplyNow()
+    {
+        if (RemoteIapIds.Current == null || monetizationSettings == null) return;
+        var iap = monetizationSettings.IAPSettings;
+        if (iap == null)
+        {
+            Debug.LogError("[RemoteIAPBinder] IAPSettings null");
+            return;
+        }
+
+        // Try to set global flags if they exist
+        TrySetBool(iap, "useFakeStore", RemoteIapIds.Current.useFakeStore);
+        TrySetEnumByInt(iap, "fakeStoreMode", RemoteIapIds.Current.fakeStoreMode);
+
+        // Find product-like objects under IAPSettings by reflection
+        var productObjs = iap.GetType()
+            .GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+            .Select(f => f.GetValue(iap))
+            .Where(o => o != null && HasField(o, "androidID") && HasField(o, "iOSID"))
+            .ToArray();
+
+        SetIds(productObjs, aliasNoAdsHint, RemoteIapIds.Current.Get("NoAds"));
+        SetIds(productObjs, aliasGoldSmallHint, RemoteIapIds.Current.Get("GoldSmall"));
+        SetIds(productObjs, aliasGoldMediumHint, RemoteIapIds.Current.Get("GoldMedium"));
+        SetIds(productObjs, aliasGoldBigHint, RemoteIapIds.Current.Get("GoldBig"));
+        SetIds(productObjs, aliasPowerupPackHint, RemoteIapIds.Current.Get("PowerUpPack"));
+
+        if (initializeIapManagerHere)
+        {
+            try { IAPManager.Init(monetizationSettings); }
+            catch (Exception e) { Debug.LogWarning($"[RemoteIAPBinder] IAPManager.Init failed: {e.Message}"); }
+        }
+
+        Debug.Log("[RemoteIAPBinder] IAP product IDs injected.");
+    }
+
+    // ---------- helpers ----------
+    private static void SetIds(object[] productObjs, string nameHint, (string android, string ios) pair)
+    {
+        if (pair.android == null && pair.ios == null) return;
+        foreach (var obj in productObjs)
+        {
+            var n = obj.GetType().Name;
+            if (!string.IsNullOrEmpty(nameHint) && n.IndexOf(nameHint, StringComparison.OrdinalIgnoreCase) < 0)
+                continue;
+
+            if (!string.IsNullOrEmpty(pair.android)) SetString(obj, "androidID", pair.android);
+            if (!string.IsNullOrEmpty(pair.ios)) SetString(obj, "iOSID", pair.ios);
+        }
+    }
+
+    private static bool HasField(object o, string field) =>
+        o.GetType().GetField(field, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic) != null;
+
+    private static void SetString(object o, string field, string value)
+    {
+        var f = o.GetType().GetField(field, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+        if (f != null && f.FieldType == typeof(string)) f.SetValue(o, value);
+    }
+
+    private static void TrySetBool(object o, string field, bool val)
+    {
+        var f = o.GetType().GetField(field, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+        if (f != null && f.FieldType == typeof(bool)) f.SetValue(o, val);
+    }
+
+    private static void TrySetEnumByInt(object o, string field, int intVal)
+    {
+        var f = o.GetType().GetField(field, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+        if (f != null && f.FieldType.IsEnum)
+        {
+            var boxed = Enum.ToObject(f.FieldType, intVal);
+            f.SetValue(o, boxed);
+        }
+    }
+}
+*/

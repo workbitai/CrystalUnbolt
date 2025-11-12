@@ -1,0 +1,94 @@
+/*using System;
+using System.Reflection;
+using UnityEngine;
+using CrystalUnbolt;
+
+[DefaultExecutionOrder(-9000)]
+public class CrystalRemoteAdsToSettingsBinder : MonoBehaviour
+{
+    [Header("Assign your Monetization Settings asset")]
+    public MonetizationSettings monetizationSettings;
+
+    [Tooltip("Call AdsManager.Init after IDs injected")]
+    public bool initializeAdsManagerHere = false;
+
+    public float reapplyAfterSeconds = 0.3f;
+
+    private void OnEnable()
+    {
+        CrystalRemoteAdConfigLoader.OnRemoteConfigApplied += ApplyNow;
+        Invoke(nameof(ApplyNow), reapplyAfterSeconds);
+    }
+
+    private void OnDisable()
+    {
+        CrystalRemoteAdConfigLoader.OnRemoteConfigApplied -= ApplyNow;
+    }
+
+    public void ApplyNow()
+    {
+        if (RemoteAdIds.Current == null || monetizationSettings == null) return;
+
+        var adsSettings = monetizationSettings.AdsSettings;
+        if (adsSettings == null) { Debug.LogError("[RemoteAdsBinder] AdsSettings null"); return; }
+
+        var admob = adsSettings.AdMobContainer;
+        if (admob == null) { Debug.LogError("[RemoteAdsBinder] AdMobContainer null"); return; }
+
+#if UNITY_ANDROID
+        SetStringField(admob, "androidBannerId", RemoteAdIds.Current.bannerAndroid);
+        SetStringField(admob, "android_banner_id", RemoteAdIds.Current.bannerAndroid);
+        SetStringField(admob, "androidBannerID", RemoteAdIds.Current.bannerAndroid);
+
+        SetStringField(admob, "androidInterstitialId", RemoteAdIds.Current.interAndroid);
+        SetStringField(admob, "android_interstitial_id", RemoteAdIds.Current.interAndroid);
+        SetStringField(admob, "androidInterstitialID", RemoteAdIds.Current.interAndroid);
+
+        SetStringField(admob, "androidRewardedId", RemoteAdIds.Current.rewardAndroid);
+        SetStringField(admob, "android_rewarded_id", RemoteAdIds.Current.rewardAndroid);
+        SetStringField(admob, "androidRewardedID", RemoteAdIds.Current.rewardAndroid);
+
+        SetStringField(admob, "androidAppOpenId", RemoteAdIds.Current.appOpenAndroid);
+        SetStringField(admob, "android_appopen_id", RemoteAdIds.Current.appOpenAndroid);
+        SetStringField(admob, "androidAppOpenID", RemoteAdIds.Current.appOpenAndroid);
+#endif
+
+#if UNITY_IOS
+        SetStringField(admob, "iOSBannerId",           RemoteAdIds.Current.bannerIOS);
+        SetStringField(admob, "ios_banner_id",         RemoteAdIds.Current.bannerIOS);
+        SetStringField(admob, "iOSBannerID",           RemoteAdIds.Current.bannerIOS);
+
+        SetStringField(admob, "iOSInterstitialId",     RemoteAdIds.Current.interIOS);
+        SetStringField(admob, "ios_interstitial_id",   RemoteAdIds.Current.interIOS);
+        SetStringField(admob, "iOSInterstitialID",     RemoteAdIds.Current.interIOS);
+
+        SetStringField(admob, "iOSRewardedId",         RemoteAdIds.Current.rewardIOS);
+        SetStringField(admob, "ios_rewarded_id",       RemoteAdIds.Current.rewardIOS);
+        SetStringField(admob, "iOSRewardedID",         RemoteAdIds.Current.rewardIOS);
+
+        SetStringField(admob, "iOSAppOpenId",          RemoteAdIds.Current.appOpenIOS);
+        SetStringField(admob, "ios_appopen_id",        RemoteAdIds.Current.appOpenIOS);
+        SetStringField(admob, "iOSAppOpenID",          RemoteAdIds.Current.appOpenIOS);
+#endif
+
+        if (initializeAdsManagerHere)
+        {
+            try
+            {
+                var m = typeof(AdsManager).GetMethod("Init", BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+                m?.Invoke(null, null);
+            }
+            catch (Exception e) { Debug.LogWarning($"[RemoteAdsBinder] AdsManager.Init failed: {e.Message}"); }
+        }
+
+        Debug.Log("[RemoteAdsBinder] Ad IDs injected.");
+    }
+
+    private static void SetStringField(object obj, string fieldName, string value)
+    {
+        if (obj == null || string.IsNullOrEmpty(value)) return;
+        var f = obj.GetType().GetField(fieldName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+        if (f != null && f.FieldType == typeof(string)) f.SetValue(obj, value);
+    }
+}
+*/

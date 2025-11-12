@@ -1,0 +1,295 @@
+// Assets/_RemoteConfig/RCAdsSync.cs
+using Firebase.RemoteConfig;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Threading;          // <-- for SemaphoreSlim
+using System.Threading.Tasks;
+using UnityEngine;
+using CrystalUnbolt;
+
+[DefaultExecutionOrder(-9000)]
+public class CrystalRCAdsSync : MonoBehaviour
+{
+    public CrystalRCProfile profile;
+    public static event System.Action OnAppliedStatic;
+
+    private bool _isSyncing;     // re-entrancy guard
+
+    void OnEnable() { StartCoroutine(Run()); }
+
+    IEnumerator Run()
+    {
+        if (profile == null) yield break;
+        if (profile.startDelaySeconds > 0) yield return new WaitForSeconds(profile.startDelaySeconds);
+        _ = Sync();
+    }
+
+    async Task Sync()
+    {
+        if (_isSyncing) { Debug.Log("[RC][ADS] Sync already running; skip."); return; }
+        _isSyncing = true;
+        Debug.Log("[RC][ADS] Sync: begin");
+
+        try
+        {
+            var dep = await CrystalRCBootstrap.Ensure();
+            if (dep != Firebase.DependencyStatus.Available)
+            {
+                ApplyToMonetization(profile.defAndroidAppId, profile.defiOSAppId, profile.defLevelPlayAndroidKey, profile.defLevelPlayiOSKey, profile.defUnityAdsAndroidId, profile.defUnityAdsiOSId, profile.defBannerAndroid, profile.defBanneriOS, profile.defInterstitialAndroid, profile.defInterstitialiOS, profile.defRewardAndroid, profile.defRewardiOS, profile.defAppOpenAndroid, profile.defAppOpeniOS);
+                Debug.LogWarning($"[RC][ADS] Firebase deps: {dep}. Used defaults.");
+                return;
+            }
+
+#if UNITY_EDITOR
+            // Old SDKs path: SetConfigSettingsAsync (ulong)
+            var cfg = new ConfigSettings
+            {
+                MinimumFetchIntervalInMilliseconds = profile.devForceFreshFetch ? 0UL : 12UL * 60UL * 60UL * 1000UL
+            };
+            Debug.Log("[RC][ADS] SetConfigSettingsAsync");
+            await FirebaseRemoteConfig.DefaultInstance.SetConfigSettingsAsync(cfg);
+#endif
+
+            // defaults so GetValue() always has a fallback
+            Debug.Log("[RC][ADS] SetDefaultsAsync");
+            await FirebaseRemoteConfig.DefaultInstance.SetDefaultsAsync(new Dictionary<string, object> {
+                // App IDs
+                { profile.kAndroidAppId,        profile.defAndroidAppId },
+                { profile.kiOSAppId,            profile.defiOSAppId },
+                { profile.kLevelPlayAndroidKey, profile.defLevelPlayAndroidKey },
+                { profile.kLevelPlayiOSKey,     profile.defLevelPlayiOSKey },
+                { profile.kUnityAdsAndroidId,   profile.defUnityAdsAndroidId },
+                { profile.kUnityAdsiOSId,       profile.defUnityAdsiOSId },
+                // Ad IDs - Android
+                { profile.kBannerAndroid,       profile.defBannerAndroid },
+                { profile.kInterstitialAndroid, profile.defInterstitialAndroid },
+                { profile.kRewardAndroid,       profile.defRewardAndroid },
+                { profile.kAppOpenAndroid,      profile.defAppOpenAndroid },
+                // Ad IDs - iOS
+                { profile.kBanneriOS,           profile.defBanneriOS },
+                { profile.kInterstitialiOS,     profile.defInterstitialiOS },
+                { profile.kRewardiOS,           profile.defRewardiOS },
+                { profile.kAppOpeniOS,          profile.defAppOpeniOS },
+            });
+
+#if UNITY_EDITOR
+            if (!profile.devForceFreshFetch)
+            {
+                Debug.Log("[RC][ADS] Editor fast path (no fetch). ReadAndApply()");
+                ReadAndApply();
+                return;
+            }
+#endif
+
+            // Serialize RC fetch/activate across the whole app (shared lock in CrystalRCBootstrap)
+            await CrystalRCBootstrap.RcLock.WaitAsync();
+            try
+            {
+                Debug.Log("[RC][ADS] FetchAsync");
+                await FirebaseRemoteConfig.DefaultInstance.FetchAsync();
+
+                Debug.Log("[RC][ADS] ActivateAsync");
+                await FirebaseRemoteConfig.DefaultInstance.ActivateAsync();
+            }
+            finally
+            {
+                CrystalRCBootstrap.RcLock.Release();
+            }
+
+            ReadAndApply();
+            Debug.Log("[RC][ADS] Sync: done");
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogWarning($"[RC][ADS] Sync exception: {e}");
+        }
+        finally
+        {
+            _isSyncing = false;
+        }
+    }
+
+    void ReadAndApply()
+    {
+        string V(string k, string d)
+        {
+            var s = FirebaseRemoteConfig.DefaultInstance.GetValue(k).StringValue;
+            return string.IsNullOrEmpty(s) ? d : s;
+        }
+
+        // App IDs
+        var androidAppId = V(profile.kAndroidAppId, profile.defAndroidAppId);
+        var iosAppId = V(profile.kiOSAppId, profile.defiOSAppId);
+        var levelPlayAndroidKey = V(profile.kLevelPlayAndroidKey, profile.defLevelPlayAndroidKey);
+        var levelPlayiOSKey = V(profile.kLevelPlayiOSKey, profile.defLevelPlayiOSKey);
+        var unityAdsAndroidId = V(profile.kUnityAdsAndroidId, profile.defUnityAdsAndroidId);
+        var unityAdsiOSId = V(profile.kUnityAdsiOSId, profile.defUnityAdsiOSId);
+
+        // Ad IDs - Android
+        var bannerAndroid = V(profile.kBannerAndroid, profile.defBannerAndroid);
+        var interAndroid = V(profile.kInterstitialAndroid, profile.defInterstitialAndroid);
+        var rewardAndroid = V(profile.kRewardAndroid, profile.defRewardAndroid);
+        var appOpenAndroid = V(profile.kAppOpenAndroid, profile.defAppOpenAndroid);
+
+        // Ad IDs - iOS
+        var banneriOS = V(profile.kBanneriOS, profile.defBanneriOS);
+        var interiOS = V(profile.kInterstitialiOS, profile.defInterstitialiOS);
+        var rewardiOS = V(profile.kRewardiOS, profile.defRewardiOS);
+        var appOpeniOS = V(profile.kAppOpeniOS, profile.defAppOpeniOS);
+
+        ApplyToMonetization(androidAppId, iosAppId, levelPlayAndroidKey, levelPlayiOSKey, unityAdsAndroidId, unityAdsiOSId, bannerAndroid, banneriOS, interAndroid, interiOS, rewardAndroid, rewardiOS, appOpenAndroid, appOpeniOS);
+        Debug.Log($"[RC][ADS] Applied ? androidAppId={androidAppId}, iosAppId={iosAppId}, bannerAndroid={bannerAndroid}, banneriOS={banneriOS}, interAndroid={interAndroid}, interiOS={interiOS}, rewardAndroid={rewardAndroid}, rewardiOS={rewardiOS}, appOpenAndroid={appOpenAndroid}, appOpeniOS={appOpeniOS}");
+        Debug.Log($"[RC][ADS] Raw Firebase values ? kAndroidAppId={FirebaseRemoteConfig.DefaultInstance.GetValue(profile.kAndroidAppId).StringValue}, kiOSAppId={FirebaseRemoteConfig.DefaultInstance.GetValue(profile.kiOSAppId).StringValue}");
+
+        OnAppliedStatic?.Invoke();
+    }
+
+    void ApplyToMonetization(string androidAppId, string iosAppId, string levelPlayAndroidKey, string levelPlayiOSKey, string unityAdsAndroidId, string unityAdsiOSId, string bannerAndroid, string banneriOS, string interAndroid, string interiOS, string rewardAndroid, string rewardiOS, string appOpenAndroid, string appOpeniOS)
+    {
+        Debug.Log($"[RC][ADS] ApplyToMonetization called with androidAppId={androidAppId}, iosAppId={iosAppId}");
+        
+        var ms = profile.monetizationSettings; 
+        if (ms == null) { 
+            Debug.LogError("[RC][ADS] MonetizationSettings not linked in CrystalRCProfile!"); 
+            return; 
+        }
+        Debug.Log($"[RC][ADS] MonetizationSettings found: {ms.name}");
+        
+        var ads = ms.AdsSettings; 
+        if (ads == null) {
+            Debug.LogError("[RC][ADS] AdsSettings is null!");
+            return;
+        }
+        
+        var admob = ads.AdMobContainer; 
+        if (admob == null) {
+            Debug.LogError("[RC][ADS] AdMobContainer is null!");
+            return;
+        }
+        Debug.Log($"[RC][ADS] AdMobContainer found: {admob.GetType().Name}");
+        
+        var levelPlay = ads.LevelPlayContainer; if (levelPlay == null) return;
+        var unityAds = ads.UnityAdsContainer; if (unityAds == null) return;
+
+        // Set App IDs
+        Set(admob, "androidAppId", androidAppId);
+        Set(admob, "iosAppId", iosAppId);
+        Set(levelPlay, "androidAppKey", levelPlayAndroidKey);
+        Set(levelPlay, "iOSAppKey", levelPlayiOSKey);
+        Set(unityAds, "androidAppID", unityAdsAndroidId);
+        Set(unityAds, "iOSAppID", unityAdsiOSId);
+
+        // 1) Remote config field mappings - Android
+        Set(admob, "androidBannerId", bannerAndroid);
+        Set(admob, "android_banner_id", bannerAndroid);
+        Set(admob, "androidBannerID", bannerAndroid);
+        Set(admob, "bannerAndroidId", bannerAndroid);
+        Set(admob, "androidBannerAdUnitId", bannerAndroid);
+
+        Set(admob, "androidInterstitialId", interAndroid);
+        Set(admob, "android_interstitial_id", interAndroid);
+        Set(admob, "androidInterstitialID", interAndroid);
+        Set(admob, "interstitialAndroidId", interAndroid);
+        Set(admob, "androidInterstitialAdUnitId", interAndroid);
+
+        Set(admob, "androidRewardedId", rewardAndroid);
+        Set(admob, "android_rewarded_id", rewardAndroid);
+        Set(admob, "androidRewardedVideoId", rewardAndroid);
+        Set(admob, "android_rewarded_video_id", rewardAndroid);
+        Set(admob, "androidRewardedAdUnitId", rewardAndroid);
+
+        Set(admob, "androidAppOpenId", appOpenAndroid);
+        Set(admob, "android_appopen_id", appOpenAndroid);
+        Set(admob, "androidAppOpenID", appOpenAndroid);
+        Set(admob, "androidAppOpenAdUnitId", appOpenAndroid);
+
+        // iOS fields
+        Set(admob, "iOSBannerId", banneriOS);
+        Set(admob, "ios_banner_id", banneriOS);
+        Set(admob, "iOSBannerID", banneriOS);
+        Set(admob, "banneriOSId", banneriOS);
+        Set(admob, "iOSBannerAdUnitId", banneriOS);
+
+        Set(admob, "iOSInterstitialId", interiOS);
+        Set(admob, "ios_interstitial_id", interiOS);
+        Set(admob, "iOSInterstitialID", interiOS);
+        Set(admob, "interstitialiOSId", interiOS);
+        Set(admob, "iOSInterstitialAdUnitId", interiOS);
+
+        Set(admob, "iOSRewardedId", rewardiOS);
+        Set(admob, "ios_rewarded_id", rewardiOS);
+        Set(admob, "iOSRewardedVideoId", rewardiOS);
+        Set(admob, "ios_rewarded_video_id", rewardiOS);
+        Set(admob, "iOSRewardedAdUnitId", rewardiOS);
+
+        Set(admob, "iOSAppOpenId", appOpeniOS);
+        Set(admob, "ios_appopen_id", appOpeniOS);
+        Set(admob, "iOSAppOpenID", appOpeniOS);
+        Set(admob, "iOSAppOpenAdUnitId", appOpeniOS);
+
+        // 2) Fuzzy fallback (covers custom field spellings) - Android
+        int changed = 0;
+        changed += FuzzySet(admob, bannerAndroid, mustContain: new[] { "android", "banner" }, anyOf: new[] { "id", "unit" });
+        changed += FuzzySet(admob, interAndroid, mustContain: new[] { "android", "inter" }, anyOf: new[] { "id", "unit" });
+        changed += FuzzySet(admob, rewardAndroid, mustContain: new[] { "android", "reward" }, anyOf: new[] { "id", "unit", "video" });
+        changed += FuzzySet(admob, appOpenAndroid, mustContain: new[] { "android", "appopen" }, anyOf: new[] { "id", "unit", "open" });
+        
+        // iOS fuzzy fallback
+        changed += FuzzySet(admob, banneriOS, mustContain: new[] { "ios", "banner" }, anyOf: new[] { "id", "unit" });
+        changed += FuzzySet(admob, interiOS, mustContain: new[] { "ios", "inter" }, anyOf: new[] { "id", "unit" });
+        changed += FuzzySet(admob, rewardiOS, mustContain: new[] { "ios", "reward" }, anyOf: new[] { "id", "unit", "video" });
+        changed += FuzzySet(admob, appOpeniOS, mustContain: new[] { "ios", "appopen" }, anyOf: new[] { "id", "unit", "open" });
+
+#if UNITY_EDITOR
+        UnityEditor.EditorUtility.SetDirty(ms);
+        UnityEditor.AssetDatabase.SaveAssets();
+#endif
+        // Debug.Log($"[RC][ADS] fieldsUpdated�{changed}");
+    }
+
+    // fuzzy setter: set any string field whose name contains all 'must' tokens and any of 'anyOf' tokens
+    static int FuzzySet(object obj, string val, string[] mustContain, string[] anyOf)
+    {
+        if (obj == null || string.IsNullOrEmpty(val)) return 0;
+        var t = obj.GetType();
+        int count = 0;
+        foreach (var f in t.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
+        {
+            if (f.FieldType != typeof(string)) continue;
+            var n = f.Name.ToLowerInvariant();
+
+            bool hasAll = true;
+            foreach (var m in mustContain) if (!n.Contains(m)) { hasAll = false; break; }
+            if (!hasAll) continue;
+
+            bool hasAny = anyOf == null || anyOf.Length == 0 || anyOf.Any(tok => n.Contains(tok));
+            if (!hasAny) continue;
+
+            if ((string)f.GetValue(obj) != val)
+            {
+                f.SetValue(obj, val);
+                count++;
+                Debug.Log($"[RC][ADS] Fuzzy set: {t.Name}.{f.Name} = {val}");
+            }
+        }
+        return count;
+    }
+
+    static void Set(object obj, string field, string val)
+    {
+        if (obj == null || string.IsNullOrEmpty(val)) {
+            Debug.Log($"[RC][ADS] Set skipped: obj={obj?.GetType().Name}, field={field}, val={val}");
+            return;
+        }
+        var f = obj.GetType().GetField(field, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+        if (f != null && f.FieldType == typeof(string)) {
+            var oldValue = f.GetValue(obj)?.ToString();
+            f.SetValue(obj, val);
+            Debug.Log($"[RC][ADS] Set {obj.GetType().Name}.{field}: '{oldValue}' ? '{val}'");
+        } else {
+            Debug.Log($"[RC][ADS] Field not found: {obj.GetType().Name}.{field}");
+        }
+    }
+}

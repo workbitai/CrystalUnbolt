@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8740130d363d4d4d8255e256072780e, type: 3}
+  m_Name: RCProfile
+  m_EditorClassIdentifier: 
+  devForceFreshFetch: 1
+  startDelaySeconds: 0.8
+  monetizationSettings: {fileID: 11400000, guid: 1ff4813fd0ca8d44e81c074b2653c333,
+    type: 2}
+  kBannerAndroid: admob_banner_id_android
+  kInterstitialAndroid: admob_interstitial_id_android
+  kRewardAndroid: admob_reward_id_android
+  kAppOpenAndroid: app_open_ads
+  defBannerAndroid: test-banner
+  defInterstitialAndroid: test-inter
+  defRewardAndroid: test-reward
+  defAppOpenAndroid: 
+  kNoAdsA: ''
+  kStarterA: ''
+  kGoldSmallA: ''
+  kGoldMediumA: ''
+  kGoldBigA: ''
+  kPuPackA: ''
+  defNoAdsA: ''
+  defStarterA: ''
+  defGoldSmallA: ''
+  defGoldMediumA: ''
+  defGoldBigA: ''
+  defPuPackA: ''
+  hintNoAds: ''
+  hintStarter: ''
+  hintGoldSmall: ''
+  hintGoldMedium: ''
+  hintGoldBig: ''
+  hintPuPack: ''

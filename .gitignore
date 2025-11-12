@@ -1,0 +1,64 @@
+# Unity generated folders
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+
+# MemoryCaptures and Recordings
+[Mm]emoryCaptures/
+[Rr]ecordings/
+
+# IDE / Editor folders
+.vs/
+.vscode/
+.idea/
+
+# Auto-generated files
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# Crash reports
+sysinfo.txt
+
+# Unity packages and builds
+*.apk
+*.aab
+*.unitypackage
+*.app
+
+# Addressables built data
+Assets/AddressableAssetsData/*/*.bin*
+Assets/AddressableAssetsData/*/*.hash
+Assets/AddressableAssetsData/*/catalog_*.json
+Assets/StreamingAssets/aa/
+ServerData/
+
+# Firebase large binaries (avoid 100MB+ errors)
+Assets/Firebase/Plugins/x86_64/
+Assets/Firebase/Plugins/arm64-v8a/
+Assets/Firebase/Plugins/x86/
+
+# macOS, Windows & Linux junk
+.DS_Store
+Thumbs.db
+Desktop.ini
+*~
+*.swp
+
+# JetBrains Rider plugin
+Assets/Plugins/Editor/JetBrains*

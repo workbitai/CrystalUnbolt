@@ -1,0 +1,169 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace CrystalUnbolt
+{
+    [StaticUnload]
+    public static class EconomyManager
+    {
+        private static Currency[] currencies;
+        public static Currency[] Currencies => currencies;
+
+        private static Dictionary<CurrencyType, int> currenciesLink;
+
+        private static bool isInitialized;
+
+        public static void Init(CurrencyDatabase currenciesDatabase)
+        {
+            if (isInitialized) return;
+
+            // Store active currencies
+            currencies = currenciesDatabase.Currencies;
+            
+            // Initialize currencies
+            foreach (Currency currency in currencies)
+            {
+                currency.Init();
+            }
+
+            // Link currencies by the type
+            currenciesLink = new Dictionary<CurrencyType, int>();
+            for (int i = 0; i < currencies.Length; i++)
+            {
+                if (!currenciesLink.ContainsKey(currencies[i].CurrencyType))
+                {
+                    currenciesLink.Add(currencies[i].CurrencyType, i);
+                }
+                else
+                {
+                    Debug.LogError(string.Format("[Currency Syste]: Currency with type {0} added to database twice!", currencies[i].CurrencyType));
+                }
+
+                Currency.Save save = DataManager.GetSaveObject<Currency.Save>("currency" + ":" + (int)currencies[i].CurrencyType);
+                if(save.Amount == -1)
+                    save.Amount = currencies[i].DefaultAmount;
+
+                currencies[i].SetSave(save);
+            }
+
+            isInitialized = true;
+        }
+
+        public static bool HasAmount(CurrencyType currencyType, int amount)
+        {
+            return currencies[currenciesLink[currencyType]].Amount >= amount;
+        }
+
+        public static int Get(CurrencyType currencyType)
+        {
+            return currencies[currenciesLink[currencyType]].Amount;
+        }
+
+        public static Currency GetCurrency(CurrencyType currencyType)
+        {
+#if UNITY_EDITOR
+            if(!Application.isPlaying)
+            {
+                ProjectInitSettings projectInitSettings = RuntimeEditorUtils.GetAsset<ProjectInitSettings>();
+                if (projectInitSettings != null)
+                {
+                    CurrencyInitModule currencyInitModule = projectInitSettings.GetModule<CurrencyInitModule>();
+                    if(currencyInitModule != null)
+                    {
+                        CurrencyDatabase currencyDatabase = currencyInitModule.Database;
+                        if (currencyDatabase != null)
+                        {
+                            return currencyDatabase.Currencies.Find(x => x.CurrencyType.Equals(currencyType));
+                        }
+                    }
+                }
+
+                return null;
+            }
+#endif
+
+            if (!isInitialized || currencies == null || currenciesLink == null)
+            {
+                Debug.LogError("[EconomyManager] EconomyManager not initialized! Make sure CurrencyInitModule is executed before accessing currencies.");
+                return null;
+            }
+            
+            if (!currenciesLink.ContainsKey(currencyType))
+            {
+                Debug.LogError($"[EconomyManager] Currency type {currencyType} not found in currenciesLink!");
+                return null;
+            }
+
+            return currencies[currenciesLink[currencyType]];
+        }
+
+        public static void Set(CurrencyType currencyType, int amount)
+        {
+            Currency currency = currencies[currenciesLink[currencyType]];
+
+            currency.Amount = amount;
+
+            // Change save state to required
+            DataManager.MarkAsSaveIsRequired();
+
+            // Invoke currency change event
+            currency.InvokeChangeEvent(0);
+        }
+
+        public static void Add(CurrencyType currencyType, int amount)
+        {
+            Currency currency = currencies[currenciesLink[currencyType]];
+
+            currency.Amount += amount;
+
+            // Change save state to required
+            DataManager.MarkAsSaveIsRequired();
+
+            // Invoke currency change event;
+            currency.InvokeChangeEvent(amount);
+        }
+
+        public static void Substract(CurrencyType currencyType, int amount)
+        {
+            Currency currency = currencies[currenciesLink[currencyType]];
+
+            currency.Amount -= amount;
+
+            // Change save state to required
+            DataManager.MarkAsSaveIsRequired();
+
+            // Invoke currency change event
+            currency.InvokeChangeEvent(-amount);
+        }
+
+        public static void SubscribeGlobalCallback(CurrencyCallback currencyChange)
+        {
+            for(int i = 0; i < currencies.Length; i++)
+            {
+                currencies[i].OnCurrencyChanged += currencyChange;
+            }
+        }
+
+        public static void UnsubscribeGlobalCallback(CurrencyCallback currencyChange)
+        {
+            if(!currencies.IsNullOrEmpty())
+            {
+                for (int i = 0; i < currencies.Length; i++)
+                {
+                    currencies[i].OnCurrencyChanged -= currencyChange;
+                }
+            }
+        }
+
+        private static void UnloadStatic()
+        {
+            currencies = null;
+
+            currenciesLink = null;
+
+            isInitialized = false;
+        }
+    }
+
+    public delegate void CurrencyCallback(Currency currency, int difference);
+}

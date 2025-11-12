@@ -1,0 +1,230 @@
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
+using System.Threading;                     
+using Firebase.RemoteConfig;
+using UnityEngine;
+using CrystalUnbolt;
+
+[DefaultExecutionOrder(-8999)]
+public class CrystalRCIapSync : MonoBehaviour
+{
+    public CrystalRCProfile profile;
+
+    bool _isSyncing;                        
+
+    void OnEnable() { StartCoroutine(Run()); }
+
+    IEnumerator Run()
+    {
+        if (profile == null) yield break;
+        if (profile.startDelaySeconds > 0) yield return new WaitForSeconds(profile.startDelaySeconds);
+        _ = Sync();
+    }
+
+    async Task Sync()
+    {
+        if (_isSyncing) { Debug.Log("[RC][IAP] Sync already running; skip"); return; }   
+        _isSyncing = true;                                                               
+        Debug.Log("[RC][IAP] Sync: begin");                                              
+
+        try
+        {
+            var dep = await CrystalRCBootstrap.Ensure();
+            if (dep != Firebase.DependencyStatus.Available)
+            {
+                ApplyDefaults();
+                Debug.LogWarning($"[RC][IAP] Firebase deps: {dep}. Used defaults.");
+                return;
+            }
+
+#if UNITY_EDITOR
+            var cfg = new ConfigSettings
+            {
+                MinimumFetchIntervalInMilliseconds = 0UL  
+            };
+            Debug.Log("[RC][IAP] SetConfigSettingsAsync - Force fresh fetch");
+            await FirebaseRemoteConfig.DefaultInstance.SetConfigSettingsAsync(cfg);
+#endif
+
+            Debug.Log("[RC][IAP] SetDefaultsAsync");
+            await FirebaseRemoteConfig.DefaultInstance.SetDefaultsAsync(new Dictionary<string, object> {
+                { profile.kNoAdsA,      profile.defNoAdsA },
+                { profile.kStarterA,    profile.defStarterA },
+                { profile.kGoldSmallA,  profile.defGoldSmallA },
+                { profile.kGoldMediumA, profile.defGoldMediumA },
+                { profile.kGoldBigA,    profile.defGoldBigA },
+                { profile.kPuPackA,     profile.defPuPackA },
+            });
+
+#if UNITY_EDITOR
+            if (!profile.devForceFreshFetch)
+            {
+                Debug.Log("[RC][IAP] Editor fast path (no fetch)");
+                ReadAndApply();
+                return;
+            }
+#endif
+            await CrystalRCBootstrap.RcLock.WaitAsync();
+            try
+            {
+                Debug.Log("[RC][IAP] FetchAsync");
+                await FirebaseRemoteConfig.DefaultInstance.FetchAsync();
+                Debug.Log("[RC][IAP] ActivateAsync");
+                await FirebaseRemoteConfig.DefaultInstance.ActivateAsync();
+            }
+            finally
+            {
+                CrystalRCBootstrap.RcLock.Release();
+            }
+
+            ReadAndApply();
+            Debug.Log("[RC][IAP] Sync: done");
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogWarning($"[RC][IAP] Sync exception: {e}");
+        }
+        finally
+        {
+            _isSyncing = false;                                                  
+        }
+    }
+
+    void ApplyDefaults()
+    {
+        WriteToMonetization(profile.defNoAdsA, profile.hintNoAds);
+        WriteToMonetization(profile.defStarterA, profile.hintStarter);
+        WriteToMonetization(profile.defGoldSmallA, profile.hintGoldSmall);
+        WriteToMonetization(profile.defGoldMediumA, profile.hintGoldMedium);
+        WriteToMonetization(profile.defGoldBigA, profile.hintGoldBig);
+        WriteToMonetization(profile.defPuPackA, profile.hintPuPack);
+        Debug.Log("[RC][IAP] Used defaults.");
+    }
+
+    void ReadAndApply()
+    {
+        string V(string k, string d)
+        {
+            var s = FirebaseRemoteConfig.DefaultInstance.GetValue(k).StringValue;
+            return string.IsNullOrEmpty(s) ? d : s;
+        }
+
+        var noAds = V(profile.kNoAdsA, profile.defNoAdsA);
+        var starter = V(profile.kStarterA, profile.defStarterA);
+        var gSmall = V(profile.kGoldSmallA, profile.defGoldSmallA);
+        var gMed = V(profile.kGoldMediumA, profile.defGoldMediumA);
+        var gBig = V(profile.kGoldBigA, profile.defGoldBigA);
+        var puPack = V(profile.kPuPackA, profile.defPuPackA);
+
+        Debug.Log($"[RC][IAP] Read ? noAds={noAds}, starter={starter}, small={gSmall}, med={gMed}, big={gBig}, puPack={puPack}");
+
+        WriteToMonetization(noAds, profile.hintNoAds);
+        WriteToMonetization(starter, profile.hintStarter);
+        WriteToMonetization(gSmall, profile.hintGoldSmall);
+        WriteToMonetization(gMed, profile.hintGoldMedium);
+        WriteToMonetization(gBig, profile.hintGoldBig);
+        WriteToMonetization(puPack, profile.hintPuPack);
+
+        Debug.Log("[RC][IAP] Applied product IDs.");
+    }
+
+    void WriteToMonetization(string androidId, string nameHint)
+    {
+        if (string.IsNullOrEmpty(androidId)) return;
+        var ms = profile.monetizationSettings; if (ms == null) return;
+        var iap = ms.IAPSettings; if (iap == null) return;
+        
+        Debug.Log($"[RC][IAP] Writing {androidId} for hint {nameHint}");
+
+        var storeItemsField = iap.GetType().GetField("storeItems", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+        if (storeItemsField == null)
+        {
+            Debug.LogWarning($"[RC][IAP] storeItems field not found in IAPSettings");
+            return;
+        }
+
+        var storeItems = storeItemsField.GetValue(iap) as System.Array;
+        if (storeItems == null)
+        {
+            Debug.LogWarning($"[RC][IAP] storeItems is null");
+            return;
+        }
+
+        Debug.Log($"[RC][IAP] Found {storeItems.Length} store items");
+
+        for (int i = 0; i < storeItems.Length; i++)
+        {
+            var item = storeItems.GetValue(i);
+            if (item == null) continue;
+
+            var itemType = item.GetType();
+            var itemName = itemType.Name;
+            
+            var productKeyTypeField = itemType.GetField("productKeyType", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            var productKeyType = productKeyTypeField?.GetValue(item)?.ToString() ?? "";
+            
+            Debug.Log($"[RC][IAP] Checking item {i}: {itemName}, ProductKeyType: {productKeyType}");
+
+            bool matches = itemName.IndexOf(nameHint, System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+                          productKeyType.IndexOf(nameHint, System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+                          productKeyType.Replace(" ", "").IndexOf(nameHint, System.StringComparison.OrdinalIgnoreCase) >= 0;
+            
+            if (matches)
+            {
+                var androidIdField = itemType.GetField("androidID", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                var iosIdField = itemType.GetField("iosID", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                
+                if (iosIdField == null)
+                {
+                    iosIdField = itemType.GetField("iOSID", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                }
+                if (iosIdField == null)
+                {
+                    iosIdField = itemType.GetField("iosId", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                }
+                if (iosIdField == null)
+                {
+                    iosIdField = itemType.GetField("iOSId", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                }
+                
+                Debug.Log($"[RC][IAP] Available fields in {itemName}:");
+                var allFields = itemType.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                foreach (var field in allFields)
+                {
+                    Debug.Log($"[RC][IAP] Field: {field.Name}, Type: {field.FieldType.Name}");
+                }
+                
+                if (androidIdField != null)
+                {
+                    var oldAndroidValue = androidIdField.GetValue(item);
+                    androidIdField.SetValue(item, androidId);
+                    Debug.Log($"[RC][IAP] Successfully updated Android ID: {oldAndroidValue} -> {androidId}");
+                }
+                else
+                {
+                    Debug.LogWarning($"[RC][IAP] androidID field not found in {itemName}");
+                }
+                
+                if (iosIdField != null)
+                {
+                    var oldIosValue = iosIdField.GetValue(item);
+                    iosIdField.SetValue(item, androidId);
+                    Debug.Log($"[RC][IAP] Successfully updated iOS ID: {oldIosValue} -> {androidId}");
+                }
+                else
+                {
+                    Debug.LogWarning($"[RC][IAP] iosID field not found in {itemName}");
+                }
+                break;
+            }
+        }
+
+#if UNITY_EDITOR
+        UnityEditor.EditorUtility.SetDirty(ms);
+        UnityEditor.AssetDatabase.SaveAssets();
+#endif
+    }
+}

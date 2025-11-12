@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bdfe15605739d3844adf6c12ca0e15dc, type: 3}
+  m_Name: Game Data
+  m_EditorClassIdentifier: 
+  showTutorial: 1
+  infiniteLevels: 1
+  CrystalGameTimer:
+    enabled: 1
+    value: 120
+  coinsRewardPerLevel: 50
+  replayingLevelRewardPercent:
+    enabled: 1
+    value: 50
+  replayStageCost: 100
+  screwShadowColor: {r: 0, g: 0, b: 0, a: 0.3137255}
+  screwHighlightColor: {r: 0, g: 1, b: 0, a: 1}
+  highlightSizeMultiplier: 1.6
+  highlightBreathingEffect: 1
+  screwMovementDuration: 0.3
+  crystalExtractionAnimationSpeedMultiplier: 1.5
+  screwInAnimationSpeedMultiplier: 1.5
+  crystalExtractionPUAnimationSpeedMultiplier: 1.5
+  holeVisibleAmountToEnableScrew: 0.7
+  additionalTimerTimeOnFail: 30

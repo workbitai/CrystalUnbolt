@@ -1,0 +1,82 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5272500912242729696
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3733783327902157600}
+  - component: {fileID: 7755363477806648264}
+  m_Layer: 0
+  m_Name: PU Destroy Plank
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3733783327902157600
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5272500912242729696}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7755363477806648264
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5272500912242729696}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc08e8f9cb5a0904b8111b5e3380b939, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  particle:
+    particleName: Destroy Plank Particle
+    particlePrefab: {fileID: 167592597321332269, guid: 86bdc3fdd3edd7a44bb9a646e724e705,
+      type: 3}
+  usePlankShape: 1
+  usePlankColor: 1
+  hammerPrefab: {fileID: 1913545258031188959, guid: 3e441ec44a5918c4685ab17361de937c,
+    type: 3}
+  parentObject: {fileID: 0}
+  useLeftCornerAlignment: 1
+  preSpawnDelay: 0
+  growUpDuration: 0.24
+  slamDownDuration: 0.08
+  settleDuration: 0.2
+  fadeOutDuration: 0.28
+  scaleA_Small: 0.8
+  scaleB_Big: 1.8
+  scaleC_Impact: 0.6
+  scaleD_Settle: 0.8
+  useCameraShake: 1
+  camShakeDuration: 0.5
+  camShakeStrength: 0.6
+  shakeHammerOnImpact: 1
+  hammerShakeDuration: 0.1
+  hammerShakeStrength: 0.06
+  useHaptics: 1
+  hapticStrength: 0.8
+  hapticDurationMultiplier: 1
+  vibrateOnGrow: 0
+  vibrateOnSlam: 1
+  forceOnTop: 1
+  sortingLayerName: UI
+  sortingOrderOnTop: 200
+  useNestedCanvasForUI: 1
+  forceZInFront: 1
+  zFrontOffset: 0.05

@@ -1,0 +1,248 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e068d4b61b94914da390f6ae91e0b2b, type: 3}
+  m_Name: Level 100
+  m_EditorClassIdentifier: 
+  stages:
+  - holePositions:
+    - position: {x: -4.1, y: -5.8099995, z: 0}
+      hasScrew: 1
+    - position: {x: 4.12, y: -5.8099995, z: 0}
+      hasScrew: 1
+    - position: {x: 0.89, y: -5.8099995, z: 0}
+      hasScrew: 1
+    - position: {x: -0.90999997, y: -5.8099995, z: 0}
+      hasScrew: 1
+    - position: {x: -1.76, y: -3.6499996, z: 0}
+      hasScrew: 1
+    - position: {x: 2.08, y: -3.92, z: 0}
+      hasScrew: 1
+    - position: {x: -0.722, y: -2.514, z: 0}
+      hasScrew: 1
+    - position: {x: -2.8799999, y: -2.514, z: 0}
+      hasScrew: 1
+    - position: {x: 2.9, y: -2.514, z: 0}
+      hasScrew: 1
+    - position: {x: 0.66499996, y: -2.514, z: 0}
+      hasScrew: 1
+    - position: {x: 0, y: -4.2799997, z: 0}
+      hasScrew: 1
+    - position: {x: 0.01999998, y: 0.5100002, z: 0}
+      hasScrew: 1
+    - position: {x: -1.5999999, y: 0.5100002, z: 0}
+      hasScrew: 1
+    - position: {x: -1.14, y: 2.44, z: 0}
+      hasScrew: 1
+    - position: {x: 1.17, y: 2.44, z: 0}
+      hasScrew: 1
+    - position: {x: -0.72099996, y: 4.285, z: 0}
+      hasScrew: 1
+    - position: {x: 0.75699997, y: 4.285, z: 0}
+      hasScrew: 1
+    - position: {x: -0.02000001, y: 6.03, z: 0}
+      hasScrew: 1
+    - position: {x: 1.6, y: 0.5100002, z: 0}
+      hasScrew: 1
+    - position: {x: -1.6600001, y: -7.1400003, z: 0}
+      hasScrew: 0
+    - position: {x: 0, y: -7.12, z: 0}
+      hasScrew: 0
+    - position: {x: 1.6700001, y: -7.08, z: 0}
+      hasScrew: 0
+    planksData:
+    - plankType: 1
+      plankLayer: 0
+      position: {x: -1.31, y: -4.76, z: 0}
+      rotation: {x: -0, y: 0, z: 291.95496}
+      scale: {x: 1.4, y: 1, z: 1}
+      screwsPositions:
+      - {x: 1.1234022, y: -0.021580057, z: 0}
+      - {x: -1.1977462, y: -0.0023607374, z: 0}
+    - plankType: 1
+      plankLayer: 0
+      position: {x: 1.53, y: -4.76, z: 0}
+      rotation: {x: 0, y: 0, z: 237.07114}
+      scale: {x: 1.4, y: 1, z: 1}
+      screwsPositions:
+      - {x: 1.2292151, y: 0.033595257, z: 0}
+      - {x: -1.0040294, y: 0.005018505, z: 0}
+    - plankType: 3
+      plankLayer: 1
+      position: {x: 0, y: -1.8899994, z: 0}
+      rotation: {x: -0, y: -0, z: 90}
+      scale: {x: 1, y: 1, z: 1}
+      screwsPositions:
+      - {x: -2.39, y: -0.00000014245512, z: 0}
+      - {x: 2.3999994, y: -0.019999838, z: 0}
+    - plankType: 10
+      plankLayer: 2
+      position: {x: 0, y: -5.04, z: 0}
+      rotation: {x: 0, y: 0, z: 270}
+      scale: {x: 1, y: 1, z: 1}
+      screwsPositions:
+      - {x: 0.7699995, y: 0.88999987, z: 0}
+      - {x: 0.7699994, y: -0.90999997, z: 0}
+      - {x: -0.76000017, y: 0.000000045299544, z: 0}
+    - plankType: 3
+      plankLayer: 2
+      position: {x: 1.1784999, y: 2.3975, z: 0}
+      rotation: {x: -0, y: 0, z: 282.58826}
+      scale: {x: 1, y: 1, z: 1}
+      screwsPositions:
+      - {x: -0.043330897, y: 0.0009669365, z: 0}
+      - {x: -1.9339902, y: -0.0000000108477565, z: 0}
+      - {x: 1.9339902, y: 0.00000012719144, z: 0}
+    - plankType: 3
+      plankLayer: 2
+      position: {x: -1.43, y: -0.9919996, z: 0}
+      rotation: {x: -0, y: -0, z: 46.387794}
+      scale: {x: 1, y: 1, z: 1}
+      screwsPositions:
+      - {x: -2.102138, y: 0.00000019152387, z: 0}
+      - {x: 2.0876572, y: -0.013795983, z: 0}
+    - plankType: 3
+      plankLayer: 2
+      position: {x: -2.3899999, y: -4.1900005, z: 0}
+      rotation: {x: -0, y: -0, z: 43.71129}
+      scale: {x: 1, y: 1, z: 1}
+      screwsPositions:
+      - {x: -2.3555005, y: 0.010667037, z: 0}
+      - {x: 0.82853746, y: -0.045016155, z: 0}
+      - {x: 2.36384, y: 0.058835864, z: 0}
+    - plankType: 3
+      plankLayer: 2
+      position: {x: 2.37, y: -4.1900005, z: 0}
+      rotation: {x: -0, y: -0, z: 136.99998}
+      scale: {x: 1, y: 1, z: 1}
+      screwsPositions:
+      - {x: -2.3847058, y: -0.0087052435, z: 0}
+      - {x: 0.39623243, y: 0.00031371872, z: 0}
+      - {x: 2.3899877, y: -0.06294176, z: 0}
+    - plankType: 2
+      plankLayer: 3
+      position: {x: 0.014999986, y: 2.44, z: 0}
+      rotation: {x: 0, y: 0, z: 0}
+      scale: {x: 1, y: 1, z: 1}
+      screwsPositions:
+      - {x: -1.155, y: 0, z: 0}
+      - {x: 1.155, y: 0, z: 0}
+    - plankType: 2
+      plankLayer: 3
+      position: {x: 2.49, y: -5.8099995, z: 0}
+      rotation: {x: 0, y: 0, z: 0}
+      scale: {x: 1, y: 1, z: 1}
+      screwsPositions:
+      - {x: 1.6299999, y: 0, z: 0}
+      - {x: -1.6, y: 0, z: 0}
+    - plankType: 3
+      plankLayer: 3
+      position: {x: 1.46, y: -0.9919996, z: 0}
+      rotation: {x: -0, y: 0, z: 313.4142}
+      scale: {x: 1, y: 1, z: 1}
+      screwsPositions:
+      - {x: 2.095253, y: 0.00000038937134, z: 0}
+      - {x: -2.0807245, y: -0.013746059, z: 0}
+    - plankType: 2
+      plankLayer: 4
+      position: {x: -2.54, y: -5.8099995, z: 0}
+      rotation: {x: 0, y: 0, z: 0}
+      scale: {x: 1, y: 1, z: 1}
+      screwsPositions:
+      - {x: -1.56, y: 0, z: 0}
+      - {x: 1.63, y: 0, z: 0}
+    - plankType: 4
+      plankLayer: 4
+      position: {x: 0, y: -2.5299997, z: 0}
+      rotation: {x: 0, y: 0, z: 0}
+      scale: {x: 1, y: 1, z: 1}
+      screwsPositions:
+      - {x: -0.722, y: 0.015999794, z: 0}
+      - {x: -2.8799999, y: 0.015999794, z: 0}
+      - {x: 2.9, y: 0.015999794, z: 0}
+      - {x: 0.66499996, y: 0.015999794, z: 0}
+    - plankType: 3
+      plankLayer: 4
+      position: {x: -1.1604999, y: 2.3975, z: 0}
+      rotation: {x: -0, y: 0, z: 256.89236}
+      scale: {x: 1, y: 1, z: 1}
+      screwsPositions:
+      - {x: 1.9379926, y: -0.00000023698534, z: 0}
+      - {x: -0.04604171, y: 0.010327642, z: 0}
+      - {x: -1.9379926, y: 0.00000023698534, z: 0}
+    - plankType: 2
+      plankLayer: 5
+      position: {x: 0, y: 0.5, z: 0}
+      rotation: {x: 0, y: 0, z: 0}
+      scale: {x: 1, y: 1, z: 1}
+      screwsPositions:
+      - {x: 0.01999998, y: 0.010000229, z: 0}
+      - {x: -1.5999999, y: 0.010000229, z: 0}
+      - {x: 1.6, y: 0.010000229, z: 0}
+    - plankType: 3
+      plankLayer: 6
+      position: {x: -3.4899998, y: -4.1619997, z: 0}
+      rotation: {x: 0, y: 0, z: 249.6882}
+      scale: {x: 1, y: 1, z: 1}
+      screwsPositions:
+      - {x: 1.7572715, y: -0.0000004434656, z: 0}
+      - {x: -1.7572714, y: 0.00000021987252, z: 0}
+    - plankType: 3
+      plankLayer: 6
+      position: {x: 3.51, y: -4.1619997, z: 0}
+      rotation: {x: -0, y: 0, z: 290.31183}
+      scale: {x: 1, y: 1, z: 1}
+      screwsPositions:
+      - {x: 1.7572715, y: -0.0000008714884, z: 0}
+      - {x: -1.7572715, y: 0.0000008714884, z: 0}
+    - plankType: 4
+      plankLayer: 6
+      position: {x: -0.000000029802322, y: 3.2700002, z: 0}
+      rotation: {x: -0, y: 0, z: 270.41516}
+      scale: {x: 1, y: -1, z: 1}
+      screwsPositions:
+      - {x: 2.7600725, y: 0.0000008071157, z: 0}
+      - {x: -2.7600725, y: -0.0000007773142, z: 0}
+    - plankType: 3
+      plankLayer: 7
+      position: {x: 2.25, y: -1.0019999, z: 0}
+      rotation: {x: -0, y: 0, z: 293.26257}
+      scale: {x: 1, y: 1, z: 1}
+      screwsPositions:
+      - {x: 1.645796, y: 0.00000082432297, z: 0}
+      - {x: -1.645796, y: -0.00000071480486, z: 0}
+    - plankType: 3
+      plankLayer: 7
+      position: {x: -2.2399998, y: -1.0019999, z: 0}
+      rotation: {x: -0, y: -0, z: 67.058014}
+      scale: {x: 1, y: 1, z: 1}
+      screwsPositions:
+      - {x: -1.6418723, y: -0.000000030520738, z: 0}
+      - {x: 1.6418722, y: 0.0000002500804, z: 0}
+    - plankType: 1
+      plankLayer: 7
+      position: {x: 0, y: 4.3, z: 0}
+      rotation: {x: 0, y: 0, z: 0}
+      scale: {x: 1, y: 1, z: 1}
+      screwsPositions:
+      - {x: -0.72099996, y: -0.015000343, z: 0}
+      - {x: 0.75699997, y: -0.015000343, z: 0}
+    timerOverride:
+      enabled: 1
+      value: 180
+  invalidStageIndex: -1
+  presentHolesCount: 2
+  requiredHolesCount: 3
+  useInRandomizer: 1
+  overrideLevelReward:
+    enabled: 0
+    value: 0
+  powerUpsReward: []
