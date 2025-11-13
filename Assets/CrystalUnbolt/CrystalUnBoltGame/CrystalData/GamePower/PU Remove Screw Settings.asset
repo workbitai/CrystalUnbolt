@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PU Remove Screw Settings
   m_EditorClassIdentifier: 
   type: 2
-  icon: {fileID: 21300000, guid: a95f0b5691b517145a1f7b6f4bdb63c4, type: 3}
+  icon: {fileID: 21300000, guid: 002c352afe1df8545971e56cb7f6f749, type: 3}
   behaviorPrefab: {fileID: 2013195708258155285, guid: 400b991461ce65947a51b20509073083,
     type: 3}
   customAudioClip:

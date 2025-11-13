@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PU Timer Settings
   m_EditorClassIdentifier: 
   type: 3
-  icon: {fileID: 21300000, guid: 621686d0176aaed4c826988fad8ce3d4, type: 3}
+  icon: {fileID: 21300000, guid: cbe9dd19f0ca51f4b939870d072e327e, type: 3}
   behaviorPrefab: {fileID: 8526447253219634370, guid: ef7f2b7f0c190564483388dce003c87d,
     type: 3}
   customAudioClip:

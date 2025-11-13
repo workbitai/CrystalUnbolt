@@ -75,7 +75,10 @@ namespace CrystalUnbolt
 
             ScreenManager.OnPopupWindowOpened(this);
 
-            PopupHelper.ShowPopup(powerUpPurchasePreview.transform);
+            // Show power icon with final scale of 2 after animation
+            PopupHelper.ShowPopup(powerUpPurchasePreview.transform, finalScale: 2f);
+            
+            // Show buttons with default scale (1)
             if (showCurrency) PopupHelper.ShowPopup(purchaseButton.transform);
             if (showRV) PopupHelper.ShowPopup(purchaseRVButton.transform);
         }

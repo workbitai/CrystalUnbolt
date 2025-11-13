@@ -73,7 +73,15 @@ namespace CrystalUnbolt
         private void OnEnable()
         {
             StartCoroutine(ShineLoop());
-            iconSeq = IconAnimationHelper.PlayHeartbeatShake(lockIcon.transform, 0.8f, 1.15f, 0.08f, 1.2f,true);
+            iconSeq = IconAnimationHelper.PlayLockIconPremium(
+                 lockIcon.transform,
+                 duration: 2.2f,
+                 scaleUp: 1.08f,
+                 rotation: 4f,
+                 glowMin: 0.7f,
+                 glowMax: 1f,
+                 startDelay: 0.4f
+             );
         }
 
         private void OnDisable()
@@ -301,7 +309,7 @@ namespace CrystalUnbolt
                 RedrawBusyVisuals(behavior.IsBusy);
 
             if (behavior.IsSelectable())
-                selectedOutlineObject.SetActive(behavior.IsSelected);
+                busyStateVisualsObject.SetActive(behavior.IsSelected);
 
             behavior.OnRedrawn();
         }
@@ -319,7 +327,7 @@ public static class IconAnimationHelper
                                               float duration,
                                               float overshoot,
                                               float punchAmt,
-                                              float delay,bool lockImg)
+                                              float delay, bool lockImg)
     {
         if (target == null) return null;
 
@@ -345,6 +353,57 @@ public static class IconAnimationHelper
 
         return seq;
     }
+    public static Sequence PlayLockIconPremium(Transform target,
+                                           float duration = 2.2f,
+                                           float scaleUp = 0.95f,
+                                           float rotation = 4f,
+                                           float glowMin = 0.7f,
+                                           float glowMax = 1f,
+                                           float startDelay = 0f)
+    {
+        if (target == null) return null;
+
+        // Reset
+        target.localScale = Vector3.one *0.7f;
+        target.localRotation = Quaternion.identity;
+
+        // Glow via CanvasGroup
+        CanvasGroup glow = target.GetComponent<CanvasGroup>();
+        if (glow == null)
+            glow = target.gameObject.AddComponent<CanvasGroup>();
+
+        glow.alpha = glowMax;
+
+        Sequence seq = DOTween.Sequence();
+
+        if (startDelay > 0)
+            seq.AppendInterval(startDelay);
+
+        // Step 1 — soft upscale + tilt
+        seq.Append(target.DOScale(Vector3.one *0.9f * scaleUp, duration * 0.25f).SetEase(Ease.OutQuad));
+        seq.Join(target.DOLocalRotate(new Vector3(0, 0, rotation), duration * 0.25f).SetEase(Ease.OutQuad));
+      //  seq.Join(glow.DOFade(glowMax, duration * 0.25f));
+
+        // Step 2 — settle back to normal
+        seq.Append(target.DOScale(Vector3.one *0.7f, duration * 0.25f).SetEase(Ease.OutBack));
+        seq.Join(target.DOLocalRotate(Vector3.zero, duration * 0.25f).SetEase(Ease.OutQuad));
+
+        // Step 3 — subtle breathing dip
+        seq.Append(target.DOScale(Vector3.one *0.8f * 0.97f, duration * 0.20f).SetEase(Ease.InOutSine));
+       // seq.Join(glow.DOFade(glowMin, duration * 0.20f));
+
+        // Step 4 — smooth restore
+        seq.Append(target.DOScale(Vector3.one *0.7f, duration * 0.15f).SetEase(Ease.OutSine));
+      //  seq.Join(glow.DOFade(glowMax, duration * 0.15f));
+
+        // Step 5 — pause
+        seq.AppendInterval(duration * 0.15f);
+
+        seq.SetLoops(-1, LoopType.Restart);
+
+        return seq;
+    }
+
 }
 public static class PowerUpLock
 {

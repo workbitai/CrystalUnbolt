@@ -172,6 +172,12 @@ namespace CrystalUnbolt
                         ScreenManager.CloseScreen<CrystalUIGameOver>();
                         CrystalGameManager.ReplayLevel();
                     }
+                    else
+                    {
+                        // User closed the panel without adding life
+                        Debug.Log("[GameOver] User closed lives panel without adding life - staying on GameOver screen");
+                        // User remains on GameOver screen, can still click Menu button to return
+                    }
                 });
             }
 

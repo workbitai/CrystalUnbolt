@@ -15,7 +15,10 @@ namespace CrystalUnbolt
         [SerializeField] private ScrollRect scrollRect; // For auto-scrolling to current level
         [SerializeField] private Transform gridContainer; // Assign the "Content" GameObject
         [SerializeField] private int columns = 5; // Number of columns in grid
-        [SerializeField] private float spacing = 20f;
+        [SerializeField] private float spacingPercentage = 0.02f; // Spacing as percentage of screen width
+        [SerializeField] private float paddingPercentage = 0.04f; // Padding as percentage of screen width
+        [SerializeField] private bool useDynamicCellSize = true; // Auto-calculate cell size based on screen
+        [SerializeField] private Vector2 fixedCellSize = new Vector2(120f, 120f); // Used if useDynamicCellSize is false
 
         [Header("Animation Settings")]
         [SerializeField] private CanvasGroup canvasGroup; // For fade animation
@@ -25,46 +28,14 @@ namespace CrystalUnbolt
 
         private List<CrystalMapLevelBehavior> spawnedButtons = new List<CrystalMapLevelBehavior>();
         private bool isInitialized = false;
+        private Vector2 lastScreenSize;
 
         private void OnEnable()
         {
             Debug.Log("[LevelGrid] OnEnable called!");
             
-            // Ensure canvas is enabled and visible
-            if (canvas != null)
-            {
-                canvas.enabled = true;
-                Debug.Log("[LevelGrid] Canvas enabled");
-            }
-            
-            // Ensure CanvasGroup is visible
-            if (canvasGroup != null)
-            {
-                canvasGroup.alpha = 1f;
-                Debug.Log("[LevelGrid] CanvasGroup alpha set to 1");
-            }
-            
-            // Ensure scale is normal (not from animation)
-            if (panelRectTransform != null)
-                panelRectTransform.localScale = Vector3.one;
-            
-            // Auto-generate levels when GridPanel becomes active
-            if (!isInitialized)
-            {
-                Debug.Log("[LevelGrid] GridPanel enabled, attempting to generate levels...");
-                
-                // Check if database is ready
-               /* if (CrystalLevelController.Database != null)
-                {
-                    GenerateLevelButtons();
-                    isInitialized = true;
-                }
-                else
-                {
-                    Debug.LogWarning("[LevelGrid] Database not ready yet, will retry when database loads...");
-                    StartCoroutine(WaitForDatabaseAndGenerate());
-                }*/
-            }
+            // Don't force canvas to be enabled - let it be controlled by ShowLevelGrid()
+            // This prevents the grid from showing automatically on startup
         }
 
         private System.Collections.IEnumerator WaitForDatabaseAndGenerate()
@@ -99,9 +70,31 @@ namespace CrystalUnbolt
             if (canvas != null)
                 canvas.enabled = true;
             
-            // Generate level buttons if not already done
-            if (!isInitialized && CrystalLevelController.Database != null)
+            // Ensure CanvasGroup is visible
+            if (canvasGroup != null)
             {
+                canvasGroup.alpha = 1f;
+            }
+            
+            // Ensure scale is normal
+            if (panelRectTransform != null)
+            {
+                panelRectTransform.localScale = Vector3.one;
+            }
+            
+            // Ensure grid layout is set up for current screen size
+            Vector2 currentScreenSize = new Vector2(Screen.width, Screen.height);
+            if (currentScreenSize != lastScreenSize)
+            {
+                Debug.Log($"[LevelGrid] Screen size changed, refreshing layout...");
+                SetupGridLayout();
+                lastScreenSize = currentScreenSize;
+            }
+            
+            // Generate level buttons if not already done OR if buttons were cleared
+            if ((!isInitialized || spawnedButtons.Count == 0) && CrystalLevelController.Database != null)
+            {
+                Debug.Log($"[LevelGrid] Generating levels in ShowLevelGrid (initialized: {isInitialized}, button count: {spawnedButtons.Count})...");
                 GenerateLevelButtons();
                 isInitialized = true;
             }
@@ -109,6 +102,10 @@ namespace CrystalUnbolt
             {
                 Debug.LogWarning("[LevelGrid] Database not ready in ShowLevelGrid, starting retry...");
                 StartCoroutine(WaitForDatabaseAndGenerate());
+            }
+            else
+            {
+                Debug.Log($"[LevelGrid] Levels already generated ({spawnedButtons.Count} buttons), skipping generation");
             }
             
             // Play opening animation
@@ -126,54 +123,108 @@ namespace CrystalUnbolt
         {
             Debug.Log("[LevelGrid] ShowGridOnMainMenu called!");
             
+            // Make sure GameObject is active FIRST
+            if (!gameObject.activeSelf)
+            {
+                gameObject.SetActive(true);
+                Debug.Log("[LevelGrid] GameObject was inactive, now activated");
+            }
+            
             // Force enable canvas
             if (canvas != null)
             {
                 canvas.enabled = true;
+                Debug.Log($"[LevelGrid] Canvas enabled: {canvas.enabled}");
+            }
+            else
+            {
+                Debug.LogError("[LevelGrid] Canvas is NULL! Please assign it in Inspector!");
             }
             
             // Force set alpha to 1
             if (canvasGroup != null)
             {
                 canvasGroup.alpha = 1f;
+                canvasGroup.interactable = true;
+                canvasGroup.blocksRaycasts = true;
+                Debug.Log($"[LevelGrid] CanvasGroup alpha set to: {canvasGroup.alpha}");
+            }
+            else
+            {
+                Debug.LogWarning("[LevelGrid] CanvasGroup is NULL! Grid may not be visible. Assign CanvasGroup in Inspector.");
             }
             
             // Force scale to 1
             if (panelRectTransform != null)
             {
                 panelRectTransform.localScale = Vector3.one;
+                Debug.Log($"[LevelGrid] Panel scale set to: {panelRectTransform.localScale}");
             }
-            
-            // Make sure GameObject is active
-            if (!gameObject.activeSelf)
+            else
             {
-                gameObject.SetActive(true);
+                Debug.LogWarning("[LevelGrid] PanelRectTransform is NULL! Trying to use transform instead.");
+                transform.localScale = Vector3.one;
+                Debug.Log($"[LevelGrid] Transform scale set to: {transform.localScale}");
             }
             
-            Debug.Log($"[LevelGrid] Canvas enabled: {canvas?.enabled}, Alpha: {canvasGroup?.alpha}, GameObject active: {gameObject.activeSelf}");
+            // Check if screen size changed and refresh layout if needed
+            Vector2 currentScreenSize = new Vector2(Screen.width, Screen.height);
+            if (currentScreenSize != lastScreenSize)
+            {
+                Debug.Log($"[LevelGrid] Screen size changed from {lastScreenSize} to {currentScreenSize}, refreshing layout...");
+                SetupGridLayout();
+                lastScreenSize = currentScreenSize;
+            }
+            
+            // Always regenerate levels to ensure they're up to date when returning from game
+            if (CrystalLevelController.Database != null)
+            {
+                Debug.Log("[LevelGrid] Generating levels in ShowGridOnMainMenu...");
+                GenerateLevelButtons();
+                isInitialized = true;
+            }
+            else
+            {
+                Debug.LogWarning("[LevelGrid] Database not ready in ShowGridOnMainMenu, starting retry...");
+                StartCoroutine(WaitForDatabaseAndGenerate());
+            }
+            
+            Debug.Log($"[LevelGrid] FINAL STATE - Canvas: {canvas?.enabled}, Alpha: {canvasGroup?.alpha}, Scale: {(panelRectTransform != null ? panelRectTransform.localScale : transform.localScale)}, GameObject active: {gameObject.activeSelf}, Levels: {spawnedButtons.Count}");
         }
 
         private void PlayShowAnimation()
         {
+            Debug.Log("[LevelGrid] PlayShowAnimation started");
+            
             // Setup initial states
             if (canvasGroup != null)
             {
                 canvasGroup.alpha = 0f;
-                canvasGroup.DOFade(1f, animationDuration).SetEasing(Ease.Type.CubicOut);
+                canvasGroup.DOFade(1f, animationDuration).SetEasing(Ease.Type.CubicOut)
+                    .OnComplete(() => Debug.Log("[LevelGrid] CanvasGroup fade animation complete"));
+                Debug.Log("[LevelGrid] CanvasGroup fade animation started");
+            }
+            else
+            {
+                Debug.LogWarning("[LevelGrid] CanvasGroup is NULL in PlayShowAnimation!");
             }
 
             if (panelRectTransform != null)
             {
                 panelRectTransform.localScale = Vector3.zero;
-                panelRectTransform.DOScale(Vector3.one, animationDuration).SetEasing(Ease.Type.BackOut);
+                panelRectTransform.DOScale(Vector3.one, animationDuration).SetEasing(Ease.Type.BackOut)
+                    .OnComplete(() => Debug.Log("[LevelGrid] Panel scale animation complete"));
+                Debug.Log("[LevelGrid] Panel scale animation started");
             }
             else
             {
+                Debug.LogWarning("[LevelGrid] PanelRectTransform is NULL in PlayShowAnimation!");
                 // Fallback: animate the grid container if panel not assigned
                 if (gridContainer != null)
                 {
                     gridContainer.localScale = Vector3.zero;
                     gridContainer.DOScale(Vector3.one, animationDuration).SetEasing(Ease.Type.BackOut);
+                    Debug.Log("[LevelGrid] Grid container scale animation started (fallback)");
                 }
             }
 
@@ -181,20 +232,79 @@ namespace CrystalUnbolt
             AnimateLevelButtonsAppearance();
         }
 
+        private void Awake()
+        {
+            // Auto-find components if not assigned
+            if (canvas == null)
+            {
+                canvas = GetComponent<Canvas>();
+                Debug.Log($"[LevelGrid] Canvas auto-found: {canvas != null}");
+            }
+            
+            if (canvasGroup == null)
+            {
+                canvasGroup = GetComponent<CanvasGroup>();
+                Debug.Log($"[LevelGrid] CanvasGroup auto-found: {canvasGroup != null}");
+            }
+            
+            if (panelRectTransform == null)
+            {
+                panelRectTransform = GetComponent<RectTransform>();
+                Debug.Log($"[LevelGrid] RectTransform auto-found: {panelRectTransform != null}");
+            }
+        }
+        
         private void Start()
         {
-            // Setup grid layout
-            if (gridContainer != null)
-            {
-                GridLayoutGroup gridLayout = gridContainer.GetComponent<GridLayoutGroup>();
-                if (gridLayout == null)
-                    gridLayout = gridContainer.gameObject.AddComponent<GridLayoutGroup>();
+            lastScreenSize = new Vector2(Screen.width, Screen.height);
+            SetupGridLayout();
+        }
 
-                gridLayout.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
-                gridLayout.constraintCount = columns;
-                gridLayout.spacing = new Vector2(spacing, spacing);
-                gridLayout.childAlignment = TextAnchor.MiddleCenter;
+        private void SetupGridLayout()
+        {
+            if (gridContainer == null)
+                return;
+
+            GridLayoutGroup gridLayout = gridContainer.GetComponent<GridLayoutGroup>();
+            if (gridLayout == null)
+                gridLayout = gridContainer.gameObject.AddComponent<GridLayoutGroup>();
+
+            // Get viewport/screen dimensions for responsive sizing
+            RectTransform viewportRect = scrollRect != null ? scrollRect.viewport : null;
+            float availableWidth = viewportRect != null ? viewportRect.rect.width : Screen.width;
+            float availableHeight = viewportRect != null ? viewportRect.rect.height : Screen.height;
+
+            // Calculate responsive padding and spacing
+            int padding = Mathf.RoundToInt(availableWidth * paddingPercentage);
+            float spacing = availableWidth * spacingPercentage;
+
+            // Calculate cell size dynamically to fit screen perfectly
+            Vector2 cellSize;
+            if (useDynamicCellSize)
+            {
+                // Calculate cell size based on available width and columns
+                float totalSpacing = spacing * (columns - 1);
+                float totalPadding = padding * 2;
+                float availableForCells = availableWidth - totalSpacing - totalPadding;
+                float cellWidth = availableForCells / columns;
+                
+                // Make cells square
+                cellSize = new Vector2(cellWidth, cellWidth);
             }
+            else
+            {
+                cellSize = fixedCellSize;
+            }
+
+            // Configure grid layout
+            gridLayout.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+            gridLayout.constraintCount = columns;
+            gridLayout.spacing = new Vector2(spacing, spacing);
+            gridLayout.cellSize = cellSize;
+            gridLayout.childAlignment = TextAnchor.UpperCenter;
+            gridLayout.padding = new RectOffset(padding, padding, padding, padding);
+
+            Debug.Log($"[LevelGrid] Grid configured for screen width {availableWidth}px: {columns} columns, {cellSize} cell size, {spacing:F1} spacing, {padding}px padding");
         }
         public void HideLevelGrid()
         {
@@ -328,12 +438,8 @@ namespace CrystalUnbolt
             if (scrollRect == null || spawnedButtons.Count == 0)
                 return;
 
-            // Option 1: Scroll to current level (default)
+            // Scroll to current level with better centering
             int currentLevelIndex = CrystalLevelController.MaxReachedLevelIndex;
-            
-            // Option 2: Always scroll to top (Level 1)
-            // Uncomment the line below to always show Level 1 first:
-            // currentLevelIndex = 0;
             
             // Clamp to valid range
             if (currentLevelIndex >= spawnedButtons.Count)
@@ -351,12 +457,12 @@ namespace CrystalUnbolt
             float contentHeight = content.rect.height;
             float viewportHeight = scrollRect.viewport.rect.height;
             
-            // Scroll to show selected level in the viewport
-            float normalizedPos = Mathf.Clamp01((buttonPos - viewportHeight * 0.3f) / (contentHeight - viewportHeight));
+            // Center the current level in viewport (more visually pleasing)
+            float normalizedPos = Mathf.Clamp01((buttonPos - viewportHeight * 0.4f) / Mathf.Max(1f, contentHeight - viewportHeight));
             
             scrollRect.verticalNormalizedPosition = 1f - normalizedPos;
             
-            Debug.Log($"[LevelGrid] Scrolled to level: {currentLevelIndex + 1}");
+            Debug.Log($"[LevelGrid] Scrolled to level: {currentLevelIndex + 1}, Position: {normalizedPos:F2}");
         }
 
         private void CreateLevelButton(int levelIndex)
@@ -442,6 +548,30 @@ namespace CrystalUnbolt
                             CrystalGameManager.LoadLevel(levelIndex);
                             ScreenOverlay.Hide(0.3f);
                         }, true);
+                    }
+                    else
+                    {
+                        // User closed the panel without adding life - ensure grid is visible
+                        Debug.Log("[LevelGrid] User closed lives panel - ensuring Grid Panel is visible");
+                        
+                        // Force canvas and visibility in case something hid it
+                        if (canvas != null)
+                            canvas.enabled = true;
+                        
+                        if (canvasGroup != null)
+                        {
+                            canvasGroup.alpha = 1f;
+                            canvasGroup.interactable = true;
+                            canvasGroup.blocksRaycasts = true;
+                        }
+                        
+                        if (panelRectTransform != null)
+                            panelRectTransform.localScale = Vector3.one;
+                        
+                        // Refresh levels to show updated states
+                        RefreshLevels();
+                        
+                        Debug.Log("[LevelGrid] Grid Panel visibility forced after lives panel closed");
                     }
                 });
             }

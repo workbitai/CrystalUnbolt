@@ -230,7 +230,7 @@ namespace CrystalUnbolt
 public static class PopupHelper
 {
   
-    public static void ShowPopup(Transform popup, float duration = 0.6f, float overshoot = 1.2f)
+    public static void ShowPopup(Transform popup, float duration = 0.6f, float overshoot = 1.2f, float finalScale = 1f)
     {
         popup.localScale = Vector3.zero;
 
@@ -238,6 +238,14 @@ public static class PopupHelper
         Sequence seq = DOTween.Sequence();
         seq.Append(popup.DOScale(Vector3.one * overshoot, duration * 0.4f).SetEase(Ease.OutBack));
         seq.Append(popup.DOScale(Vector3.one, duration * 0.3f).SetEase(Ease.OutSine));
+        
+        // If finalScale is different from 1, smoothly animate to it
+        if (Mathf.Abs(finalScale - 1f) > 0.01f)
+        {
+            // Add smooth transition to final scale
+            seq.Append(popup.DOScale(Vector3.one * finalScale, duration * 0.3f).SetEase(Ease.OutBack));
+            Debug.Log($"[PopupHelper] Smooth final scale animation added: {finalScale}");
+        }
     }
 
     

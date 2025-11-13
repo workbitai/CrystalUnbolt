@@ -112,7 +112,11 @@ namespace CrystalUnbolt
         private void OnEnable()
         {
             // IAPManager.PurchaseCompleted += OnAdPurchased; // IAP Removed!
-            levelGrid.canvas.enabled = true;
+            
+            // Hide grid on enable (will be shown when play button is clicked)
+            if (levelGrid != null && levelGrid.canvas != null)
+                levelGrid.canvas.enabled = false;
+            
             // Listen for login events
             if (authManager == null)
                 authManager = FindObjectOfType<CrystalLoginAuthManager>();
@@ -226,11 +230,11 @@ namespace CrystalUnbolt
             CrystalUILevelNumberText.Show();
             playButtonText.text = "LEVEL " + (CrystalLevelController.MaxReachedLevelIndex + 1);
 
-            // Show level grid when main menu opens
-            if (levelGrid != null)
+            // Hide level grid when main menu opens (will show when play button is clicked)
+            if (levelGrid != null && levelGrid.canvas != null)
             {
-                levelGrid.ShowGridOnMainMenu();
-                Debug.Log("[MainMenu] Called ShowGridOnMainMenu");
+                levelGrid.canvas.enabled = false;
+                Debug.Log("[MainMenu] Grid Panel hidden on startup");
             }
 
             // Update leaderboard button state on show
@@ -431,10 +435,20 @@ namespace CrystalUnbolt
             dailyGift_Plinko.Hide(true);
             settingButton.Hide(true);
             leaderBoardButton.Hide(true);
+            HideTapToPlayButton(true);
+            HidePlayButton(true);
+            HideGameLogo(true);
             coinsLabelScalable.Show();
 
             CrystalUILevelNumberText.Show();
             playButtonText.text = "LEVEL " + (CrystalLevelController.MaxReachedLevelIndex + 1);
+
+            // Show and regenerate grid when returning from game
+            if (levelGrid != null)
+            {
+                levelGrid.ShowGridOnMainMenu();
+                Debug.Log("[MainMenu] Showing Grid Panel when returning from game");
+            }
 
             showHideStoreAdButtonDelayTweenCase = Tween.DelayedCall(0.12f, delegate
             {
@@ -720,6 +734,28 @@ namespace CrystalUnbolt
                             CrystalGameManager.LoadLevel(levelId);
                             ScreenOverlay.Hide(0.3f);
                         }, true);
+                    }
+                    else
+                    {
+                        // User closed the panel without adding life - show grid
+                        Debug.Log("[MainMenu] User closed lives panel - showing Grid Panel");
+                        
+                        if (levelGrid != null)
+                        {
+                            // Hide play button and logo first
+                            HidePlayButton(true);
+                            HideGameLogo(true);
+                            HideTapToPlayButton(true);
+                            
+                            // Use the same method as the play button to show grid with animation
+                            levelGrid.ShowLevelGrid();
+                            
+                            Debug.Log("[MainMenu] Grid Panel shown with animation after lives panel closed");
+                        }
+                        else
+                        {
+                            Debug.LogError("[MainMenu] levelGrid is NULL!");
+                        }
                     }
                 });
             }
