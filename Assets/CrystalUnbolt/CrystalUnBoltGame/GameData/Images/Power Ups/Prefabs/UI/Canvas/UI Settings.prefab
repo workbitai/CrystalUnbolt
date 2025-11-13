@@ -958,7 +958,7 @@ Canvas:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1656384807885498838}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_RenderMode: 2
   m_Camera: {fileID: 0}
@@ -2431,7 +2431,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -2.6, y: -114}
+  m_AnchoredPosition: {x: -2.5999985, y: -114}
   m_SizeDelta: {x: 0.01, y: -322.61}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3034754409986035068
@@ -2839,7 +2839,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 9.31, y: -164.67}
+  m_AnchoredPosition: {x: 9.309998, y: -164.66998}
   m_SizeDelta: {x: -51.35, y: -245.8}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6198948249851434189
@@ -3082,7 +3082,7 @@ MonoBehaviour:
   type: 0
   imageRef: {fileID: 6658730988087410514}
   selectionImage: {fileID: 1246609437395384546}
-  activeSprite: {fileID: 21300000, guid: 217c8237b6b47d8459572eb17fe555f3, type: 3}
+  activeSprite: {fileID: 21300000, guid: 06d68987d2d1c094290bd8187399bd89, type: 3}
   disableSprite: {fileID: 21300000, guid: b6982b02076689641b857b5df941a889, type: 3}
 --- !u!1 &5785162443088424407
 GameObject:
@@ -4096,7 +4096,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 160.5, y: -21.499996}
+  m_AnchoredPosition: {x: 160.5, y: -21.5}
   m_SizeDelta: {x: 157.76, y: 266.06}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &1017457241900814181
@@ -4841,7 +4841,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.90588236}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.8156863}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

@@ -45,6 +45,11 @@ namespace CrystalUnbolt
         [BoxGroup("Coins", "Coins")]
         [SerializeField] CrystalCurrencyUIPanelSimple coinsPanel;
 
+        [BoxGroup("Top Bar", "Top Bar")]
+        [SerializeField] RectTransform livesPanel;
+        [BoxGroup("Top Bar")]
+        [SerializeField] RectTransform profilePanel;
+
         [BoxGroup("Buttons", "Buttons")]
         [SerializeField] CrystalUIMainMenuButton iapStoreButton;
         [BoxGroup("Buttons")]
@@ -84,7 +89,7 @@ namespace CrystalUnbolt
         private const string PRIVACY_ACCEPTED_KEY = "privacy_accepted_v1";
 
 
-        private UIScaleAnimation coinsLabelScalable;
+        // private UIScaleAnimation coinsLabelScalable; // Animation removed
 
         private AnimCase tapToPlayPingPong;
         private AnimCase gamePlayPingPong;
@@ -156,7 +161,7 @@ namespace CrystalUnbolt
 
         public override void Init()
         {
-            coinsLabelScalable = new UIScaleAnimation(coinsPanel.transform);
+            // coinsLabelScalable = new UIScaleAnimation(coinsPanel.transform); // Animation removed
             coinsPanel.Init();
 
             // iapStoreButton.Init(STORE_AD_RIGHT_OFFSET_X); // IAP Disabled!
@@ -216,16 +221,17 @@ namespace CrystalUnbolt
 
             HideAdButton(true);
             // iapStoreButton.Hide(true); // IAP Disabled!
-            skinsStoreButton.Hide(true);
-            dailyBonusButton.Hide(true);
-            dailyGift_Plinko.Hide(true);
-            settingButton.Hide(true);
-            leaderBoardButton.Hide(true);
+            // DON'T hide ALL bottom buttons - our custom animation handles their visibility
+            // settingButton.Hide(true); // Animated separately
+            // dailyBonusButton.Hide(true); // Animated separately
+            // skinsStoreButton.Hide(true); // Animated separately
+            // dailyGift_Plinko.Hide(true); // Animated separately
+            // leaderBoardButton.Hide(true); // Animated separately
             ShowTapToPlay();
             ShowPlayButton();
             ShowGameLogo(); 
             StartSimpleSpin(); 
-            coinsLabelScalable.Show();
+            // coinsLabelScalable.Show(); // Animation removed
 
             CrystalUILevelNumberText.Show();
             playButtonText.text = "LEVEL " + (CrystalLevelController.MaxReachedLevelIndex + 1);
@@ -240,15 +246,15 @@ namespace CrystalUnbolt
             // Update leaderboard button state on show
             UpdateLeaderboardButtonState();
 
-            showHideStoreAdButtonDelayTweenCase = Tween.DelayedCall(0.12f, delegate
+            // Animate top bar (3 elements) and bottom buttons (4 buttons) together - simple and clean
+            AnimateTopBar();
+            AnimateBottomButtons();
+
+            // Show remaining buttons (only ad button now, all bottom buttons are animated)
+            showHideStoreAdButtonDelayTweenCase = Tween.DelayedCall(0.5f, delegate
             {
                 ShowAdButton();
-                // iapStoreButton.Show(); // IAP Disabled!
-                skinsStoreButton.Show();
-                dailyBonusButton.Show();
-                dailyGift_Plinko.Show();
-                settingButton.Show();
-                leaderBoardButton.Show();
+                // All bottom buttons now use custom animation - nothing else to show here
             });
 
             CrystalMapLevelAbstractBehavior.OnLevelClicked += OnLevelOnMapSelected;
@@ -430,15 +436,16 @@ namespace CrystalUnbolt
 
             HideAdButton(true);
             // iapStoreButton.Hide(true); // IAP Disabled!
-            skinsStoreButton.Hide(true);
-            dailyBonusButton.Hide(true);
-            dailyGift_Plinko.Hide(true);
-            settingButton.Hide(true);
-            leaderBoardButton.Hide(true);
+            // DON'T hide ALL bottom buttons - our custom animation handles their visibility
+            // settingButton.Hide(true); // Animated separately
+            // dailyBonusButton.Hide(true); // Animated separately
+            // skinsStoreButton.Hide(true); // Animated separately
+            // dailyGift_Plinko.Hide(true); // Animated separately
+            // leaderBoardButton.Hide(true); // Animated separately
             HideTapToPlayButton(true);
             HidePlayButton(true);
             HideGameLogo(true);
-            coinsLabelScalable.Show();
+            // coinsLabelScalable.Show(); // Animation removed
 
             CrystalUILevelNumberText.Show();
             playButtonText.text = "LEVEL " + (CrystalLevelController.MaxReachedLevelIndex + 1);
@@ -450,15 +457,14 @@ namespace CrystalUnbolt
                 Debug.Log("[MainMenu] Showing Grid Panel when returning from game");
             }
 
-            showHideStoreAdButtonDelayTweenCase = Tween.DelayedCall(0.12f, delegate
+            // Animate top bar and bottom buttons when returning
+            AnimateTopBar();
+            AnimateBottomButtons();
+
+            showHideStoreAdButtonDelayTweenCase = Tween.DelayedCall(0.5f, delegate
             {
                 ShowAdButton();
-                // iapStoreButton.Show(); // IAP Disabled!
-                skinsStoreButton.Show();
-                dailyBonusButton.Show();
-                dailyGift_Plinko.Show();
-                settingButton.Show();
-                leaderBoardButton.Show();
+                // All bottom buttons now use custom animation - nothing else to show here
             });
 
             CrystalMapLevelAbstractBehavior.OnLevelClicked += OnLevelOnMapSelected;
@@ -478,7 +484,7 @@ namespace CrystalUnbolt
             HideTapToPlayButton();
             HidePlayButton();
             HideGameLogo(); 
-            coinsLabelScalable.Hide();
+            // coinsLabelScalable.Hide(); // Animation removed
 
             // Hide level grid canvas when main menu closes
             if (levelGrid != null && levelGrid.canvas != null)
@@ -496,7 +502,7 @@ namespace CrystalUnbolt
                 dailyBonusButton.Hide();
                 dailyGift_Plinko.Hide();
                 settingButton.Hide();
-                leaderBoardButton.Hide();
+               // leaderBoardButton.Hide();
             });
 
             CrystalMapLevelAbstractBehavior.OnLevelClicked -= OnLevelOnMapSelected;
@@ -569,14 +575,20 @@ namespace CrystalUnbolt
                 return;
             }
 
-            gamePlayRect.localScale = Vector3.zero;
+            // SIMPLE ANIMATION: Only clockwise rotation
+            gamePlayRect.localScale = Vector3.one; // Keep normal scale
+            gamePlayRect.localRotation = Quaternion.Euler(0, 0, 360f); // Start rotated 360 degrees (one full rotation)
 
-            gamePlayRect.DOPushScale(Vector3.one * 1.2f, Vector3.one, 0.35f, 0.2f,
-                Ease.Type.CubicOut, Ease.Type.CubicIn).OnComplete(delegate
+            // Rotate clockwise to normal position
+            Tween.DelayedCall(0.3f, () =>
+            {
+                gamePlayRect.DOLocalRotate(Vector3.zero, 0.5f).SetEasing(Ease.Type.CubicOut).OnComplete(delegate
                 {
+                    // Start breathing pulse after rotation
                     gamePlayPingPong = gamePlayRect.transform.DOPingPongScale(1.0f, 1.05f, 0.9f,
                         Ease.Type.QuadIn, Ease.Type.QuadOut, unscaledTime: true);
                 });
+            });
         }
 
         public void HidePlayButton(bool immediately = false)
@@ -587,10 +599,12 @@ namespace CrystalUnbolt
             if (immediately)
             {
                 gamePlayRect.localScale = Vector3.zero;
+                gamePlayRect.localRotation = Quaternion.identity;
                 return;
             }
 
             gamePlayRect.DOScale(Vector3.zero, 0.3f).SetEasing(Ease.Type.CubicIn);
+            gamePlayRect.localRotation = Quaternion.identity; // Reset rotation on hide
         }
 
         #endregion
@@ -612,14 +626,18 @@ namespace CrystalUnbolt
                 return;
             }
 
+            // SIMPLIFIED ANIMATION: Simple fade and scale (like top/bottom UI)
             gameLogoRect.localScale = Vector3.zero;
 
-            gameLogoRect.DOPushScale(Vector3.one * 1.2f, Vector3.one, 0.35f, 0.2f,
-                Ease.Type.CubicOut, Ease.Type.CubicIn).OnComplete(delegate
+            // Simple scale up with slight delay
+            Tween.DelayedCall(0.15f, () =>
+            {
+                gameLogoRect.DOScale(Vector3.one, 0.5f).SetEasing(Ease.Type.BackOut).OnComplete(delegate
                 {
                     gameLogoPingPong = gameLogoRect.transform.DOPingPongScale(1.0f, 1.05f, 0.9f,
                         Ease.Type.QuadIn, Ease.Type.QuadOut, unscaledTime: true);
                 });
+            });
         }
 
         public void HideGameLogo(bool immediately = false)
@@ -646,6 +664,111 @@ namespace CrystalUnbolt
             if (spinImageRect == null) return;
             
             spinImageRect.DOLocalRotate(new Vector3(0, 0, 720f), 2.0f).SetEasing(Ease.Type.QuadOut);
+        }
+
+        #endregion
+
+        #region Top Bar and Bottom Buttons Combined Animations
+
+        private void AnimateTopBar()
+        {
+            float startDelay = 0.1f;
+            float staggerDelay = 0.06f;
+            float duration = 0.4f;
+
+            // TOP 3 ELEMENTS - Simple fade and scale animation
+            // 1. Profile Panel (Left)
+            if (profilePanel != null)
+            {
+                AnimateTopElement(profilePanel, startDelay, duration);
+            }
+
+            // 2. Lives Panel (Center)
+            if (livesPanel != null)
+            {
+                AnimateTopElement(livesPanel, startDelay + staggerDelay, duration);
+            }
+
+            // 3. Coins Panel (Right)
+            if (coinsPanel != null)
+            {
+                RectTransform coinRect = coinsPanel.transform as RectTransform;
+                if (coinRect != null)
+                {
+                    AnimateTopElement(coinRect, startDelay + (staggerDelay * 2), duration);
+                }
+            }
+        }
+
+        private void AnimateTopElement(RectTransform element, float delay, float duration)
+        {
+            if (element == null) return;
+
+            // Store original position
+            Vector3 originalPos = element.anchoredPosition;
+            
+            // Start from slightly above (much less dramatic)
+            element.anchoredPosition = new Vector3(originalPos.x, originalPos.y + 50f, 0);
+            element.localScale = Vector3.zero;
+            
+            // Slide down to original position with simple easing
+            element.DOAnchorPos(originalPos, duration).SetDelay(delay).SetEase(DG.Tweening.Ease.OutCubic);
+            
+            // Scale up smoothly without much bounce
+            element.DOScale(Vector3.one, duration).SetDelay(delay).SetEasing(Ease.Type.CubicOut);
+        }
+
+        private void AnimateBottomButtons()
+        {
+            float startDelay = 0.1f;
+            float staggerDelay = 0.06f;
+            float duration = 0.4f;
+
+            // ALL BOTTOM BUTTONS - Simple fade and scale animation
+            // 1. Settings Button (Leftmost)
+            AnimateBottomButton(settingButton, startDelay, duration);
+            
+            // 2. Daily Bonus Button
+            AnimateBottomButton(dailyBonusButton, startDelay + staggerDelay, duration);
+            
+            // 3. Skins Store Button
+            AnimateBottomButton(skinsStoreButton, startDelay + (staggerDelay * 2), duration);
+            
+            // 4. Daily Gift/Plinko Button
+            AnimateBottomButton(dailyGift_Plinko, startDelay + (staggerDelay * 3), duration);
+        }
+
+        private void AnimateBottomButton(CrystalUIMainMenuButton button, float delay, float duration)
+        {
+            if (button == null || button.Button == null) return;
+
+            RectTransform buttonRect = button.Button.transform as RectTransform;
+            if (buttonRect == null) return;
+
+            // Make sure button is active
+            if (!button.Button.gameObject.activeInHierarchy)
+                button.Button.gameObject.SetActive(true);
+
+            // Get the target position (where button should end up)
+            Vector2 targetPos = buttonRect.anchoredPosition;
+            
+            // Start from slightly below (much less dramatic - same as top bar)
+            buttonRect.anchoredPosition = new Vector2(targetPos.x, targetPos.y - 50f);
+            buttonRect.localScale = Vector3.zero;
+            
+            // Kill any existing tweens on this button
+            buttonRect.DOKill();
+            
+            // Slide up to target position with simple easing (same as top bar)
+            buttonRect.DOAnchorPos(targetPos, duration)
+                .SetDelay(delay)
+                .SetEase(DG.Tweening.Ease.OutCubic);
+            
+            // Scale up smoothly without bounce (same as top bar)
+            buttonRect.DOScale(Vector3.one, duration)
+                .SetDelay(delay)
+                .SetEasing(Ease.Type.CubicOut);
+            // No punch effect - keeping it simple and clean
         }
 
         #endregion
@@ -798,7 +921,7 @@ namespace CrystalUnbolt
             ScreenManager.DisplayScreen<CrystalUIProfilePage>();
             
             if (UIProfilePage != null)
-                UIProfilePage.RefreshNow();
+                UIProfilePage.RefreshNow();   
                 
             ScreenManager.PageClosed += OnProfilePanelClose;
             CrystalMapBehavior.DisableScroll();
