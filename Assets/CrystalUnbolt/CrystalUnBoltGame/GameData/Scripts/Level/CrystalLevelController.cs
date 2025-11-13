@@ -590,7 +590,7 @@ namespace CrystalUnbolt
 
         private void Update()
         {
-         //   GameTimer.Update();
+            GameTimer.Update();
         }
 
         private static void OnGameplayTimerFinished()

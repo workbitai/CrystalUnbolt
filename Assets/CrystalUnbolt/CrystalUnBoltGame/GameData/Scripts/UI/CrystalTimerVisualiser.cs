@@ -112,48 +112,71 @@ namespace CrystalUnbolt
             if (scaleObject == null) yield break;
 
             Vector3 originalScale = scaleObject.transform.localScale;
-            Vector3 targetScaleVector = Vector3.one * targetScale;
+            Vector3 startScale = originalScale * 0.5f; // Start at 50% (less extreme)
+            Vector3 maxScale = originalScale * 1.4f; // MAX SCALE: Only 1.4x (even smaller to avoid overlap)
             
-            Vector3 screenCenter = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width / 2, Screen.height / 2, Camera.main.nearClipPlane + 1));
-            Vector3 originalPosition = scaleObject.transform.position;
+            // Make sure timer text renders on top by setting it as last sibling
+            if (timerText != null)
+                timerText.transform.SetAsLastSibling();
             
+            // Set initial small scale
+            scaleObject.transform.localScale = startScale;
+            
+            // PHASE 1: Quick bounce from small to slightly bigger
             float elapsedTime = 0f;
+            Vector3 mediumScale = originalScale * 1.15f; // More subtle
+            
+            while (elapsedTime < 0.3f)
+            {
+                elapsedTime += Time.deltaTime;
+                float progress = elapsedTime / 0.3f;
+                
+                // Overshoot slightly then settle
+                float overshoot = Mathf.Sin(progress * Mathf.PI);
+                float scale = Mathf.Lerp(0.5f, 1.15f, progress) + overshoot * 0.1f;
+                
+                scaleObject.transform.localScale = originalScale * scale;
+                
+                yield return null;
+            }
+            
+            // PHASE 2: Smooth grow to max size (1.8x) with gentle bounce
+            elapsedTime = 0f;
             while (elapsedTime < scaleUpDuration)
             {
                 elapsedTime += Time.deltaTime;
                 float progress = elapsedTime / scaleUpDuration;
                 
-                float smoothProgress = Mathf.SmoothStep(0f, 1f, progress);
+                // Ease out back (slight overshoot)
+                float easeProgress = progress < 0.5f 
+                    ? 2f * progress * progress 
+                    : 1f - Mathf.Pow(-2f * progress + 2f, 2f) / 2f;
                 
-                scaleObject.transform.localScale = Vector3.Lerp(originalScale, targetScaleVector, smoothProgress);
-                
-                scaleObject.transform.position = Vector3.Lerp(originalPosition, screenCenter, smoothProgress);
+                scaleObject.transform.localScale = Vector3.Lerp(mediumScale, maxScale, easeProgress);
                 
                 yield return null;
             }
-
-            scaleObject.transform.localScale = targetScaleVector;
-            scaleObject.transform.position = screenCenter;
             
+            scaleObject.transform.localScale = maxScale;
+            
+            // PHASE 3: Hold at max size
             yield return new WaitForSeconds(waitDuration);
             
+            // PHASE 4: Shrink back smoothly
             elapsedTime = 0f;
             while (elapsedTime < scaleDownDuration)
             {
                 elapsedTime += Time.deltaTime;
                 float progress = elapsedTime / scaleDownDuration;
                 
-                float smoothProgress = Mathf.SmoothStep(0f, 1f, progress);
-                
-                scaleObject.transform.localScale = Vector3.Lerp(targetScaleVector, originalScale, smoothProgress);
-                
-                scaleObject.transform.position = Vector3.Lerp(screenCenter, originalPosition, smoothProgress);
+                // Smooth cubic ease out
+                float smoothProgress = 1f - Mathf.Pow(1f - progress, 3f);
+                scaleObject.transform.localScale = Vector3.Lerp(maxScale, originalScale, smoothProgress);
                 
                 yield return null;
             }
 
             scaleObject.transform.localScale = originalScale;
-            scaleObject.transform.position = originalPosition;
             
             StartCoroutine(ShakeEffectCoroutine());
         }

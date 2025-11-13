@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using System;
 using TMPro;
 using System.Collections;
+using DG.Tweening;
 
 namespace CrystalUnbolt
 {
@@ -16,6 +17,10 @@ namespace CrystalUnbolt
 
         [BoxGroup("Level Complete", "Level Complete")]
         [SerializeField] UIScaleAnimation levelCompleteLabel;
+        [BoxGroup("Level Complete")]
+        [SerializeField] RectTransform congratsRibbon;
+        [BoxGroup("Level Complete")]
+        [SerializeField] RectTransform[] stars; // Array of 3 stars
 
         [BoxGroup("CrystalReward", "CrystalReward")]
         [SerializeField] UIScaleAnimation rewardLabel;
@@ -45,7 +50,7 @@ namespace CrystalUnbolt
 
         [SerializeField] ParticleSystem starParticles;
         [SerializeField] ParticleSystem fireParticles;
-        [SerializeField] GameObject starImage;
+        // [SerializeField] GameObject starImage; // Removed - using star array animation instead
         private AnimCase noThanksAppearTween;
 
         private int coinsHash = "Coins".GetHashCode();
@@ -53,8 +58,6 @@ namespace CrystalUnbolt
 
         public override void Init()
         {
-            if (starImage != null)
-                starImage.transform.localScale = Vector3.zero;
             multiplyRewardButton.onClick.AddListener(MultiplyRewardButton);
             homeButton.onClick.AddListener(HomeButton);
             nextLevelButton.onClick.AddListener(NextLevelButton);
@@ -63,6 +66,28 @@ namespace CrystalUnbolt
             powerUpsRewardPanel.Init();
 
             SafeAreaHandler.RegisterRectTransform(safeAreaTransform);
+            
+            // Initialize star positions and scales
+            ResetAnimatedElements();
+        }
+        
+        private void ResetAnimatedElements()
+        {
+            // Reset stars to hidden state
+            if (stars != null)
+            {
+                foreach (var star in stars)
+                {
+                    if (star != null)
+                        star.localScale = Vector3.zero;
+                }
+            }
+            
+            // Reset congrats ribbon to off-screen
+            if (congratsRibbon != null)
+            {
+                congratsRibbon.localScale = Vector3.one;
+            }
         }
 
         private void OnDestroy()
@@ -76,18 +101,14 @@ namespace CrystalUnbolt
         #region Show/Hide
         public override void PlayShowAnimation()
         {
-
-
+            // Play particles
             if (starParticles != null)
             {
                 starParticles.Play();
                 fireParticles.Play();
-                StartCoroutine(ShowImageAfterParticles());
             }
 
-
-
-
+            // Hide all elements initially
             rewardLabel.Hide(immediately: true);
             multiplyRewardButtonFade.Hide(immediately: true);
             multiplyRewardButton.interactable = false;
@@ -99,13 +120,36 @@ namespace CrystalUnbolt
 
             currentReward = CrystalLevelController.GetCurrentLevelReward();
 
+            // Start animation sequence
             backgroundFade.Show(duration: 0.3f);
+            
+            // NEW ANIMATIONS - Exciting celebration sequence!
+            StartCoroutine(CelebrationAnimationSequence());
+        }
+
+        private IEnumerator CelebrationAnimationSequence()
+        {
+            // Step 1: Animate stars one by one (0.5s)
+            AnimateStars();
+            yield return new WaitForSeconds(0.5f);
+            
+            // Step 2: Animate CONGRATS ribbon (0.3s)
+            AnimateCongratsRibbon();
+            yield return new WaitForSeconds(0.3f);
+            
+            // Step 3: Animate LEVEL COMPLETED text (0.3s)
             levelCompleteLabel.Show();
-
+            yield return new WaitForSeconds(0.3f);
+            
+            // Step 4: Show coins panel at top
             coinsPanelScalable.Show();
-
+            yield return new WaitForSeconds(0.2f);
+            
+            // Step 5: Show power-ups reward panel
             powerUpsRewardPanel.Show(CrystalLevelController.GetPUReward(), 0.5f);
-
+            yield return new WaitForSeconds(0.3f);
+            
+            // Step 6: Show reward and buttons
             if (currentReward > 0)
             {
                 ShowRewardLabel(currentReward, false, 0.3f, delegate
@@ -118,14 +162,9 @@ namespace CrystalUnbolt
                         FloatingCloud.SpawnCurrency(coinsHash, (RectTransform)rewardLabel.Transform, (RectTransform)coinsPanelScalable.Transform, 10, "", () =>
                         {
                             EconomyManager.Add(CurrencyType.Coins, currentReward);
-                            // After coins change, try push to cloud if signed in
                             CrystalCloudProgressSync.PushLocalToCloud();
 
-                            homeButtonScaleAnimation.Show(1.05f, 0.25f, 1f);
-                            nextLevelButtonScaleAnimation.Show(1.05f, 0.25f, 1f);
-
-                            homeButton.interactable = true;
-                            nextLevelButton.interactable = true;
+                            AnimateBottomButtons();
                         });
                     });
                 });
@@ -133,36 +172,75 @@ namespace CrystalUnbolt
             else
             {
                 rewardLabel.Hide(immediately: true);
-
-                homeButtonScaleAnimation.Show(1.05f, 0.25f, 1f);
-                nextLevelButtonScaleAnimation.Show(1.05f, 0.25f, 1f);
-
-                homeButton.interactable = true;
-                nextLevelButton.interactable = true;
+                AnimateBottomButtons();
             }
         }
-        private IEnumerator ShowImageAfterParticles()
+        
+        private void AnimateStars()
         {
-            // Particle khatam hone tak wait
-            float duration = starParticles.main.duration;
-            yield return new WaitForSeconds(duration + 0.2f);
-
-            if (starImage != null)
+            if (stars == null || stars.Length == 0) return;
+            
+            for (int i = 0; i < stars.Length; i++)
             {
-                // Scale 0 ? 1 animation
-                float time = 0f;
-                while (time < 0.1f)
+                if (stars[i] != null)
                 {
-                    float t = time / 0.1f;
-                    starImage.transform.localScale = Vector3.Lerp(Vector3.zero, Vector3.one, t);
-                    time += Time.deltaTime;
-                    yield return null;
+                    // Left (0) and Right (2) stars = 0.23 scale
+                    // Middle (1) star = 0.32 scale
+                    float finalScale = (i == 1) ? 0.32f : 0.23f;
+                    AnimateStar(stars[i], i * 0.15f, finalScale);
                 }
-                starImage.transform.localScale = Vector3.one; // final size
             }
         }
+        
+        private void AnimateStar(RectTransform star, float delay, float finalScale)
+        {
+            // Start small and from above
+            star.localScale = Vector3.zero;
+            Vector3 originalPos = star.anchoredPosition;
+            star.anchoredPosition = new Vector3(originalPos.x, originalPos.y + 200f, 0);
+            
+            Tween.DelayedCall(delay, () =>
+            {
+                // Drop down with bounce
+                star.DOAnchorPos(originalPos, 0.5f).SetEase(DG.Tweening.Ease.OutBounce);
+                
+                // Scale up with elastic bounce to final scale
+                star.DOScale(Vector3.one * finalScale, 0.5f).SetEasing(Ease.Type.ElasticOut).OnComplete(() =>
+                {
+                    // Small punch for extra celebration (proportional to final scale)
+                    star.DOPunchScale(Vector3.one * finalScale * 0.2f, 0.3f, 6, 0.5f);
+                });
+            });
+        }
+        
+        private void AnimateCongratsRibbon()
+        {
+            if (congratsRibbon == null) return;
+            
+            // Start from left side of screen
+            Vector3 originalPos = congratsRibbon.anchoredPosition;
+            congratsRibbon.anchoredPosition = new Vector3(originalPos.x - 800f, originalPos.y, 0);
+            congratsRibbon.localScale = Vector3.one;
+            
+            // Slide in from left with overshoot
+            congratsRibbon.DOAnchorPos(originalPos, 0.6f).SetEase(DG.Tweening.Ease.OutBack);
+        }
+        
+        private void AnimateBottomButtons()
+        {
+            // Animate HOME and NEXT buttons with bounce
+            homeButtonScaleAnimation.Show(1.05f, 0.25f, 1f);
+            nextLevelButtonScaleAnimation.Show(1.05f, 0.25f, 1f);
+
+            homeButton.interactable = true;
+            nextLevelButton.interactable = true;
+        }
+        
         public override void PlayHideAnimation()
         {
+            // Reset elements for next time
+            ResetAnimatedElements();
+            
             ScreenManager.OnPageClosed(this);
         }
 

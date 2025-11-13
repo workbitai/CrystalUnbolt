@@ -457,6 +457,9 @@ namespace CrystalUnbolt
                 Debug.Log("[MainMenu] Showing Grid Panel when returning from game");
             }
 
+            // Reset button positions first (in case they were moved off-screen)
+            ResetBottomButtonPositions();
+
             // Animate top bar and bottom buttons when returning
             AnimateTopBar();
             AnimateBottomButtons();
@@ -718,6 +721,27 @@ namespace CrystalUnbolt
             element.DOScale(Vector3.one, duration).SetDelay(delay).SetEasing(Ease.Type.CubicOut);
         }
 
+        private void ResetBottomButtonPositions()
+        {
+            // Reset button X positions to their saved positions (but keep them invisible for animation)
+            ResetButtonPosition(settingButton);
+            ResetButtonPosition(dailyBonusButton);
+            ResetButtonPosition(skinsStoreButton);
+            ResetButtonPosition(dailyGift_Plinko);
+        }
+
+        private void ResetButtonPosition(CrystalUIMainMenuButton button)
+        {
+            if (button == null || button.Button == null) return;
+            
+            RectTransform buttonRect = button.Button.transform as RectTransform;
+            if (buttonRect == null) return;
+
+            // Reset position to saved X position immediately, but keep invisible (scale 0)
+            button.Show(true); // This sets the correct X position
+            buttonRect.localScale = Vector3.zero; // But keep it invisible for animation
+        }
+
         private void AnimateBottomButtons()
         {
             float startDelay = 0.1f;
@@ -749,26 +773,25 @@ namespace CrystalUnbolt
             if (!button.Button.gameObject.activeInHierarchy)
                 button.Button.gameObject.SetActive(true);
 
-            // Get the target position (where button should end up)
+            // Kill any existing tweens on this button first
+            buttonRect.DOKill();
+
+            // Store the target position BEFORE modifying it
             Vector2 targetPos = buttonRect.anchoredPosition;
             
-            // Start from slightly below (much less dramatic - same as top bar)
+            // Now set starting position (slightly below) and scale to zero
             buttonRect.anchoredPosition = new Vector2(targetPos.x, targetPos.y - 50f);
             buttonRect.localScale = Vector3.zero;
             
-            // Kill any existing tweens on this button
-            buttonRect.DOKill();
-            
-            // Slide up to target position with simple easing (same as top bar)
-            buttonRect.DOAnchorPos(targetPos, duration)
-                .SetDelay(delay)
-                .SetEase(DG.Tweening.Ease.OutCubic);
-            
-            // Scale up smoothly without bounce (same as top bar)
-            buttonRect.DOScale(Vector3.one, duration)
-                .SetDelay(delay)
-                .SetEasing(Ease.Type.CubicOut);
-            // No punch effect - keeping it simple and clean
+            // Animate both position and scale together with delay
+            Tween.DelayedCall(delay, () =>
+            {
+                // Slide up to target position
+                buttonRect.DOAnchorPos(targetPos, duration).SetEase(DG.Tweening.Ease.OutCubic);
+                
+                // Scale up smoothly
+                buttonRect.DOScale(Vector3.one, duration).SetEasing(Ease.Type.CubicOut);
+            });
         }
 
         #endregion
