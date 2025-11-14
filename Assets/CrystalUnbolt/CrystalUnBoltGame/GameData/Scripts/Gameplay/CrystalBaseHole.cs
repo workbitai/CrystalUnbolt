@@ -1,4 +1,3 @@
-using System.Drawing;
 using UnityEngine;
 
 namespace CrystalUnbolt
@@ -12,6 +11,7 @@ namespace CrystalUnbolt
 
         public event SimpleBoolCallback StateChanged;
         public SpriteRenderer hole;
+        [SerializeField] private SpriteRenderer rippleRenderer;
 
         public void Init(CrystalHoleData data)
         {
@@ -20,6 +20,14 @@ namespace CrystalUnbolt
             transform.position = data.Position.SetZ(0.9f);
 
             IsActive = false;
+
+            EnsureRippleRenderer();
+            if (rippleRenderer != null)
+            {
+                rippleRenderer.gameObject.SetActive(false);
+                rippleRenderer.color = new Color(1f, 1f, 1f, 0f);
+                rippleRenderer.transform.localScale = Vector3.one;
+            }
         }
 
         public void SetActive(bool isActive)
@@ -40,7 +48,35 @@ namespace CrystalUnbolt
         {
            
             gameObject.transform.localScale = Vector3.one;
-        
+            if (rippleRenderer != null)
+            {
+                rippleRenderer.transform.localScale = Vector3.one;
+                rippleRenderer.color = new Color(1f, 1f, 1f, 0f);
+                rippleRenderer.gameObject.SetActive(false);
+            }
+        }
+
+        public SpriteRenderer GetOrCreateRippleRenderer()
+        {
+            EnsureRippleRenderer();
+            return rippleRenderer;
+        }
+
+        private void EnsureRippleRenderer()
+        {
+            if (rippleRenderer != null || hole == null)
+                return;
+
+            GameObject rippleObject = new GameObject($"{hole.name}_Ripple");
+            rippleObject.transform.SetParent(hole.transform, false);
+            rippleObject.transform.localPosition = Vector3.zero;
+            rippleObject.transform.localRotation = Quaternion.identity;
+
+            rippleRenderer = rippleObject.AddComponent<SpriteRenderer>();
+            rippleRenderer.sprite = hole.sprite;
+            rippleRenderer.color = new Color(1f, 1f, 1f, 0f);
+            rippleRenderer.sortingLayerID = hole.sortingLayerID;
+            rippleRenderer.sortingOrder = hole.sortingOrder + 1;
         }
     }
 }

@@ -329,6 +329,9 @@ namespace CrystalUnbolt
 
 
         static readonly Dictionary<CrystalBaseHole, Coroutine> _holeBlinkCo = new();
+        // Theme colors for available holes (matches provided blue swatch #00ADFF)
+        static readonly Color holeGlowColor = new Color(0f / 255f, 173f / 255f, 1f, 1f);      // base glow
+        static readonly Color rippleColor   = new Color(102f / 255f, 224f / 255f, 1f, 1f);    // lighter ripple
 
         static void ToggleHole(CrystalBaseHole bh, bool on)
         {
@@ -341,30 +344,60 @@ namespace CrystalUnbolt
             }
 
             SpriteRenderer sr = bh.hole; 
+            SpriteRenderer ripple = bh.GetOrCreateRippleRenderer();
             if (!on)
             {
                 sr.color = Color.white;
+                bh.ResetDataHole();
                 sr.gameObject.SetActive(false);
+
+                if (ripple != null)
+                {
+                    ripple.color = new Color(1f, 1f, 1f, 0f);
+                    ripple.transform.localScale = Vector3.one;
+                    ripple.gameObject.SetActive(false);
+                }
                 return;
             }
 
             sr.gameObject.SetActive(true);
             sr.enabled = true;
             sr.color = Color.white;
+            if (ripple != null)
+            {
+                ripple.gameObject.SetActive(true);
+                ripple.transform.localScale = Vector3.one * 0.6f;
+                ripple.color = new Color(rippleColor.r, rippleColor.g, rippleColor.b, 0.45f);
+            }
 
-            _holeBlinkCo[bh] = instance.StartCoroutine(HoleBlinkRoutine(sr));
+            _holeBlinkCo[bh] = instance.StartCoroutine(HoleBlinkRoutine(sr, ripple));
         }
 
-        static IEnumerator HoleBlinkRoutine(SpriteRenderer sr)
+        static IEnumerator HoleBlinkRoutine(SpriteRenderer sr, SpriteRenderer ripple)
         {
-            const float dur = 0.35f;
-            Color from = Color.white;
-            Color to = new Color(1f, 0.95f, 0.1f, 1f); 
+            const float pulseDuration = 0.9f;
+            const float colorPulseSpeed = 2.2f;
+            float timer = 0f;
 
             while (true)
             {
-                float t = Mathf.PingPong(Time.unscaledTime / dur, 1f); 
-                sr.color = Color.Lerp(from, to, t);
+                timer += Time.unscaledDeltaTime;
+
+                float colorT = (Mathf.Sin(timer * colorPulseSpeed) + 1f) * 0.5f;
+                sr.color = Color.Lerp(Color.white, holeGlowColor, colorT * 0.5f);
+
+                if (ripple != null)
+                {
+                    float rippleT = (timer % pulseDuration) / pulseDuration;
+                    float eased = rippleT * rippleT * (3f - 2f * rippleT);
+
+                    float scale = Mathf.Lerp(0.65f, 1.55f, eased);
+                    float alpha = Mathf.Lerp(0.45f, 0f, eased);
+
+                    ripple.transform.localScale = Vector3.one * scale;
+                    ripple.color = new Color(1f, 1f, 1f, alpha);
+                }
+
                 yield return null;
             }
         }

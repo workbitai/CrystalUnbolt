@@ -23,7 +23,7 @@ namespace CrystalUnbolt
         /// </summary>
         private static Dictionary<int, IPool> poolsDictionary;
 
-        private static readonly Vector3 DefaultContainerPosition = new Vector3(0f, -3550f, 0f);
+        private static readonly Vector3 DefaultContainerPosition = new Vector3(0f, -3100f, 0f);
 
         public static Transform DefaultContainer { get; private set; }
 

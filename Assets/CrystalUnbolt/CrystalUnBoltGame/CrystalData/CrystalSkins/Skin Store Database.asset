@@ -26,51 +26,23 @@ MonoBehaviour:
     tabDisabledColor: {r: 0.7789757, g: 0.7789757, b: 0.7789757, a: 1}
     productBackgroundColor: {r: 1, g: 1, b: 1, a: 1}
   products:
-  - uniqueId: 9/19/2024 2:07:59 PM_46975
+  - uniqueId: 14-11-2025 13:32:09_521632
     isExpanded: 0
     id: 0
     tabId: 0
     isDummy: 0
-    name: Second Skin
-    openedSprite: {fileID: 21300000, guid: ceead7554f14dc24d897168d29cd9745, type: 3}
-    lockedSprite: {fileID: 21300000, guid: ceead7554f14dc24d897168d29cd9745, type: 3}
-    preview2DSprite: {fileID: 21300000, guid: ceead7554f14dc24d897168d29cd9745, type: 3}
-    skinId: 0c2b86ab-e9be-4a38-8af4-2dfe68ddf6e1
-    previewPrefab: {fileID: 0}
-    purchaseType: 0
-    currency: 0
-    cost: 0
-  - uniqueId: 9/18/2024 4:16:25 PM_135171
-    isExpanded: 0
-    id: 2
-    tabId: 0
-    isDummy: 0
-    name: First Skin
-    openedSprite: {fileID: 21300000, guid: 9084e943f6f2b73429927071079a1ad3, type: 3}
-    lockedSprite: {fileID: 21300000, guid: 9084e943f6f2b73429927071079a1ad3, type: 3}
-    preview2DSprite: {fileID: 21300000, guid: 9084e943f6f2b73429927071079a1ad3, type: 3}
-    skinId: ba248457-be83-4460-9345-e23b2e84df28
+    name: Glosy
+    openedSprite: {fileID: 21300000, guid: 6dc2701f6db5755478d825d011ad6f8b, type: 3}
+    lockedSprite: {fileID: 21300000, guid: 6dc2701f6db5755478d825d011ad6f8b, type: 3}
+    preview2DSprite: {fileID: 21300000, guid: 6dc2701f6db5755478d825d011ad6f8b, type: 3}
+    skinId: 45927fd5-8a0f-4481-86c5-54997b98f166
     previewPrefab: {fileID: 0}
     purchaseType: 0
     currency: 0
     cost: 1000
-  - uniqueId: 9/19/2024 2:26:02 PM_990057
-    isExpanded: 0
-    id: 3
-    tabId: 0
-    isDummy: 0
-    name: Third Skin
-    openedSprite: {fileID: 21300000, guid: 7b5b612572c6d4d43b73740e1db09e10, type: 3}
-    lockedSprite: {fileID: 21300000, guid: 7b5b612572c6d4d43b73740e1db09e10, type: 3}
-    preview2DSprite: {fileID: 21300000, guid: 7b5b612572c6d4d43b73740e1db09e10, type: 3}
-    skinId: 94972f01-4641-4185-bc49-1d6d361a4331
-    previewPrefab: {fileID: 0}
-    purchaseType: 0
-    currency: 0
-    cost: 3000
   - uniqueId: 9/25/2024 10:25:59 AM_199029
     isExpanded: 0
-    id: 4
+    id: 1
     tabId: 0
     isDummy: 1
     name: Dummy 2
@@ -84,7 +56,7 @@ MonoBehaviour:
     cost: 0
   - uniqueId: 9/25/2024 10:26:57 AM_638340
     isExpanded: 0
-    id: 5
+    id: 2
     tabId: 0
     isDummy: 1
     name: Dummy 3
@@ -98,7 +70,7 @@ MonoBehaviour:
     cost: 0
   - uniqueId: 9/25/2024 10:27:21 AM_587494
     isExpanded: 0
-    id: 6
+    id: 3
     tabId: 0
     isDummy: 1
     name: Dummy 4
@@ -112,7 +84,7 @@ MonoBehaviour:
     cost: 0
   - uniqueId: 9/25/2024 10:27:35 AM_820198
     isExpanded: 0
-    id: 7
+    id: 4
     tabId: 0
     isDummy: 1
     name: Dummy 5
@@ -126,7 +98,7 @@ MonoBehaviour:
     cost: 0
   - uniqueId: 9/25/2024 10:27:58 AM_293882
     isExpanded: 0
-    id: 8
+    id: 5
     tabId: 0
     isDummy: 1
     name: Dummy 6
@@ -140,7 +112,7 @@ MonoBehaviour:
     cost: 0
   - uniqueId: 9/25/2024 10:28:16 AM_322749
     isExpanded: 0
-    id: 9
+    id: 6
     tabId: 0
     isDummy: 1
     name: Dummy 7
@@ -154,7 +126,7 @@ MonoBehaviour:
     cost: 0
   - uniqueId: 9/25/2024 11:06:07 AM_849517
     isExpanded: 0
-    id: 10
+    id: 7
     tabId: 0
     isDummy: 1
     name: Dummy 8
@@ -166,20 +138,6 @@ MonoBehaviour:
     purchaseType: 0
     currency: 0
     cost: 0
-  - uniqueId: 14-11-2025 13:32:09_521632
-    isExpanded: 0
-    id: 1
-    tabId: 0
-    isDummy: 0
-    name: Glosy
-    openedSprite: {fileID: 21300000, guid: 6dc2701f6db5755478d825d011ad6f8b, type: 3}
-    lockedSprite: {fileID: 21300000, guid: 6dc2701f6db5755478d825d011ad6f8b, type: 3}
-    preview2DSprite: {fileID: 21300000, guid: 6dc2701f6db5755478d825d011ad6f8b, type: 3}
-    skinId: 45927fd5-8a0f-4481-86c5-54997b98f166
-    previewPrefab: {fileID: 0}
-    purchaseType: 0
-    currency: 0
-    cost: 1000
   coinsForAdsAmount: 100
   currencyForAds: 0
   TabTypes: 00000000

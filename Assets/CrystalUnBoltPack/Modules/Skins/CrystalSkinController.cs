@@ -9,6 +9,8 @@ namespace CrystalUnbolt
 
         [UnpackNested]
         [SerializeField] SkinsHandler handler;
+        [Header("Defaults")]
+        [SerializeField] private string defaultPlankSkinId = "Glosy";
         public SkinsHandler Handler => handler;
 
         private SkinControllerSave save;
@@ -140,7 +142,17 @@ namespace CrystalUnbolt
         {
             if (provider.SkinsCount == 0) return null;
 
-            ISkinData defaultSkin = provider.GetSkinData(0);
+            ISkinData defaultSkin = null;
+
+            if (provider is CrystalPlanksSkinsDatabase && !string.IsNullOrEmpty(defaultPlankSkinId))
+            {
+                defaultSkin = provider.GetSkinData(defaultPlankSkinId);
+                if (defaultSkin == null)
+                    Debug.LogWarning($"[SkinController] Could not find plank skin with ID '{defaultPlankSkinId}'. Falling back to first skin.");
+            }
+
+            if (defaultSkin == null)
+                defaultSkin = provider.GetSkinData(0);
 
             defaultSkin.Unlock();
 

@@ -27,7 +27,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 1, w: 0}
   m_LocalPosition: {x: 0.0015, y: -0.0013, z: 0}
-  m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1672978808604135004}
@@ -76,12 +76,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 10
-  m_Sprite: {fileID: 21300000, guid: 56131f96a0fa55447a331a1903a75d93, type: 3}
-  m_Color: {r: 0.17409457, g: 0.2, b: 0.11372549, a: 1}
+  m_Sprite: {fileID: 21300000, guid: ed4e4562f9db07d42a28a5df78db604c, type: 3}
+  m_Color: {r: 0.003921569, g: 0.003921569, b: 0, a: 0}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 1
-  m_Size: {x: 4.08, y: 4.08}
+  m_Size: {x: 0.768, y: 0.768}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -137,6 +137,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   circleCollider: {fileID: 1617212587254180667}
   hole: {fileID: 9160817490813010132}
+  rippleRenderer: {fileID: 0}
 --- !u!58 &1617212587254180667
 CircleCollider2D:
   m_ObjectHideFlags: 0

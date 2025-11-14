@@ -15,6 +15,7 @@ namespace CrystalUnbolt
     public class CrystalUIMainMenu : BaseScreen
     {
         public readonly float STORE_AD_RIGHT_OFFSET_X = 300F;
+        private const bool SKIN_STORE_ENABLED = false;
 
         [BoxGroup("Safe Area", "Safe Area")]
         [SerializeField] RectTransform safeAreaRectTransform;
@@ -52,8 +53,6 @@ namespace CrystalUnbolt
 
         [BoxGroup("Buttons", "Buttons")]
         [SerializeField] CrystalUIMainMenuButton iapStoreButton;
-        [BoxGroup("Buttons")]
-        [SerializeField] CrystalUIMainMenuButton skinsStoreButton;
         [BoxGroup("Buttons")]
         [SerializeField] CrystalUIMainMenuButton dailyBonusButton;
         [BoxGroup("Buttons")]
@@ -167,7 +166,6 @@ namespace CrystalUnbolt
             // iapStoreButton.Init(STORE_AD_RIGHT_OFFSET_X); // IAP Disabled!
             // noAdsButton.Init(STORE_AD_RIGHT_OFFSET_X); // Disabled - keep button at editor position
             dailyGift_Plinko.Init(STORE_AD_RIGHT_OFFSET_X);
-            skinsStoreButton.Init(STORE_AD_RIGHT_OFFSET_X);
             dailyBonusButton.Init(STORE_AD_RIGHT_OFFSET_X);
             settingButton.Init(STORE_AD_RIGHT_OFFSET_X);
             leaderBoardButton.Init(STORE_AD_RIGHT_OFFSET_X);
@@ -176,7 +174,6 @@ namespace CrystalUnbolt
             // iapStoreButton.Button.onClick.AddListener(IAPStoreButton); // IAP Disabled!
             // noAdsButton.Button.onClick.AddListener(NoAdButton); // IAP REMOVED - No Ads disabled
             dailyGift_Plinko.Button.onClick.AddListener(DailyGift_PlinkoGame);
-            skinsStoreButton.Button.onClick.AddListener(SkinsStoreButton);
             coinsPanel.AddButton.onClick.AddListener(AddCoinsButton);
             playButton.onClick.AddListener(PlayButton);
             gamePlayButton.onClick.AddListener(TapToPlayResetButton);
@@ -501,7 +498,6 @@ namespace CrystalUnbolt
             showHideStoreAdButtonDelayTweenCase = Tween.DelayedCall(0.1f, delegate
             {
                 // iapStoreButton.Hide(); // IAP Disabled!
-                skinsStoreButton.Hide();
                 dailyBonusButton.Hide();
                 dailyGift_Plinko.Hide();
                 settingButton.Hide();
@@ -726,7 +722,6 @@ namespace CrystalUnbolt
             // Reset button X positions to their saved positions (but keep them invisible for animation)
             ResetButtonPosition(settingButton);
             ResetButtonPosition(dailyBonusButton);
-            ResetButtonPosition(skinsStoreButton);
             ResetButtonPosition(dailyGift_Plinko);
         }
 
@@ -754,9 +749,6 @@ namespace CrystalUnbolt
             
             // 2. Daily Bonus Button
             AnimateBottomButton(dailyBonusButton, startDelay + staggerDelay, duration);
-            
-            // 3. Skins Store Button
-            AnimateBottomButton(skinsStoreButton, startDelay + (staggerDelay * 2), duration);
             
             // 4. Daily Gift/Plinko Button
             AnimateBottomButton(dailyGift_Plinko, startDelay + (staggerDelay * 3), duration);
@@ -793,7 +785,6 @@ namespace CrystalUnbolt
                 buttonRect.DOScale(Vector3.one, duration).SetEasing(Ease.Type.CubicOut);
             });
         }
-
         #endregion
 
         #region Ad Button Label
