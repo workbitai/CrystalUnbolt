@@ -633,7 +633,7 @@ namespace CrystalUnbolt
             gameLogoRect.localScale = Vector3.zero;
 
             // Simple scale up with slight delay
-            Tween.DelayedCall(0.15f, () =>
+            Tween.DelayedCall(0.03f, () =>
             {
                 gameLogoRect.DOScale(Vector3.one, 0.5f).SetEasing(Ease.Type.BackOut).OnComplete(delegate
                 {

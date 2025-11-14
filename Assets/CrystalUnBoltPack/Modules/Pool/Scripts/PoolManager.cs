@@ -23,6 +23,8 @@ namespace CrystalUnbolt
         /// </summary>
         private static Dictionary<int, IPool> poolsDictionary;
 
+        private static readonly Vector3 DefaultContainerPosition = new Vector3(0f, -3550f, 0f);
+
         public static Transform DefaultContainer { get; private set; }
 
         static ObjectPoolManager()
@@ -118,7 +120,7 @@ namespace CrystalUnbolt
                     // Create container object
                     GameObject containerObject = new GameObject("[POOL OBJECTS]");
                     DefaultContainer = containerObject.transform;
-                    DefaultContainer.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+                    DefaultContainer.SetPositionAndRotation(DefaultContainerPosition, Quaternion.identity);
                     DefaultContainer.localScale = Vector3.one;
 
                     GameObject.DontDestroyOnLoad(DefaultContainer);

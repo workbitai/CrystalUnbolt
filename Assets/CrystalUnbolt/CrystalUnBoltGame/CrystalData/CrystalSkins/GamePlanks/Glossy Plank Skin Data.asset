@@ -1,0 +1,132 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9010e0ddeffdcf43abc4cd52330af57, type: 3}
+  m_Name: Glossy Plank Skin Data
+  m_EditorClassIdentifier: 
+  planks:
+  - type: 1
+    prefab: {fileID: 3355370785201252168, guid: b18e5e475557c3a4681ba36ada0635fd,
+      type: 3}
+    useInQuickMode: 1
+    quickModeSize: 1.48
+  - type: 2
+    prefab: {fileID: 3355370785201252168, guid: a7a4c0f694b70d94cb899bc21e0cadd3,
+      type: 3}
+    useInQuickMode: 1
+    quickModeSize: 3.17
+  - type: 3
+    prefab: {fileID: 3355370785201252168, guid: 0b983cbbf1fdb8a41a8894753753d06c,
+      type: 3}
+    useInQuickMode: 1
+    quickModeSize: 4.82
+  - type: 4
+    prefab: {fileID: 3355370785201252168, guid: b5ce77c65bc95d34780c244800fbcc30,
+      type: 3}
+    useInQuickMode: 1
+    quickModeSize: 6.17
+  - type: 5
+    prefab: {fileID: 3355370785201252168, guid: 57f509a4c7a8a5c4c8f7b8caf632c468,
+      type: 3}
+    useInQuickMode: 1
+    quickModeSize: 8.75
+  - type: 6
+    prefab: {fileID: 3355370785201252168, guid: 00c394af11920dd448cf8e8f87479d16,
+      type: 3}
+    useInQuickMode: 0
+    quickModeSize: 1
+  - type: 10
+    prefab: {fileID: 3355370785201252168, guid: 2d1978c3bb1aef94eb5e5fe79c353b32,
+      type: 3}
+    useInQuickMode: 0
+    quickModeSize: 2.9
+  - type: 11
+    prefab: {fileID: 3355370785201252168, guid: 51f8491f7e8d8d244b9e0ab893532512,
+      type: 3}
+    useInQuickMode: 0
+    quickModeSize: 2.12
+  - type: 12
+    prefab: {fileID: 3355370785201252168, guid: 201097727427aaf46afdcf56e621b311,
+      type: 3}
+    useInQuickMode: 0
+    quickModeSize: 3.8
+  - type: 13
+    prefab: {fileID: 3355370785201252168, guid: fcef099ef11352b489d3aede56848a52,
+      type: 3}
+    useInQuickMode: 0
+    quickModeSize: 1
+  - type: 14
+    prefab: {fileID: 3355370785201252168, guid: 62fec407b45c6d44a9c63c605bb51bda,
+      type: 3}
+    useInQuickMode: 0
+    quickModeSize: 1
+  - type: 15
+    prefab: {fileID: 3355370785201252168, guid: fd5bb672605c4b74782db8de277503c1,
+      type: 3}
+    useInQuickMode: 0
+    quickModeSize: 1
+  - type: 18
+    prefab: {fileID: 3355370785201252168, guid: ea631acfb48cb0a40ae894df5859f4eb,
+      type: 3}
+    useInQuickMode: 0
+    quickModeSize: 1
+  - type: 16
+    prefab: {fileID: 3355370785201252168, guid: 7e5bc393bf3ca984490502aa871129b2,
+      type: 3}
+    useInQuickMode: 0
+    quickModeSize: 1
+  - type: 17
+    prefab: {fileID: 3355370785201252168, guid: ba956d6b127123d43b41d7b950672890,
+      type: 3}
+    useInQuickMode: 0
+    quickModeSize: 1
+  - type: 19
+    prefab: {fileID: 3355370785201252168, guid: 0cf810a18e7eb3349a0ca3bcb31194fb,
+      type: 3}
+    useInQuickMode: 0
+    quickModeSize: 1
+  - type: 20
+    prefab: {fileID: 3355370785201252168, guid: 35613d4390e1bb842b9cfd678a8e539b,
+      type: 3}
+    useInQuickMode: 0
+    quickModeSize: 1
+  - type: 21
+    prefab: {fileID: 3355370785201252168, guid: fccb4978e5b5ef7448e935050ccbc3fb,
+      type: 3}
+    useInQuickMode: 0
+    quickModeSize: 1
+  - type: 22
+    prefab: {fileID: 3355370785201252168, guid: 7226843f85aa0224e9ab5b7dbbdcfe6f,
+      type: 3}
+    useInQuickMode: 0
+    quickModeSize: 1
+  - type: 23
+    prefab: {fileID: 3355370785201252168, guid: 96776e13ddca13e4283323f5e5360837,
+      type: 3}
+    useInQuickMode: 0
+    quickModeSize: 1
+  plankHolePrefab: {fileID: 7553608525549546757, guid: d03a531dbdf3fb8498340a7afa4770b8,
+    type: 3}
+  baseHolePrefab: {fileID: 7553608525549546757, guid: 387a3061b9382b7448e514f554452aab,
+    type: 3}
+  screwPrefab: {fileID: 281245748398564474, guid: 4662860265eaae2459b1a20c6e2fe977,
+    type: 3}
+  backPrefab: {fileID: 2760256733891159865, guid: 691898e307b01e942aad3368de262526,
+    type: 3}
+  layerColors:
+  - {r: 0.7254902, g: 0.17254902, b: 0.6431373, a: 0.92156863}
+  - {r: 1, g: 0.5309852, b: 0.36320752, a: 1}
+  - {r: 0.839878, g: 0.9811321, b: 0.1064436, a: 1}
+  - {r: 0.31764707, g: 0.7372549, b: 0.28235295, a: 0.9019608}
+  - {r: 0.4539427, g: 0.6271676, b: 0.9528302, a: 1}
+  - {r: 0.45490196, g: 0.9411765, b: 0.9117328, a: 1}
+  - {r: 0.9339623, g: 0.34628385, b: 0.083704144, a: 0.9019608}
+  - {r: 0.9019608, g: 0.89165187, b: 0.29019615, a: 0.9019608}

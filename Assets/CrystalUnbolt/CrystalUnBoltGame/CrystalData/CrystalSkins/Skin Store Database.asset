@@ -26,23 +26,9 @@ MonoBehaviour:
     tabDisabledColor: {r: 0.7789757, g: 0.7789757, b: 0.7789757, a: 1}
     productBackgroundColor: {r: 1, g: 1, b: 1, a: 1}
   products:
-  - uniqueId: 14-11-2025 10:17:48_521632
-    isExpanded: 0
-    id: 0
-    tabId: 0
-    isDummy: 0
-    name: Glosy
-    openedSprite: {fileID: 21300000, guid: 6dc2701f6db5755478d825d011ad6f8b, type: 3}
-    lockedSprite: {fileID: 21300000, guid: 6dc2701f6db5755478d825d011ad6f8b, type: 3}
-    preview2DSprite: {fileID: 21300000, guid: 6dc2701f6db5755478d825d011ad6f8b, type: 3}
-    skinId: 45927fd5-8a0f-4481-86c5-54997b98f166
-    previewPrefab: {fileID: 0}
-    purchaseType: 0
-    currency: 0
-    cost: 1000
   - uniqueId: 9/19/2024 2:07:59 PM_46975
     isExpanded: 0
-    id: 1
+    id: 0
     tabId: 0
     isDummy: 0
     name: Second Skin
@@ -180,6 +166,20 @@ MonoBehaviour:
     purchaseType: 0
     currency: 0
     cost: 0
+  - uniqueId: 14-11-2025 13:32:09_521632
+    isExpanded: 0
+    id: 1
+    tabId: 0
+    isDummy: 0
+    name: Glosy
+    openedSprite: {fileID: 21300000, guid: 6dc2701f6db5755478d825d011ad6f8b, type: 3}
+    lockedSprite: {fileID: 21300000, guid: 6dc2701f6db5755478d825d011ad6f8b, type: 3}
+    preview2DSprite: {fileID: 21300000, guid: 6dc2701f6db5755478d825d011ad6f8b, type: 3}
+    skinId: 45927fd5-8a0f-4481-86c5-54997b98f166
+    previewPrefab: {fileID: 0}
+    purchaseType: 0
+    currency: 0
+    cost: 1000
   coinsForAdsAmount: 100
   currencyForAds: 0
   TabTypes: 00000000
