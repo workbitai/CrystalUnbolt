@@ -22,3 +22,6 @@ MonoBehaviour:
   - id: 94972f01-4641-4185-bc49-1d6d361a4331
     previewSprite: {fileID: 21300000, guid: 7b5b612572c6d4d43b73740e1db09e10, type: 3}
     planksSkinData: {fileID: 11400000, guid: 173e6a544243b6446afaa3bfac6e7205, type: 2}
+  - id: 45927fd5-8a0f-4481-86c5-54997b98f166
+    previewSprite: {fileID: 21300000, guid: 6dc2701f6db5755478d825d011ad6f8b, type: 3}
+    planksSkinData: {fileID: 11400000, guid: 51cc419fa1b8ec54ba03cbb290be4b71, type: 2}

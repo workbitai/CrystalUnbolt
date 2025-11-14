@@ -177,7 +177,17 @@ namespace CrystalUnbolt.SkinStore
 
             previewImage.sprite = SelectedProductContainer.ProductData.Preview2DSprite;
 
-            storeGrid.Init(Controller, Controller.GetProducts(Controller.SelectedTabData), SelectedProductContainer.ProductData.UniqueId);
+            var products = Controller.GetProducts(Controller.SelectedTabData);
+#if UNITY_EDITOR
+            Debug.Log($"[SkinStore] Loading {products.Count} products for tab '{Controller.SelectedTabData.Name}'");
+            foreach (var container in products)
+            {
+                var product = container.ProductData;
+                Debug.Log($"[SkinStore] - Product '{product.Name}' (Dummy: {product.IsDummy}, SkinId: {product.SkinId}, HasSkinData: {container.SkinData != null})");
+            }
+#endif
+
+            storeGrid.Init(Controller, products, SelectedProductContainer.ProductData.UniqueId);
 
             if (resetScroll)
                 scrollView.normalizedPosition = Vector2.up;

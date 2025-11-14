@@ -52,6 +52,11 @@ namespace CrystalUnbolt.SkinStore
                     if (!product.IsDummy)
                     {
                         skinData = SkinsProvider.GetSkinData(product.SkinId);
+
+                        if (skinData == null)
+                        {
+                            Debug.LogWarning($"[CrystalSkinStoreController] Skin data not found for product '{product.Name}' (SkinId: {product.SkinId}). Please ensure the skin exists in the corresponding database.");
+                        }
                     }
 
                     var container = new CrystalSkinStoreProductContainer(product, skinData);
