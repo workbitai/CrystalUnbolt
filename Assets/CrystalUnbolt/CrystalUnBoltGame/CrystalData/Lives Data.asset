@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Lives Data
   m_EditorClassIdentifier: 
   maxLivesCount: 5
-  oneLifeRestorationDuration: 1200
+  oneLifeRestorationDuration: 1800
 
 
 

@@ -9,7 +9,7 @@ namespace CrystalUnbolt
         public int MaxLivesCount => maxLivesCount;
 
         [Tooltip("In seconds")]
-        [SerializeField] int oneLifeRestorationDuration = 1200;
+        [SerializeField] int oneLifeRestorationDuration = 1800;
         public int OneLifeRestorationDuration => oneLifeRestorationDuration;
     }
 }

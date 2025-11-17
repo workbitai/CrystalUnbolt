@@ -52,6 +52,7 @@ namespace CrystalUnbolt
             CrystalPUSettings settings = unlockedPowerUps[index];
 
             powerUpPurchasePreview.sprite = settings.Icon;
+           
             powerUpPurchaseDescriptionText.text = settings.Description;
 
             powerUpPurchasePreview.transform.localScale = new Vector3(0.6f, 0.6f, 0.6f);
