@@ -951,8 +951,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   particles:
-  - particleName: Confetti
-    particlePrefab: {fileID: 179446, guid: dfa14883224916b4fb7a88d6a3b2eb6a, type: 3}
   - particleName: Tutorial Complete
     particlePrefab: {fileID: 179446, guid: dfa14883224916b4fb7a88d6a3b2eb6a, type: 3}
 --- !u!114 &1060784215
@@ -1071,7 +1069,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 8300000, guid: cbf2cc0293f297f4c8f808c3741548d8, type: 3}
+  m_Resource: {fileID: 8300000, guid: 286c6c60160f5064aa33e5f153b779b4, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 0.081
   m_Pitch: 1
@@ -1430,6 +1428,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3744156022977956489, guid: dd3a6037af909f4468e867a2579c0413,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8672577831168765078, guid: dd3a6037af909f4468e867a2579c0413,
         type: 3}
@@ -2372,6 +2375,16 @@ PrefabInstance:
       propertyPath: m_fontColor32.rgba
       value: 3539992575
       objectReference: {fileID: 0}
+    - target: {fileID: 6072692008168381191, guid: b5f6cc9f0ef59d34b9f4a1e24115de70,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6085449350679869856, guid: b5f6cc9f0ef59d34b9f4a1e24115de70,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6505305161508688347, guid: b5f6cc9f0ef59d34b9f4a1e24115de70,
         type: 3}
       propertyPath: m_Sprite
@@ -2402,6 +2415,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6757603700896040104, guid: b5f6cc9f0ef59d34b9f4a1e24115de70,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6867950597297654384, guid: b5f6cc9f0ef59d34b9f4a1e24115de70,
         type: 3}
@@ -2446,12 +2464,12 @@ PrefabInstance:
     - target: {fileID: 7829859226390920633, guid: b5f6cc9f0ef59d34b9f4a1e24115de70,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 125
       objectReference: {fileID: 0}
     - target: {fileID: 7858975954611129841, guid: b5f6cc9f0ef59d34b9f4a1e24115de70,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 125
       objectReference: {fileID: 0}
     - target: {fileID: 7858975954611129841, guid: b5f6cc9f0ef59d34b9f4a1e24115de70,
         type: 3}

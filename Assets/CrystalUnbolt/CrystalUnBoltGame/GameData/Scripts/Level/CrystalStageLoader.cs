@@ -82,6 +82,7 @@ namespace CrystalUnbolt
                 BaseHoles[i].ResetDataHole();
 
             }
+            ApplyLockedHoleRules(CrystalLevelData);
             for (int i = 0; i < CrystalLevelData.HolePositions.Count; i++)
             {
                 CrystalHoleData CrystalHoleData = CrystalLevelData.HolePositions[i];
@@ -126,6 +127,28 @@ namespace CrystalUnbolt
 
             CrystalUIGame gameUI = ScreenManager.GetPage<CrystalUIGame>();
             gameUI.PowerUpsUIController.OnStageStarted();
+        }
+
+        private void ApplyLockedHoleRules(CrystalStageData stageData)
+        {
+            Debug.Log("LockedHole Rules --------- ");
+            if (stageData == null || stageData.LockedHoles.IsNullOrEmpty())
+                return;
+
+            for (int i = 0; i < stageData.LockedHoles.Count; i++)
+            {
+                CrystalLockedHoleConfig config = stageData.LockedHoles[i];
+                if (config == null || !config.Enabled)
+                    continue;
+
+                if (config.HoleIndex < 0 || config.HoleIndex >= BaseHoles.Count)
+                {
+                    Debug.LogWarning($"[StageLoader] Locked hole index '{config.HoleIndex}' is out of range for stage '{stageData}'. Skipping.");
+                    continue;
+                }
+
+                BaseHoles[config.HoleIndex].ApplyLock(config);
+            }
         }
 
         public void PlaceAdditionalBaseHole(Vector2 position)

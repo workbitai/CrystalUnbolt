@@ -345,10 +345,19 @@ namespace CrystalUnbolt
 
             SpriteRenderer sr = bh.hole; 
             SpriteRenderer ripple = bh.GetOrCreateRippleRenderer();
+
+            if (bh.IsLocked)
+            {
+                sr.color = Color.white;
+                sr.gameObject.SetActive(false);
+                if (ripple != null) ripple.gameObject.SetActive(false);
+                return;
+            }
+
             if (!on)
             {
                 sr.color = Color.white;
-                bh.ResetDataHole();
+                bh.ResetDataHole(true);
                 sr.gameObject.SetActive(false);
 
                 if (ripple != null)

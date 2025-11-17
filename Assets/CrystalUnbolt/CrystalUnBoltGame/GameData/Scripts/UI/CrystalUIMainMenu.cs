@@ -165,7 +165,7 @@ namespace CrystalUnbolt
 
             // iapStoreButton.Init(STORE_AD_RIGHT_OFFSET_X); // IAP Disabled!
             // noAdsButton.Init(STORE_AD_RIGHT_OFFSET_X); // Disabled - keep button at editor position
-            dailyGift_Plinko.Init(STORE_AD_RIGHT_OFFSET_X);
+           // dailyGift_Plinko.Init(STORE_AD_RIGHT_OFFSET_X);
             dailyBonusButton.Init(STORE_AD_RIGHT_OFFSET_X);
             settingButton.Init(STORE_AD_RIGHT_OFFSET_X);
             leaderBoardButton.Init(STORE_AD_RIGHT_OFFSET_X);
@@ -173,7 +173,7 @@ namespace CrystalUnbolt
             dailyBonusButton.Button.onClick.AddListener(DailyBonusButton);
             // iapStoreButton.Button.onClick.AddListener(IAPStoreButton); // IAP Disabled!
             // noAdsButton.Button.onClick.AddListener(NoAdButton); // IAP REMOVED - No Ads disabled
-            dailyGift_Plinko.Button.onClick.AddListener(DailyGift_PlinkoGame);
+           // dailyGift_Plinko.Button.onClick.AddListener(DailyGift_PlinkoGame);
             coinsPanel.AddButton.onClick.AddListener(AddCoinsButton);
             playButton.onClick.AddListener(PlayButton);
             gamePlayButton.onClick.AddListener(TapToPlayResetButton);
@@ -499,10 +499,10 @@ namespace CrystalUnbolt
             {
                 // iapStoreButton.Hide(); // IAP Disabled!
                 dailyBonusButton.Hide();
-                dailyGift_Plinko.Hide();
+             //   dailyGift_Plinko.Hide();
                 settingButton.Hide();
                // leaderBoardButton.Hide();
-            });
+            });   
 
             CrystalMapLevelAbstractBehavior.OnLevelClicked -= OnLevelOnMapSelected;
 
@@ -722,7 +722,7 @@ namespace CrystalUnbolt
             // Reset button X positions to their saved positions (but keep them invisible for animation)
             ResetButtonPosition(settingButton);
             ResetButtonPosition(dailyBonusButton);
-            ResetButtonPosition(dailyGift_Plinko);
+           // ResetButtonPosition(dailyGift_Plinko);
         }
 
         private void ResetButtonPosition(CrystalUIMainMenuButton button)
@@ -751,7 +751,7 @@ namespace CrystalUnbolt
             AnimateBottomButton(dailyBonusButton, startDelay + staggerDelay, duration);
             
             // 4. Daily Gift/Plinko Button
-            AnimateBottomButton(dailyGift_Plinko, startDelay + (staggerDelay * 3), duration);
+           // AnimateBottomButton(dailyGift_Plinko, startDelay + (staggerDelay * 3), duration);
         }
 
         private void AnimateBottomButton(CrystalUIMainMenuButton button, float delay, float duration)

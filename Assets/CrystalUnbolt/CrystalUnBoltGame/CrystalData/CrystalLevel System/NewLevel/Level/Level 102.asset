@@ -265,6 +265,14 @@ MonoBehaviour:
       screwsPositions:
       - {x: -0.6938655, y: -0.00000031565693, z: 0}
       - {x: 0.6938662, y: -0.00000027921612, z: 0}
+    lockedHoles:
+    - enabled: 1
+      holeIndex: 20
+      iconOffset: {x: 0.35, y: 0.35}
+      iconScale: 1
+      clickRadius: 0.3
+      unlockType: 1
+      rewardPlacementId: 
     timerOverride:
       enabled: 0
       value: 0

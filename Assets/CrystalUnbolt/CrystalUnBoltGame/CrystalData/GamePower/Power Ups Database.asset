@@ -14,6 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   powerUps:
   - {fileID: 11400000, guid: 017c7fd1676c1a041b5a4b30f8708f7e, type: 2}
-  - {fileID: 11400000, guid: 05b07a81280a3194488f41eed0156687, type: 2}
   - {fileID: 11400000, guid: f749c847fedaf7042bd353170fc753b3, type: 2}
-  - {fileID: 11400000, guid: a8a70e30f55280f4ea7306b7a59d9562, type: 2}

@@ -18,10 +18,10 @@ MonoBehaviour:
     type: 3}
   customAudioClip:
     enabled: 1
-    value: {fileID: 8300000, guid: 3534271bae5504b4d894b22c5fe7c699, type: 3}
+    value: {fileID: 8300000, guid: 5a2441d0905455b41af915334218057d, type: 3}
   defaultAmount: 1
   description: Remove a plank from the board
-  requiredLevel: 2
+  requiredLevel: 1
   visualiseActiveState: 0
   backgroundColor: {r: 1, g: 1, b: 1, a: 1}
   purchaseOption: 2

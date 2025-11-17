@@ -75,6 +75,7 @@ namespace CrystalUnbolt
             {
                 Debug.Log("[GameManager] Auto-running level");
                 LoadLevel(CrystalLevelAutoRun.GetLevelIndex());
+                Debug.Log("Level Number ------------------ " +  CrystalLevelAutoRun.GetLevelIndex());
             }
             else
             {

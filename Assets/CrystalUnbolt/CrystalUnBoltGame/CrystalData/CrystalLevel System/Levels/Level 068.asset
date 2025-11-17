@@ -186,6 +186,14 @@ MonoBehaviour:
       - {x: -0.079503015, y: 0.031293686, z: 0}
       - {x: -1.4935123, y: 0.5388144, z: 0}
       - {x: 1.5213168, y: 0.56718177, z: 0}
+    lockedHoles:
+    - enabled: 1
+      holeIndex: 18
+      iconOffset: {x: 0.35, y: 0.35}
+      iconScale: 1
+      clickRadius: 0.3
+      unlockType: 1
+      rewardPlacementId: 
     timerOverride:
       enabled: 0
       value: 0

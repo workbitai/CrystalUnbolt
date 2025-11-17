@@ -42,15 +42,32 @@ namespace CrystalUnbolt
             defaultFloatingTextPosition = floatingTextRectTransform.anchoredPosition;
             defaultFloatingTextWidth = floatingTextRectTransform.sizeDelta.x;
 
+            // Build UI entries for every power-up that exists in the database/controller
             CrystalPUBehavior[] activePowerUps = CrystalPUController.ActivePowerUps;
-            uiBehaviors = new CrystalPUUIBehavior[activePowerUps.Length];
+            if (activePowerUps == null || activePowerUps.Length == 0)
+            {
+                Debug.LogWarning("[CrystalPUUIController] No active power-ups found. Did CrystalPUController.Init run?");
+                uiBehaviors = new CrystalPUUIBehavior[0];
+                return;
+            }
 
+            List<CrystalPUBehavior> filteredPowerUps = new List<CrystalPUBehavior>(activePowerUps.Length);
             for (int i = 0; i < activePowerUps.Length; i++)
+            {
+                if (activePowerUps[i] != null)
+                {
+                    filteredPowerUps.Add(activePowerUps[i]);
+                }
+            }
+
+            uiBehaviors = new CrystalPUUIBehavior[filteredPowerUps.Count];
+
+            for (int i = 0; i < filteredPowerUps.Count; i++)
             {
                 GameObject itemObject = Instantiate(itemPrefab, containerTransform);
 
                 uiBehaviors[i] = itemObject.GetComponent<CrystalPUUIBehavior>();
-                uiBehaviors[i].Initialise(activePowerUps[i]);
+                uiBehaviors[i].Initialise(filteredPowerUps[i]);
             }
 
             powerUpPurchasePanel.Init();

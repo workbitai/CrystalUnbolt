@@ -13,6 +13,9 @@ namespace CrystalUnbolt
         [SerializeField, LevelEditorSetting] List<CrystalPlankLevelData> planksData;
         public List<CrystalPlankLevelData> PlanksData => planksData;
 
+        [SerializeField] List<CrystalLockedHoleConfig> lockedHoles;
+        public List<CrystalLockedHoleConfig> LockedHoles => lockedHoles;
+
         [SerializeField] FloatToggle timerOverride;
         public bool TimerOverrideEnabled => timerOverride.Enabled;
         public float TimerOverride => timerOverride.Handle(0);

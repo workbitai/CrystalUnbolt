@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8634c5cf5896bb84ca6474552cf85648, type: 3}
   m_Name: Audio Clips
   m_EditorClassIdentifier: 
-  screwPick: {fileID: 8300000, guid: 2359f795b4a77084093d4797e23c98b8, type: 3}
-  screwPlace: {fileID: 8300000, guid: fd8ffe102506fe947b1a9a0aa125ea7a, type: 3}
-  plankComplete: {fileID: 8300000, guid: 79ec33f707d9a9343bc453fc42aa8f55, type: 3}
-  plankCollision: {fileID: 8300000, guid: 3c6b45eb84939104f963faff12341655, type: 3}
-  tutorialComplete: {fileID: 8300000, guid: a86f2601ff64b7144958f1c2d291068e, type: 3}
-  levelComplete: {fileID: 8300000, guid: a86f2601ff64b7144958f1c2d291068e, type: 3}
-  stageComplete: {fileID: 8300000, guid: a86f2601ff64b7144958f1c2d291068e, type: 3}
-  levelFailed: {fileID: 8300000, guid: 79ec33f707d9a9343bc453fc42aa8f55, type: 3}
-  buttonSound: {fileID: 8300000, guid: 5df3b788147f17b45996429b3d318777, type: 3}
-  dailyBonusClaim: {fileID: 8300000, guid: 99e6ef98394a4dc4e92cee6552e38e3f, type: 3}
+  screwPick: {fileID: 8300000, guid: c017b9e626fa8f641b1ab0f61eb8feed, type: 3}
+  screwPlace: {fileID: 8300000, guid: c017b9e626fa8f641b1ab0f61eb8feed, type: 3}
+  plankComplete: {fileID: 8300000, guid: 945004563954dd14ea06a416e4136e3a, type: 3}
+  plankCollision: {fileID: 8300000, guid: d6745a4837b25254ba129330762abe22, type: 3}
+  tutorialComplete: {fileID: 8300000, guid: c11f32918798b094982e7794cb9fbd64, type: 3}
+  levelComplete: {fileID: 8300000, guid: c11f32918798b094982e7794cb9fbd64, type: 3}
+  stageComplete: {fileID: 8300000, guid: c11f32918798b094982e7794cb9fbd64, type: 3}
+  levelFailed: {fileID: 8300000, guid: 945004563954dd14ea06a416e4136e3a, type: 3}
+  buttonSound: {fileID: 8300000, guid: e4dc0be6f9e0969408e2285529daf884, type: 3}
+  dailyBonusClaim: {fileID: 8300000, guid: e45d49725c2feba409d9903ece028de8, type: 3}

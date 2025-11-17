@@ -18,10 +18,10 @@ MonoBehaviour:
     type: 3}
   customAudioClip:
     enabled: 1
-    value: {fileID: 8300000, guid: e9e24bbf251298b4d9b818eae1633c2b, type: 3}
+    value: {fileID: 8300000, guid: a5ab122968788f44a959d816f4cb19a1, type: 3}
   defaultAmount: 1
   description: Take out a screw without moving it
-  requiredLevel: 12
+  requiredLevel: 2
   visualiseActiveState: 0
   backgroundColor: {r: 1, g: 1, b: 1, a: 1}
   purchaseOption: 2

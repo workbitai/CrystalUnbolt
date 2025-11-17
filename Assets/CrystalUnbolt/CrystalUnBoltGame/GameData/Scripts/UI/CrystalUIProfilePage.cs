@@ -386,6 +386,7 @@ namespace CrystalUnbolt
             if (nameInput)
             {
                 nameInput.interactable = true;
+                SoundManager.PlaySound(SoundManager.AudioClips.buttonSound);
                 nameInput.Select();
                 nameInput.ActivateInputField();
                 nameInput.MoveTextEnd(false);
@@ -409,6 +410,7 @@ namespace CrystalUnbolt
 
         private async void OnSave()
         {
+            SoundManager.PlaySound(SoundManager.AudioClips.buttonSound);
             if (_profile == null) return;
 #if MODULE_HAPTIC
            Haptic.Play(Haptic.HAPTIC_HARD);
