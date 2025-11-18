@@ -18,6 +18,8 @@ namespace CrystalUnbolt
 
         [Group("Refs")]
         [SerializeField] Image lockIcon;
+        [Group("Refs")]
+        [SerializeField] Image lockStateIconImage;
 
         [Group("Refs")]
         [SerializeField] GameObject defaultElementsObjects;
@@ -127,6 +129,12 @@ namespace CrystalUnbolt
         {
             iconImage.sprite = settings.Icon;
             iconImage.color = Color.white;
+
+            if (lockStateIconImage != null)
+            {
+                lockStateIconImage.sprite = settings.Icon;
+                lockStateIconImage.color = Color.white;
+            }
 
             backgroundImage.color = settings.BackgroundColor;
         }
@@ -309,7 +317,7 @@ namespace CrystalUnbolt
                 RedrawBusyVisuals(behavior.IsBusy);
 
             if (behavior.IsSelectable())
-                busyStateVisualsObject.SetActive(behavior.IsSelected);
+                selectedOutlineObject.SetActive(behavior.IsSelected);
 
             behavior.OnRedrawn();
         }
@@ -379,24 +387,24 @@ public static class IconAnimationHelper
         if (startDelay > 0)
             seq.AppendInterval(startDelay);
 
-        // Step 1 — soft upscale + tilt
+        // Step 1 ï¿½ soft upscale + tilt
         seq.Append(target.DOScale(Vector3.one *0.9f * scaleUp, duration * 0.25f).SetEase(Ease.OutQuad));
         seq.Join(target.DOLocalRotate(new Vector3(0, 0, rotation), duration * 0.25f).SetEase(Ease.OutQuad));
       //  seq.Join(glow.DOFade(glowMax, duration * 0.25f));
 
-        // Step 2 — settle back to normal
+        // Step 2 ï¿½ settle back to normal
         seq.Append(target.DOScale(Vector3.one *0.7f, duration * 0.25f).SetEase(Ease.OutBack));
         seq.Join(target.DOLocalRotate(Vector3.zero, duration * 0.25f).SetEase(Ease.OutQuad));
 
-        // Step 3 — subtle breathing dip
+        // Step 3 ï¿½ subtle breathing dip
         seq.Append(target.DOScale(Vector3.one *0.8f * 0.97f, duration * 0.20f).SetEase(Ease.InOutSine));
        // seq.Join(glow.DOFade(glowMin, duration * 0.20f));
 
-        // Step 4 — smooth restore
+        // Step 4 ï¿½ smooth restore
         seq.Append(target.DOScale(Vector3.one *0.7f, duration * 0.15f).SetEase(Ease.OutSine));
       //  seq.Join(glow.DOFade(glowMax, duration * 0.15f));
 
-        // Step 5 — pause
+        // Step 5 ï¿½ pause
         seq.AppendInterval(duration * 0.15f);
 
         seq.SetLoops(-1, LoopType.Restart);

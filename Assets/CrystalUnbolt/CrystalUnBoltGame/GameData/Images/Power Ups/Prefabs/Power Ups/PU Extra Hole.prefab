@@ -48,10 +48,15 @@ MonoBehaviour:
     particleName: Extra Hole Particle
     particlePrefab: {fileID: 6361182348684157723, guid: 74e9f6a3c232ee146b03faf987d3f3d2,
       type: 3}
-  drillPrefab: {fileID: 2286114649664496839, guid: 16040b9619724fb4cae0dff0dca73de9,
+  drillPrefab: {fileID: 7553608525549546757, guid: 387a3061b9382b7448e514f554452aab,
     type: 3}
   parentObject: {fileID: 0}
   useLeftCornerAlignment: 1
   drillAnimationDuration: 3
   drillRotationSpeed: 360
   drillScaleUp: 1.5
+  useHaptics: 1
+  vibrateDuringDrill: 1
+  vibrateOnImpact: 1
+  drillHapticStrength: 0.6
+  impactHapticStrength: 0.8

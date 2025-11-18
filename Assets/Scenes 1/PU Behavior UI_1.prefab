@@ -278,6 +278,7 @@ MonoBehaviour:
   backgroundImage: {fileID: 5361968905708322676}
   iconImage: {fileID: 8261692824971142578}
   lockIcon: {fileID: 2831464855744845591}
+  lockStateIconImage: {fileID: 7955588795829091786}
   defaultElementsObjects: {fileID: 1750245774610868574}
   amountContainerObject: {fileID: 1029341033256981988}
   amountText: {fileID: 7714885590740562305}
@@ -784,7 +785,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.57479775, g: 1, b: 0.14959556, a: 1}
+  m_Color: {r: 0.4435879, g: 0.745283, b: 0.13710396, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

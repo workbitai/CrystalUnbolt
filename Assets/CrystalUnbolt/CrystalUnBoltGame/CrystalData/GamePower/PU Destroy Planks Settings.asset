@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PU Destroy Planks Settings
   m_EditorClassIdentifier: 
   type: 0
-  icon: {fileID: 21300000, guid: 050049e39e34e794aa06ee4d015aa721, type: 3}
+  icon: {fileID: 21300000, guid: 3ba9c242a4efd9d4ba18ca9755893607, type: 3}
   behaviorPrefab: {fileID: 5272500912242729696, guid: daad818e23299e3468c3b9a0e44e47c3,
     type: 3}
   customAudioClip:
