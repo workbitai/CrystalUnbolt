@@ -90,20 +90,6 @@ MonoBehaviour:
       - {x: -2.7910001, y: -0.011000156, z: 0}
     - plankType: 11
       plankLayer: 1
-      position: {x: -2.82, y: -4.85, z: 0}
-      rotation: {x: 0, y: 0, z: 0}
-      scale: {x: 1, y: 1, z: 1}
-      screwsPositions:
-      - {x: 0.030999899, y: 0.04099989, z: 0}
-    - plankType: 11
-      plankLayer: 1
-      position: {x: 2.71, y: -4.86, z: 0}
-      rotation: {x: 0, y: 0, z: 0}
-      scale: {x: 1, y: 1, z: 1}
-      screwsPositions:
-      - {x: 0.013000011, y: 0.022000313, z: 0}
-    - plankType: 11
-      plankLayer: 1
       position: {x: -3.05, y: 2.55, z: 0}
       rotation: {x: 0, y: 0, z: 0}
       scale: {x: 1, y: 1, z: 1}
@@ -116,6 +102,20 @@ MonoBehaviour:
       scale: {x: 1, y: 1, z: 1}
       screwsPositions:
       - {x: 0.029999971, y: -0.029999971, z: 0}
+    - plankType: 11
+      plankLayer: 1
+      position: {x: -2.82, y: -4.85, z: 0}
+      rotation: {x: 0, y: 0, z: 0}
+      scale: {x: 1, y: 1, z: 1}
+      screwsPositions:
+      - {x: 0.030999899, y: 0.04099989, z: 0}
+    - plankType: 11
+      plankLayer: 1
+      position: {x: 2.71, y: -4.86, z: 0}
+      rotation: {x: 0, y: 0, z: 0}
+      scale: {x: 1, y: 1, z: 1}
+      screwsPositions:
+      - {x: 0.013000011, y: 0.022000313, z: 0}
     - plankType: 6
       plankLayer: 2
       position: {x: -0.107999995, y: -1.258, z: 0}
@@ -172,18 +172,18 @@ MonoBehaviour:
       - {x: 0.46169347, y: 0.0074886475, z: 0}
     - plankType: 11
       plankLayer: 6
-      position: {x: 1.892, y: 4.058, z: 0}
-      rotation: {x: 0, y: 0, z: 0}
-      scale: {x: 1, y: 1, z: 1}
-      screwsPositions:
-      - {x: 0.019000053, y: 0.0089998245, z: 0}
-    - plankType: 11
-      plankLayer: 6
       position: {x: -1.739, y: 4.082, z: 0}
       rotation: {x: 0, y: 0, z: 0}
       scale: {x: 1, y: 1, z: 1}
       screwsPositions:
       - {x: -0.019000053, y: -0.010000229, z: 0}
+    - plankType: 11
+      plankLayer: 6
+      position: {x: 1.892, y: 4.058, z: 0}
+      rotation: {x: 0, y: 0, z: 0}
+      scale: {x: 1, y: 1, z: 1}
+      screwsPositions:
+      - {x: 0.019000053, y: 0.0089998245, z: 0}
     - plankType: 10
       plankLayer: 7
       position: {x: 0.002, y: -5.56, z: 0}
@@ -191,14 +191,7 @@ MonoBehaviour:
       scale: {x: 1, y: 1, z: 1}
       screwsPositions:
       - {x: -0.762, y: 0.032000046, z: 0}
-    lockedHoles:
-    - enabled: 1
-      holeIndex: 13
-      iconOffset: {x: 0.35, y: 0.35}
-      iconScale: 1
-      clickRadius: 0.3
-      unlockType: 1
-      rewardPlacementId: 
+    lockedHoles: []
     timerOverride:
       enabled: 0
       value: 0

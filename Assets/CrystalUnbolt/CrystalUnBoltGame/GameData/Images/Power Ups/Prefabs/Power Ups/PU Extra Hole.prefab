@@ -52,9 +52,9 @@ MonoBehaviour:
     type: 3}
   parentObject: {fileID: 0}
   useLeftCornerAlignment: 1
-  drillAnimationDuration: 3
+  drillAnimationDuration: 1
   drillRotationSpeed: 360
-  drillScaleUp: 1.5
+  drillScaleUp: 2.3
   useHaptics: 1
   vibrateDuringDrill: 1
   vibrateOnImpact: 1

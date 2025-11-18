@@ -48,27 +48,36 @@ namespace CrystalUnbolt
         {
             if (PowerUpLock.IsLocked) return false; 
 
-            if (clickableObject is CrystalBaseController)
+            if (clickableObject is CrystalBaseController baseBehavior)
             {
-                CrystalBaseController baseBehavior = (CrystalBaseController)clickableObject;
-                if (baseBehavior != null)
+                Collider2D[] colliders2D = Physics2D.OverlapCircleAll(clickPosition, 0.4f);
+                bool pointIsAllowed = true;
+                for (int i = 0; i < colliders2D.Length; i++)
                 {
-                    Collider2D[] colliders2D = Physics2D.OverlapCircleAll(clickPosition, 0.4f);
-                    bool pointIsAllowed = true;
-                    for (int i = 0; i < colliders2D.Length; i++)
-                    {
-                        if (colliders2D[i] != baseBehavior.BoxCollider)
-                        {
-                            pointIsAllowed = false;
-                            break;
-                        }
-                    }
+                    Collider2D collider = colliders2D[i];
+                    if (collider == null)
+                        continue;
 
-                    if (pointIsAllowed)
-                    {
-                        StartCoroutine(LockDuringDrillAnimation(clickPosition)); 
-                        return true;
-                    }
+                    if (collider == baseBehavior.BoxCollider)
+                        continue;
+
+                    if (collider.GetComponentInParent<CrystalBaseController>() == baseBehavior)
+                        continue;
+
+                    if (collider.GetComponent<CrystalBaseHole>() != null)
+                        continue;
+
+                    if (collider.isTrigger)
+                        continue;
+
+                    pointIsAllowed = false;
+                    break;
+                }
+
+                if (pointIsAllowed)
+                {
+                    StartCoroutine(LockDuringDrillAnimation(clickPosition)); 
+                    return true;
                 }
             }
 

@@ -1,4 +1,4 @@
-using DG.Tweening;
+﻿using DG.Tweening;
 using System;
 using System.Collections;
 using TMPro;
@@ -76,14 +76,14 @@ namespace CrystalUnbolt
         {
             StartCoroutine(ShineLoop());
             iconSeq = IconAnimationHelper.PlayLockIconPremium(
-                 lockIcon.transform,
-                 duration: 2.2f,
-                 scaleUp: 1.08f,
-                 rotation: 4f,
-                 glowMin: 0.7f,
-                 glowMax: 1f,
-                 startDelay: 0.4f
-             );
+               lockIcon.transform,
+               duration: 2.2f,
+               scaleUp: 1.08f,
+               rotation: 4f,
+               glowMin: 0.7f,
+               glowMax: 1f,
+               startDelay: 0.4f
+           );
         }
 
         private void OnDisable()
@@ -134,6 +134,7 @@ namespace CrystalUnbolt
             {
                 lockStateIconImage.sprite = settings.Icon;
                 lockStateIconImage.color = Color.white;
+                lockStateIconImage.enabled = settings.Icon != null;
             }
 
             backgroundImage.color = settings.BackgroundColor;
@@ -155,6 +156,11 @@ namespace CrystalUnbolt
                 lockText.text = string.Format("LEVEL {0}", settings.RequiredLevel);
 
                 defaultElementsObjects.SetActive(false);
+                if (lockStateIconImage != null && settings.Icon != null)
+                {
+                    lockStateIconImage.sprite = settings.Icon;
+                    lockStateIconImage.enabled = true;
+                }
 
                 isLocked = true;
             }
@@ -329,38 +335,12 @@ namespace CrystalUnbolt
 
     }
 }
+// This is the modified IconAnimationHelper class in CrystalPUUIBehavior.cs
+
+// This is the modified IconAnimationHelper class in CrystalPUUIBehavior.cs
+
 public static class IconAnimationHelper
 {
-    public static Sequence PlayHeartbeatShake(Transform target,
-                                              float duration,
-                                              float overshoot,
-                                              float punchAmt,
-                                              float delay, bool lockImg)
-    {
-        if (target == null) return null;
-
-        target.localScale = Vector3.one;
-
-        Sequence seq = DOTween.Sequence();
-
-        seq.AppendInterval(delay);
-
-        seq.Append(target.DOScale(Vector3.one * overshoot, duration * 0.4f));
-
-        seq.Append(target.DOScale(Vector3.one, duration * 0.3f));
-
-        if (punchAmt > 0f)
-        {
-            seq.Append(target.DOPunchScale(new Vector3(punchAmt, punchAmt, 0f), duration * 0.3f, 8, 0.6f));
-        }
-
-        seq.AppendInterval(delay);
-
-        if (lockImg)
-            seq.SetLoops(-1, LoopType.Restart);
-
-        return seq;
-    }
     public static Sequence PlayLockIconPremium(Transform target,
                                            float duration = 2.2f,
                                            float scaleUp = 0.95f,
@@ -372,7 +352,7 @@ public static class IconAnimationHelper
         if (target == null) return null;
 
         // Reset
-        target.localScale = Vector3.one *0.7f;
+        target.localScale = Vector3.one * 0.7f;
         target.localRotation = Quaternion.identity;
 
         // Glow via CanvasGroup
@@ -388,21 +368,21 @@ public static class IconAnimationHelper
             seq.AppendInterval(startDelay);
 
         // Step 1 � soft upscale + tilt
-        seq.Append(target.DOScale(Vector3.one *0.9f * scaleUp, duration * 0.25f).SetEase(Ease.OutQuad));
+        seq.Append(target.DOScale(Vector3.one * 0.9f * scaleUp, duration * 0.25f).SetEase(Ease.OutQuad));
         seq.Join(target.DOLocalRotate(new Vector3(0, 0, rotation), duration * 0.25f).SetEase(Ease.OutQuad));
-      //  seq.Join(glow.DOFade(glowMax, duration * 0.25f));
+        //  seq.Join(glow.DOFade(glowMax, duration * 0.25f));
 
         // Step 2 � settle back to normal
-        seq.Append(target.DOScale(Vector3.one *0.7f, duration * 0.25f).SetEase(Ease.OutBack));
+        seq.Append(target.DOScale(Vector3.one * 0.7f, duration * 0.25f).SetEase(Ease.OutBack));
         seq.Join(target.DOLocalRotate(Vector3.zero, duration * 0.25f).SetEase(Ease.OutQuad));
 
         // Step 3 � subtle breathing dip
-        seq.Append(target.DOScale(Vector3.one *0.8f * 0.97f, duration * 0.20f).SetEase(Ease.InOutSine));
-       // seq.Join(glow.DOFade(glowMin, duration * 0.20f));
+        seq.Append(target.DOScale(Vector3.one * 0.8f * 0.97f, duration * 0.20f).SetEase(Ease.InOutSine));
+        // seq.Join(glow.DOFade(glowMin, duration * 0.20f));
 
         // Step 4 � smooth restore
-        seq.Append(target.DOScale(Vector3.one *0.7f, duration * 0.15f).SetEase(Ease.OutSine));
-      //  seq.Join(glow.DOFade(glowMax, duration * 0.15f));
+        seq.Append(target.DOScale(Vector3.one * 0.7f, duration * 0.15f).SetEase(Ease.OutSine));
+        //  seq.Join(glow.DOFade(glowMax, duration * 0.15f));
 
         // Step 5 � pause
         seq.AppendInterval(duration * 0.15f);

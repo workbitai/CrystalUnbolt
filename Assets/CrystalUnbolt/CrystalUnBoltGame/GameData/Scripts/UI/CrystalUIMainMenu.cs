@@ -35,10 +35,10 @@ namespace CrystalUnbolt
         [SerializeField] GameObject gameBG;
 
         [BoxGroup("Logo", "Logo")]
-        [SerializeField] RectTransform gameLogoRect; 
-        
+        [SerializeField] RectTransform gameLogoRect;
+
         [BoxGroup("Logo", "Logo")]
-        [SerializeField] RectTransform spinImageRect; 
+        [SerializeField] RectTransform spinImageRect;
 
         [BoxGroup("Level Grid", "Level Grid")]
         [SerializeField] CrystalUILevelGrid levelGrid;
@@ -75,13 +75,13 @@ namespace CrystalUnbolt
 
         [BoxGroup("Privacy Popup", "Privacy Popup")]
         [SerializeField] GameObject privacyPopupRoot;
-        [SerializeField] GameObject privacyBG; 
+        [SerializeField] GameObject privacyBG;
         [BoxGroup("Privacy Popup")]
         [SerializeField] Button privacyYesButton;
         [BoxGroup("Privacy Popup")]
         [SerializeField] Button privacyNoButton;
         [BoxGroup("Privacy Popup")]
-        [SerializeField] Button privacyPolicyButton; 
+        [SerializeField] Button privacyPolicyButton;
         [BoxGroup("Privacy Popup")]
         [SerializeField] string privacyPolicyUrl = "https://crystalstudio.com/privacy_policy.html";
 
@@ -92,7 +92,7 @@ namespace CrystalUnbolt
 
         private AnimCase tapToPlayPingPong;
         private AnimCase gamePlayPingPong;
-        private AnimCase gameLogoPingPong; 
+        private AnimCase gameLogoPingPong;
         private AnimCase showHideStoreAdButtonDelayTweenCase;
 
         [SerializeField] private ShinyEffectForUGUI[] shinies;
@@ -112,19 +112,19 @@ namespace CrystalUnbolt
         {
             if (Input.GetKeyDown(KeyCode.F12)) { ScreenCapture.CaptureScreenshot("Assets/Screenshots/snap_" + System.DateTime.Now.ToString("HHmmss") + ".png"); }
         }
-        
+
         private void OnEnable()
         {
             // IAPManager.PurchaseCompleted += OnAdPurchased; // IAP Removed!
-            
+
             // Hide grid on enable (will be shown when play button is clicked)
             if (levelGrid != null && levelGrid.canvas != null)
                 levelGrid.canvas.enabled = false;
-            
+
             // Listen for login events
             if (authManager == null)
                 authManager = FindObjectOfType<CrystalLoginAuthManager>();
-            
+
             if (authManager != null)
             {
                 authManager.OnSignedIn += OnUserLoggedIn;
@@ -135,7 +135,7 @@ namespace CrystalUnbolt
         private void OnDisable()
         {
             // IAPManager.PurchaseCompleted -= OnAdPurchased; // IAP Removed!
-            
+
             // Unsubscribe from login events
             if (authManager != null)
             {
@@ -165,7 +165,7 @@ namespace CrystalUnbolt
 
             // iapStoreButton.Init(STORE_AD_RIGHT_OFFSET_X); // IAP Disabled!
             // noAdsButton.Init(STORE_AD_RIGHT_OFFSET_X); // Disabled - keep button at editor position
-           // dailyGift_Plinko.Init(STORE_AD_RIGHT_OFFSET_X);
+            // dailyGift_Plinko.Init(STORE_AD_RIGHT_OFFSET_X);
             dailyBonusButton.Init(STORE_AD_RIGHT_OFFSET_X);
             settingButton.Init(STORE_AD_RIGHT_OFFSET_X);
             leaderBoardButton.Init(STORE_AD_RIGHT_OFFSET_X);
@@ -173,7 +173,7 @@ namespace CrystalUnbolt
             dailyBonusButton.Button.onClick.AddListener(DailyBonusButton);
             // iapStoreButton.Button.onClick.AddListener(IAPStoreButton); // IAP Disabled!
             // noAdsButton.Button.onClick.AddListener(NoAdButton); // IAP REMOVED - No Ads disabled
-           // dailyGift_Plinko.Button.onClick.AddListener(DailyGift_PlinkoGame);
+            // dailyGift_Plinko.Button.onClick.AddListener(DailyGift_PlinkoGame);
             coinsPanel.AddButton.onClick.AddListener(AddCoinsButton);
             playButton.onClick.AddListener(PlayButton);
             gamePlayButton.onClick.AddListener(TapToPlayResetButton);
@@ -202,7 +202,7 @@ namespace CrystalUnbolt
         {
             SoundManager.PlaySound(SoundManager.AudioClips.buttonSound);
 #if MODULE_HAPTIC
-           Haptic.Play(Haptic.HAPTIC_HARD);
+            Haptic.Play(Haptic.HAPTIC_HARD);
 #endif
             MyAdsAdapter.HideBanner();
             HidePlayButton();
@@ -226,8 +226,8 @@ namespace CrystalUnbolt
             // leaderBoardButton.Hide(true); // Animated separately
             ShowTapToPlay();
             ShowPlayButton();
-            ShowGameLogo(); 
-            StartSimpleSpin(); 
+            ShowGameLogo();
+            StartSimpleSpin();
             // coinsLabelScalable.Show(); // Animation removed
 
             CrystalUILevelNumberText.Show();
@@ -270,9 +270,17 @@ namespace CrystalUnbolt
                 {
                     if (shiny != null && shiny.gameObject.activeInHierarchy)
                     {
-                        shiny.Play(1f); 
+                        shiny.Play(1f);
 
-                        IconAnimationHelper.PlayHeartbeatShake(shiny.transform, 1.2f, 1.02f, 0f, 4f, false);
+                        IconAnimationHelper.PlayLockIconPremium(
+                shiny.transform,
+                duration: 2.2f,
+                scaleUp: 1.08f,
+                rotation: 4f,
+                glowMin: 0.7f,
+                glowMax: 1f,
+                startDelay: 0.4f
+            );
                     }
                 }
 
@@ -286,7 +294,7 @@ namespace CrystalUnbolt
                 return;
 
             if (PlayerPrefs.GetInt(PRIVACY_ACCEPTED_KEY, 0) == 1)
-                return; 
+                return;
 
             privacyBG.SetActive(true);
             if (privacyPopupRoot != null)
@@ -332,7 +340,7 @@ namespace CrystalUnbolt
 
             SoundManager.PlaySound(SoundManager.AudioClips.buttonSound);
 #if MODULE_HAPTIC
-           Haptic.Play(Haptic.HAPTIC_HARD);
+            Haptic.Play(Haptic.HAPTIC_HARD);
 #endif
             HidePrivacyPopupAnimated();
         }
@@ -341,7 +349,7 @@ namespace CrystalUnbolt
         {
             SoundManager.PlaySound(SoundManager.AudioClips.buttonSound);
 #if MODULE_HAPTIC
-           Haptic.Play(Haptic.HAPTIC_HARD);
+            Haptic.Play(Haptic.HAPTIC_HARD);
 #endif
             HidePrivacyPopupAnimated();
         }
@@ -483,7 +491,7 @@ namespace CrystalUnbolt
 
             HideTapToPlayButton();
             HidePlayButton();
-            HideGameLogo(); 
+            HideGameLogo();
             // coinsLabelScalable.Hide(); // Animation removed
 
             // Hide level grid canvas when main menu closes
@@ -499,10 +507,10 @@ namespace CrystalUnbolt
             {
                 // iapStoreButton.Hide(); // IAP Disabled!
                 dailyBonusButton.Hide();
-             //   dailyGift_Plinko.Hide();
+                //   dailyGift_Plinko.Hide();
                 settingButton.Hide();
-               // leaderBoardButton.Hide();
-            });   
+                // leaderBoardButton.Hide();
+            });
 
             CrystalMapLevelAbstractBehavior.OnLevelClicked -= OnLevelOnMapSelected;
 
@@ -651,7 +659,7 @@ namespace CrystalUnbolt
             }
 
             gameLogoRect.DOScale(Vector3.zero, 0.3f).SetEasing(Ease.Type.CubicIn);
-          //  gameBG.GetComponent<Image>().DOFade(0f, 0.5f).OnComplete(() => gameBG.SetActive(false));
+            //  gameBG.GetComponent<Image>().DOFade(0f, 0.5f).OnComplete(() => gameBG.SetActive(false));
         }
 
         #endregion
@@ -661,7 +669,7 @@ namespace CrystalUnbolt
         private void StartSimpleSpin()
         {
             if (spinImageRect == null) return;
-            
+
             spinImageRect.DOLocalRotate(new Vector3(0, 0, 720f), 2.0f).SetEasing(Ease.Type.QuadOut);
         }
 
@@ -705,14 +713,14 @@ namespace CrystalUnbolt
 
             // Store original position
             Vector3 originalPos = element.anchoredPosition;
-            
+
             // Start from slightly above (much less dramatic)
             element.anchoredPosition = new Vector3(originalPos.x, originalPos.y + 50f, 0);
             element.localScale = Vector3.zero;
-            
+
             // Slide down to original position with simple easing
             element.DOAnchorPos(originalPos, duration).SetDelay(delay).SetEase(DG.Tweening.Ease.OutCubic);
-            
+
             // Scale up smoothly without much bounce
             element.DOScale(Vector3.one, duration).SetDelay(delay).SetEasing(Ease.Type.CubicOut);
         }
@@ -722,13 +730,13 @@ namespace CrystalUnbolt
             // Reset button X positions to their saved positions (but keep them invisible for animation)
             ResetButtonPosition(settingButton);
             ResetButtonPosition(dailyBonusButton);
-           // ResetButtonPosition(dailyGift_Plinko);
+            // ResetButtonPosition(dailyGift_Plinko);
         }
 
         private void ResetButtonPosition(CrystalUIMainMenuButton button)
         {
             if (button == null || button.Button == null) return;
-            
+
             RectTransform buttonRect = button.Button.transform as RectTransform;
             if (buttonRect == null) return;
 
@@ -746,12 +754,12 @@ namespace CrystalUnbolt
             // ALL BOTTOM BUTTONS - Simple fade and scale animation
             // 1. Settings Button (Leftmost)
             AnimateBottomButton(settingButton, startDelay, duration);
-            
+
             // 2. Daily Bonus Button
             AnimateBottomButton(dailyBonusButton, startDelay + staggerDelay, duration);
-            
+
             // 4. Daily Gift/Plinko Button
-           // AnimateBottomButton(dailyGift_Plinko, startDelay + (staggerDelay * 3), duration);
+            // AnimateBottomButton(dailyGift_Plinko, startDelay + (staggerDelay * 3), duration);
         }
 
         private void AnimateBottomButton(CrystalUIMainMenuButton button, float delay, float duration)
@@ -770,17 +778,17 @@ namespace CrystalUnbolt
 
             // Store the target position BEFORE modifying it
             Vector2 targetPos = buttonRect.anchoredPosition;
-            
+
             // Now set starting position (slightly below) and scale to zero
             buttonRect.anchoredPosition = new Vector2(targetPos.x, targetPos.y - 50f);
             buttonRect.localScale = Vector3.zero;
-            
+
             // Animate both position and scale together with delay
             Tween.DelayedCall(delay, () =>
             {
                 // Slide up to target position
                 buttonRect.DOAnchorPos(targetPos, duration).SetEase(DG.Tweening.Ease.OutCubic);
-                
+
                 // Scale up smoothly
                 buttonRect.DOScale(Vector3.one, duration).SetEasing(Ease.Type.CubicOut);
             });
@@ -827,11 +835,11 @@ namespace CrystalUnbolt
             print("IN");
             SoundManager.PlaySound(SoundManager.AudioClips.buttonSound);
 #if MODULE_HAPTIC
-           Haptic.Play(Haptic.HAPTIC_HARD);
+            Haptic.Play(Haptic.HAPTIC_HARD);
 #endif
 
             Debug.Log("[MainMenu] Play button clicked - loading current level!");
-            
+
             // Load the current level directly (grid is already visible)
             OnPlayTriggered(CrystalLevelController.MaxReachedLevelIndex);
         }
@@ -839,7 +847,7 @@ namespace CrystalUnbolt
         {
             SoundManager.PlaySound(SoundManager.AudioClips.buttonSound);
 #if MODULE_HAPTIC
-           Haptic.Play(Haptic.HAPTIC_HARD);
+            Haptic.Play(Haptic.HAPTIC_HARD);
 #endif
         }
 
@@ -876,17 +884,17 @@ namespace CrystalUnbolt
                     {
                         // User closed the panel without adding life - show grid
                         Debug.Log("[MainMenu] User closed lives panel - showing Grid Panel");
-                        
+
                         if (levelGrid != null)
                         {
                             // Hide play button and logo first
                             HidePlayButton(true);
                             HideGameLogo(true);
                             HideTapToPlayButton(true);
-                            
+
                             // Use the same method as the play button to show grid with animation
                             levelGrid.ShowLevelGrid();
-                            
+
                             Debug.Log("[MainMenu] Grid Panel shown with animation after lives panel closed");
                         }
                         else
@@ -927,21 +935,21 @@ namespace CrystalUnbolt
                 Debug.LogError("[CrystalUIMainMenu] Profile page not found!");
                 return;
             }
-            
+
             if (profilePage.IsPageDisplayed)
                 return;
-                
+
             ScreenManager.CloseScreen<CrystalUIMainMenu>();
             ScreenManager.DisplayScreen<CrystalUIProfilePage>();
-            
+
             if (UIProfilePage != null)
-                UIProfilePage.RefreshNow();   
-                
+                UIProfilePage.RefreshNow();
+
             ScreenManager.PageClosed += OnProfilePanelClose;
             CrystalMapBehavior.DisableScroll();
             SoundManager.PlaySound(SoundManager.AudioClips.buttonSound);
 #if MODULE_HAPTIC
-           Haptic.Play(Haptic.HAPTIC_HARD);
+            Haptic.Play(Haptic.HAPTIC_HARD);
 #endif
         }
         private void DailyBonusButton()
@@ -957,7 +965,7 @@ namespace CrystalUnbolt
 
             SoundManager.PlaySound(SoundManager.AudioClips.buttonSound);
 #if MODULE_HAPTIC
-           Haptic.Play(Haptic.HAPTIC_HARD);
+            Haptic.Play(Haptic.HAPTIC_HARD);
 #endif
 
 
@@ -970,12 +978,12 @@ namespace CrystalUnbolt
 
             ScreenManager.CloseScreen<CrystalUIMainMenu>();
             ScreenManager.DisplayScreen<CrystalUIPlinko>();
-           // ScreenManager.PageClosed += OnDailySpinClosed;
+            // ScreenManager.PageClosed += OnDailySpinClosed;
             CrystalMapBehavior.DisableScroll();
 
             SoundManager.PlaySound(SoundManager.AudioClips.buttonSound);
 #if MODULE_HAPTIC
-           Haptic.Play(Haptic.HAPTIC_HARD);
+            Haptic.Play(Haptic.HAPTIC_HARD);
 #endif
         }
         private void SkinsStoreButton()
@@ -991,7 +999,7 @@ namespace CrystalUnbolt
 
             SoundManager.PlaySound(SoundManager.AudioClips.buttonSound);
 #if MODULE_HAPTIC
-           Haptic.Play(Haptic.HAPTIC_HARD);
+            Haptic.Play(Haptic.HAPTIC_HARD);
 #endif
         }
 
@@ -1020,7 +1028,7 @@ namespace CrystalUnbolt
 
             SoundManager.PlaySound(SoundManager.AudioClips.buttonSound);
 #if MODULE_HAPTIC
-           Haptic.Play(Haptic.HAPTIC_HARD);
+            Haptic.Play(Haptic.HAPTIC_HARD);
 #endif
         }
 
@@ -1166,7 +1174,7 @@ namespace CrystalUnbolt
             // IAPStoreButton(); // IAP Disabled! - No coin purchase
             SoundManager.PlaySound(SoundManager.AudioClips.buttonSound);
 #if MODULE_HAPTIC
-           Haptic.Play(Haptic.HAPTIC_HARD);
+            Haptic.Play(Haptic.HAPTIC_HARD);
 #endif
         }
 
