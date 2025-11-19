@@ -46,7 +46,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   particle:
     particleName: Screw Remove Particle
-    particlePrefab: {fileID: 167592597321332269, guid: 4f0d1f6b086c6954e999e011a0ef8944,
-      type: 3}
-    specialBehaviour: 0
-    developmentMode: 0
+    particlePrefab: {fileID: 111918, guid: dd6c73f9fa999934da4ac2637d7004bf, type: 3}

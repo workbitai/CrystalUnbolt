@@ -1,7 +1,6 @@
-using Coffee.UIExtensions;
+﻿using Coffee.UIExtensions;
 using DG.Tweening;
 using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -87,7 +86,6 @@ namespace CrystalUnbolt
 
         private const string PRIVACY_ACCEPTED_KEY = "privacy_accepted_v1";
 
-
         // private UIScaleAnimation coinsLabelScalable; // Animation removed
 
         private AnimCase tapToPlayPingPong;
@@ -110,7 +108,11 @@ namespace CrystalUnbolt
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.F12)) { ScreenCapture.CaptureScreenshot("Assets/Screenshots/snap_" + System.DateTime.Now.ToString("HHmmss") + ".png"); }
+            if (Input.GetKeyDown(KeyCode.F12))
+            {
+                ScreenCapture.CaptureScreenshot(
+                    "Assets/Screenshots/snap_" + System.DateTime.Now.ToString("HHmmss") + ".png");
+            }
         }
 
         private void OnEnable()
@@ -168,7 +170,7 @@ namespace CrystalUnbolt
             // dailyGift_Plinko.Init(STORE_AD_RIGHT_OFFSET_X);
             dailyBonusButton.Init(STORE_AD_RIGHT_OFFSET_X);
             settingButton.Init(STORE_AD_RIGHT_OFFSET_X);
-            leaderBoardButton.Init(STORE_AD_RIGHT_OFFSET_X);
+            //  leaderBoardButton.Init(STORE_AD_RIGHT_OFFSET_X);
 
             dailyBonusButton.Button.onClick.AddListener(DailyBonusButton);
             // iapStoreButton.Button.onClick.AddListener(IAPStoreButton); // IAP Disabled!
@@ -243,15 +245,14 @@ namespace CrystalUnbolt
             // Update leaderboard button state on show
             UpdateLeaderboardButtonState();
 
-            // Animate top bar (3 elements) and bottom buttons (4 buttons) together - simple and clean
+            // Animate top bar (3 elements) and bottom buttons (2 buttons) together
             AnimateTopBar();
-            AnimateBottomButtons();
+         
 
             // Show remaining buttons (only ad button now, all bottom buttons are animated)
             showHideStoreAdButtonDelayTweenCase = Tween.DelayedCall(0.5f, delegate
             {
                 ShowAdButton();
-                // All bottom buttons now use custom animation - nothing else to show here
             });
 
             CrystalMapLevelAbstractBehavior.OnLevelClicked += OnLevelOnMapSelected;
@@ -273,14 +274,14 @@ namespace CrystalUnbolt
                         shiny.Play(1f);
 
                         IconAnimationHelper.PlayLockIconPremium(
-                shiny.transform,
-                duration: 2.2f,
-                scaleUp: 1.08f,
-                rotation: 4f,
-                glowMin: 0.7f,
-                glowMax: 1f,
-                startDelay: 0.4f
-            );
+                            shiny.transform,
+                            duration: 2.2f,
+                            scaleUp: 1.08f,
+                            rotation: 4f,
+                            glowMin: 0.7f,
+                            glowMax: 1f,
+                            startDelay: 0.4f
+                        );
                     }
                 }
 
@@ -405,7 +406,7 @@ namespace CrystalUnbolt
 #if UNITY_2020_2_OR_NEWER
                 bool ok = req.result == UnityWebRequest.Result.Success;
 #else
-        bool ok = !(req.isNetworkError || req.isHttpError);
+                bool ok = !(req.isNetworkError || req.isHttpError);
 #endif
                 if (ok)
                 {
@@ -467,12 +468,10 @@ namespace CrystalUnbolt
 
             // Animate top bar and bottom buttons when returning
             AnimateTopBar();
-            AnimateBottomButtons();
 
             showHideStoreAdButtonDelayTweenCase = Tween.DelayedCall(0.5f, delegate
             {
                 ShowAdButton();
-                // All bottom buttons now use custom animation - nothing else to show here
             });
 
             CrystalMapLevelAbstractBehavior.OnLevelClicked += OnLevelOnMapSelected;
@@ -584,7 +583,7 @@ namespace CrystalUnbolt
 
             // SIMPLE ANIMATION: Only clockwise rotation
             gamePlayRect.localScale = Vector3.one; // Keep normal scale
-            gamePlayRect.localRotation = Quaternion.Euler(0, 0, 360f); // Start rotated 360 degrees (one full rotation)
+            gamePlayRect.localRotation = Quaternion.Euler(0, 0, 360f); // Start rotated 360 degrees
 
             // Rotate clockwise to normal position
             Tween.DelayedCall(0.3f, () =>
@@ -616,7 +615,7 @@ namespace CrystalUnbolt
 
         #endregion
 
-        #region GameLogo (duplicate)
+        #region GameLogo
 
         public void ShowGameLogo(bool immediately = false)
         {
@@ -633,10 +632,9 @@ namespace CrystalUnbolt
                 return;
             }
 
-            // SIMPLIFIED ANIMATION: Simple fade and scale (like top/bottom UI)
+            // Simple fade + scale
             gameLogoRect.localScale = Vector3.zero;
 
-            // Simple scale up with slight delay
             Tween.DelayedCall(0.03f, () =>
             {
                 gameLogoRect.DOScale(Vector3.one, 0.5f).SetEasing(Ease.Type.BackOut).OnComplete(delegate
@@ -659,7 +657,6 @@ namespace CrystalUnbolt
             }
 
             gameLogoRect.DOScale(Vector3.zero, 0.3f).SetEasing(Ease.Type.CubicIn);
-            //  gameBG.GetComponent<Image>().DOFade(0f, 0.5f).OnComplete(() => gameBG.SetActive(false));
         }
 
         #endregion
@@ -675,7 +672,7 @@ namespace CrystalUnbolt
 
         #endregion
 
-        #region Top Bar and Bottom Buttons Combined Animations
+        #region Top Bar + Bottom Buttons
 
         private void AnimateTopBar()
         {
@@ -683,27 +680,20 @@ namespace CrystalUnbolt
             float staggerDelay = 0.06f;
             float duration = 0.4f;
 
-            // TOP 3 ELEMENTS - Simple fade and scale animation
-            // 1. Profile Panel (Left)
+            // Profile
             if (profilePanel != null)
-            {
                 AnimateTopElement(profilePanel, startDelay, duration);
-            }
 
-            // 2. Lives Panel (Center)
+            // Lives
             if (livesPanel != null)
-            {
                 AnimateTopElement(livesPanel, startDelay + staggerDelay, duration);
-            }
 
-            // 3. Coins Panel (Right)
+            // Coins
             if (coinsPanel != null)
             {
                 RectTransform coinRect = coinsPanel.transform as RectTransform;
                 if (coinRect != null)
-                {
                     AnimateTopElement(coinRect, startDelay + (staggerDelay * 2), duration);
-                }
             }
         }
 
@@ -711,23 +701,17 @@ namespace CrystalUnbolt
         {
             if (element == null) return;
 
-            // Store original position
             Vector3 originalPos = element.anchoredPosition;
 
-            // Start from slightly above (much less dramatic)
             element.anchoredPosition = new Vector3(originalPos.x, originalPos.y + 50f, 0);
             element.localScale = Vector3.zero;
 
-            // Slide down to original position with simple easing
             element.DOAnchorPos(originalPos, duration).SetDelay(delay).SetEase(DG.Tweening.Ease.OutCubic);
-
-            // Scale up smoothly without much bounce
             element.DOScale(Vector3.one, duration).SetDelay(delay).SetEasing(Ease.Type.CubicOut);
         }
 
         private void ResetBottomButtonPositions()
         {
-            // Reset button X positions to their saved positions (but keep them invisible for animation)
             ResetButtonPosition(settingButton);
             ResetButtonPosition(dailyBonusButton);
             // ResetButtonPosition(dailyGift_Plinko);
@@ -740,62 +724,15 @@ namespace CrystalUnbolt
             RectTransform buttonRect = button.Button.transform as RectTransform;
             if (buttonRect == null) return;
 
-            // Reset position to saved X position immediately, but keep invisible (scale 0)
-            button.Show(true); // This sets the correct X position
-            buttonRect.localScale = Vector3.zero; // But keep it invisible for animation
+            button.Show(true);            // restores original anchoredPosition
+            buttonRect.localScale = Vector3.zero;   // but keep invisible for animation
         }
 
-        private void AnimateBottomButtons()
-        {
-            float startDelay = 0.1f;
-            float staggerDelay = 0.06f;
-            float duration = 0.4f;
-
-            // ALL BOTTOM BUTTONS - Simple fade and scale animation
-            // 1. Settings Button (Leftmost)
-            AnimateBottomButton(settingButton, startDelay, duration);
-
-            // 2. Daily Bonus Button
-            AnimateBottomButton(dailyBonusButton, startDelay + staggerDelay, duration);
-
-            // 4. Daily Gift/Plinko Button
-            // AnimateBottomButton(dailyGift_Plinko, startDelay + (staggerDelay * 3), duration);
-        }
-
-        private void AnimateBottomButton(CrystalUIMainMenuButton button, float delay, float duration)
-        {
-            if (button == null || button.Button == null) return;
-
-            RectTransform buttonRect = button.Button.transform as RectTransform;
-            if (buttonRect == null) return;
-
-            // Make sure button is active
-            if (!button.Button.gameObject.activeInHierarchy)
-                button.Button.gameObject.SetActive(true);
-
-            // Kill any existing tweens on this button first
-            buttonRect.DOKill();
-
-            // Store the target position BEFORE modifying it
-            Vector2 targetPos = buttonRect.anchoredPosition;
-
-            // Now set starting position (slightly below) and scale to zero
-            buttonRect.anchoredPosition = new Vector2(targetPos.x, targetPos.y - 50f);
-            buttonRect.localScale = Vector3.zero;
-
-            // Animate both position and scale together with delay
-            Tween.DelayedCall(delay, () =>
-            {
-                // Slide up to target position
-                buttonRect.DOAnchorPos(targetPos, duration).SetEase(DG.Tweening.Ease.OutCubic);
-
-                // Scale up smoothly
-                buttonRect.DOScale(Vector3.one, duration).SetEasing(Ease.Type.CubicOut);
-            });
-        }
+        // Bottom button animation: simple scale pop + gentle idle pulse
+      
         #endregion
 
-        #region Ad Button Label
+        #region Ad Button
 
         private void ShowAdButton(bool immediately = false)
         {
@@ -815,20 +752,9 @@ namespace CrystalUnbolt
             }
         }
 
-        // IAP Purchase Handler - DISABLED (IAP Removed!)
-        /*
-        private void OnAdPurchased(ProductKeyType productKeyType)
-        {
-            if (productKeyType == ProductKeyType.NoAds)
-            {
-                HideAdButton(immediately: true);
-            }
-        }
-        */
-
         #endregion
 
-        #region Buttons (rest unchanged)
+        #region Buttons Logic
 
         private void PlayButton()
         {
@@ -840,9 +766,9 @@ namespace CrystalUnbolt
 
             Debug.Log("[MainMenu] Play button clicked - loading current level!");
 
-            // Load the current level directly (grid is already visible)
             OnPlayTriggered(CrystalLevelController.MaxReachedLevelIndex);
         }
+
         private void GamePlayButton()
         {
             SoundManager.PlaySound(SoundManager.AudioClips.buttonSound);
@@ -882,17 +808,14 @@ namespace CrystalUnbolt
                     }
                     else
                     {
-                        // User closed the panel without adding life - show grid
                         Debug.Log("[MainMenu] User closed lives panel - showing Grid Panel");
 
                         if (levelGrid != null)
                         {
-                            // Hide play button and logo first
                             HidePlayButton(true);
                             HideGameLogo(true);
                             HideTapToPlayButton(true);
 
-                            // Use the same method as the play button to show grid with animation
                             levelGrid.ShowLevelGrid();
 
                             Debug.Log("[MainMenu] Grid Panel shown with animation after lives panel closed");
@@ -906,27 +829,8 @@ namespace CrystalUnbolt
             }
         }
 
-        // IAP Store Button - DISABLED (IAP System Removed!)
-        /*
-        private void IAPStoreButton()
-        {
-            if (ScreenManager.GetPage<CrystalUIStore>().IsPageDisplayed)
-                return;
-
-            CrystalUILevelNumberText.Hide(true);
-            ScreenManager.CloseScreen<CrystalUIMainMenu>();
-            ScreenManager.DisplayScreen<CrystalUIStore>();
-            MyAdsAdapter.DestroyBanner();
-            // ScreenManager.PageClosed += OnIapStoreClosed; // IAP Disabled!
-            CrystalMapBehavior.DisableScroll();
-
-            SoundManager.PlaySound(SoundManager.AudioClips.buttonSound);
-#if MODULE_HAPTIC
-           Haptic.Play(Haptic.HAPTIC_HARD);
-#endif
-        }
-        */
         public CrystalUIProfilePage UIProfilePage;
+
         private void ProfileOpenButton()
         {
             var profilePage = ScreenManager.GetPage<CrystalUIProfilePage>();
@@ -952,6 +856,7 @@ namespace CrystalUnbolt
             Haptic.Play(Haptic.HAPTIC_HARD);
 #endif
         }
+
         private void DailyBonusButton()
         {
             if (ScreenManager.GetPage<CrystalUIDailyBonus>().IsPageDisplayed)
@@ -967,10 +872,8 @@ namespace CrystalUnbolt
 #if MODULE_HAPTIC
             Haptic.Play(Haptic.HAPTIC_HARD);
 #endif
-
-
-
         }
+
         private void DailyGift_PlinkoGame()
         {
             if (ScreenManager.GetPage<CrystalUIPlinko>().IsPageDisplayed)
@@ -978,7 +881,6 @@ namespace CrystalUnbolt
 
             ScreenManager.CloseScreen<CrystalUIMainMenu>();
             ScreenManager.DisplayScreen<CrystalUIPlinko>();
-            // ScreenManager.PageClosed += OnDailySpinClosed;
             CrystalMapBehavior.DisableScroll();
 
             SoundManager.PlaySound(SoundManager.AudioClips.buttonSound);
@@ -986,6 +888,7 @@ namespace CrystalUnbolt
             Haptic.Play(Haptic.HAPTIC_HARD);
 #endif
         }
+
         private void SkinsStoreButton()
         {
             if (ScreenManager.GetPage<CrystalUISkinStore>().IsPageDisplayed)
@@ -994,7 +897,7 @@ namespace CrystalUnbolt
             CrystalUILevelNumberText.Hide(true);
             ScreenManager.CloseScreen<CrystalUIMainMenu>();
             ScreenManager.DisplayScreen<CrystalUISkinStore>();
-            ScreenManager.PageClosed += OnSkinStoreClosed; // Re-enabled for Skin Store
+            ScreenManager.PageClosed += OnSkinStoreClosed;
             CrystalMapBehavior.DisableScroll();
 
             SoundManager.PlaySound(SoundManager.AudioClips.buttonSound);
@@ -1005,18 +908,15 @@ namespace CrystalUnbolt
 
         private void LeaderBoardButton()
         {
-            // Check if user is logged in
             bool isLoggedIn = authManager != null && authManager.CurrentUser != null;
 
             if (!isLoggedIn)
             {
-                // User not logged in - show "Please Login First" message
                 SoundManager.PlaySound(SoundManager.AudioClips.buttonSound);
                 ShowPleaseLoginMessage();
                 return;
             }
 
-            // User is logged in - open leaderboard
             if (ScreenManager.GetPage<CrystalUILeaderBoard>().IsPageDisplayed)
                 return;
 
@@ -1032,20 +932,14 @@ namespace CrystalUnbolt
 #endif
         }
 
-        /// <summary>
-        /// Show "Please Login First" text for 2 seconds
-        /// </summary>
         private void ShowPleaseLoginMessage()
         {
             if (pleaseLoginText == null) return;
 
-            // Cancel any existing coroutine
             StopCoroutine(nameof(HidePleaseLoginTextAfterDelay));
 
-            // Show text
             pleaseLoginText.gameObject.SetActive(true);
 
-            // Hide after 2 seconds
             StartCoroutine(HidePleaseLoginTextAfterDelay());
         }
 
@@ -1056,9 +950,6 @@ namespace CrystalUnbolt
                 pleaseLoginText.gameObject.SetActive(false);
         }
 
-        /// <summary>
-        /// Update leaderboard button sprite based on login status
-        /// </summary>
         private void UpdateLeaderboardButtonState()
         {
             if (leaderBoardButton.Button == null) return;
@@ -1070,19 +961,16 @@ namespace CrystalUnbolt
 
             if (isLoggedIn)
             {
-                // User logged in - show unlocked sprite
                 if (leaderboardUnlockedSprite != null)
                     buttonImage.sprite = leaderboardUnlockedSprite;
             }
             else
             {
-                // User not logged in - show locked sprite
                 if (leaderboardLockedSprite != null)
                     buttonImage.sprite = leaderboardLockedSprite;
             }
         }
 
-        // Skin Store Closed Handler - Re-enabled (IAP Store remains disabled)
         private void OnSkinStoreClosed(BaseScreen page, System.Type pageType)
         {
             if (pageType.Equals(typeof(CrystalUISkinStore)))
@@ -1093,6 +981,7 @@ namespace CrystalUnbolt
                 MyAdsAdapter.HideBanner();
             }
         }
+
         private void OnDailyBonusClosed(BaseScreen page, System.Type pageType)
         {
             if (pageType.Equals(typeof(CrystalUIDailyBonus)))
@@ -1101,9 +990,9 @@ namespace CrystalUnbolt
                 CrystalMapBehavior.EnableScroll();
                 ScreenManager.DisplayScreenReturn<CrystalUIMainMenu>();
                 MyAdsAdapter.HideBanner();
-
             }
         }
+
         private void OnDailySpinClosed(BaseScreen page, System.Type pageType)
         {
             if (pageType.Equals(typeof(CrystalUIDailySpin)))
@@ -1112,9 +1001,9 @@ namespace CrystalUnbolt
                 CrystalMapBehavior.EnableScroll();
                 ScreenManager.DisplayScreenReturn<CrystalUIMainMenu>();
                 MyAdsAdapter.HideBanner();
-
             }
         }
+
         private void OnProfilePanelClose(BaseScreen page, System.Type pageType)
         {
             if (pageType.Equals(typeof(CrystalUIProfilePage)))
@@ -1123,7 +1012,6 @@ namespace CrystalUnbolt
                 CrystalMapBehavior.EnableScroll();
                 ScreenManager.DisplayScreenReturn<CrystalUIMainMenu>();
                 MyAdsAdapter.HideBanner();
-
             }
         }
 
@@ -1141,32 +1029,8 @@ namespace CrystalUnbolt
         // IAP REMOVED - No Ads button functionality disabled
         private void NoAdButton()
         {
-            // Do nothing - IAP removed
             Debug.Log("[CrystalUIMainMenu] No Ads feature has been removed from this version.");
             return;
-
-            /*
-            try
-            {
-                if (noAdsPopUp != null)
-                {
-                    noAdsPopUp.Show();
-                }
-                else
-                {
-                    Debug.LogWarning("[CrystalUIMainMenu] noAdsPopUp is null, cannot show popup");
-                }
-            }
-            catch (System.Exception e)
-            {
-                Debug.LogError($"[CrystalUIMainMenu] Error showing No Ads popup: {e.Message}");
-            }
-
-            SoundManager.PlaySound(SoundManager.AudioClips.buttonSound);
-#if MODULE_HAPTIC
-           Haptic.Play(Haptic.HAPTIC_HARD);
-#endif
-            */
         }
 
         private void AddCoinsButton()

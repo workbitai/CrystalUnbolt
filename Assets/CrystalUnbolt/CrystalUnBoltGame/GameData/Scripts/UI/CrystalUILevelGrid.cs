@@ -26,7 +26,14 @@ namespace CrystalUnbolt
         [SerializeField] private float animationDuration = 0.3f; // Faster panel animation
         [SerializeField] private float buttonStaggerDelay = 0.02f; // Delay between each button appearing
 
+        [Header("Coming Soon Button")]
+        [SerializeField] private GameObject comingSoonButtonPrefab; // Prefab for "Coming Soon" button (similar to level button)
+        [SerializeField] private string comingSoonText = "Coming Soon.."; // Text to display on the button
+        [SerializeField, Tooltip("Always show the Coming Soon button, ignoring level completion & infinite mode.")]
+        private bool alwaysShowComingSoonButton = true;
+
         private List<CrystalMapLevelBehavior> spawnedButtons = new List<CrystalMapLevelBehavior>();
+        private GameObject comingSoonButton; // Reference to the "Coming Soon" button
         private bool isInitialized = false;
         private Vector2 lastScreenSize;
 
@@ -110,6 +117,9 @@ namespace CrystalUnbolt
             
             // Play opening animation
             PlayShowAnimation();
+            
+            // Check if all levels are complete and add Coming Soon button
+            CheckAndAddComingSoonButton();
         }
 
         public void RefreshLevels()
@@ -117,6 +127,33 @@ namespace CrystalUnbolt
             // Refresh levels to update lock/unlock states
             Debug.Log("[LevelGrid] Refreshing levels...");
             GenerateLevelButtons();
+            
+            // Check if all levels are complete and add Coming Soon button
+            CheckAndAddComingSoonButton();
+        }
+
+        /// <summary>
+        /// Public method to manually check and update the coming soon button.
+        /// Useful for testing or calling after level completion.
+        /// </summary>
+        public void UpdateComingSoonButton()
+        {
+            CheckAndAddComingSoonButton();
+        }
+
+        /// <summary>
+        /// Force create the Coming Soon button for testing purposes.
+        /// </summary>
+        [ContextMenu("Force Create Coming Soon Button")]
+        public void ForceCreateComingSoonButton()
+        {
+            Debug.Log("[LevelGrid] Force creating Coming Soon button (manual trigger)");
+            if (comingSoonButton != null)
+            {
+                Destroy(comingSoonButton);
+                comingSoonButton = null;
+            }
+            CreateComingSoonButton();
         }
 
         public void ShowGridOnMainMenu()
@@ -188,6 +225,9 @@ namespace CrystalUnbolt
                 Debug.LogWarning("[LevelGrid] Database not ready in ShowGridOnMainMenu, starting retry...");
                 StartCoroutine(WaitForDatabaseAndGenerate());
             }
+            
+            // Check if all levels are complete and show message
+            CheckAndShowNewLevelsMessage();
             
             Debug.Log($"[LevelGrid] FINAL STATE - Canvas: {canvas?.enabled}, Alpha: {canvasGroup?.alpha}, Scale: {(panelRectTransform != null ? panelRectTransform.localScale : transform.localScale)}, GameObject active: {gameObject.activeSelf}, Levels: {spawnedButtons.Count}");
         }
@@ -420,6 +460,9 @@ namespace CrystalUnbolt
             
             Debug.Log($"[LevelGrid] Generated {spawnedButtons.Count} level buttons successfully!");
             
+            // Check if all levels are complete and add "Coming Soon" button
+            CheckAndAddComingSoonButton();
+            
             // Scroll to show current level after generation
             StartCoroutine(ScrollToCurrentLevelDelayed());
         }
@@ -588,6 +631,206 @@ namespace CrystalUnbolt
                     Destroy(btn.gameObject);
             }
             spawnedButtons.Clear();
+            
+            // Clear coming soon button
+            if (comingSoonButton != null)
+            {
+                Destroy(comingSoonButton);
+                comingSoonButton = null;
+            }
+        }
+
+        private void CheckAndAddComingSoonButton()
+        {
+            if (CrystalLevelController.Database == null)
+            {
+                Debug.LogWarning("[LevelGrid] Database is null, cannot check level completion");
+                return;
+            }
+
+            int totalLevels = CrystalLevelController.Database.AmountOfLevels;
+            int displayedLevel = CrystalLevelController.DisplayedLevelIndex;
+            int maxReachedLevel = CrystalLevelController.MaxReachedLevelIndex;
+            
+            // Check if all levels are complete
+            // Levels are 0-indexed, so last level index is (totalLevels - 1)
+            // When last level (index totalLevels-1) is completed:
+            // - DisplayLevelIndex becomes totalLevels (incremented after completion)
+            // - MaxReachedLevelIndex becomes totalLevels but gets clamped to totalLevels - 1
+            // So we check both conditions:
+            bool allLevelsComplete = displayedLevel >= totalLevels || 
+                                     maxReachedLevel >= totalLevels - 1;
+
+            bool infiniteLevels = CrystalGameManager.Data != null && CrystalGameManager.Data.InfiniteLevels;
+            bool shouldShow = alwaysShowComingSoonButton || (!infiniteLevels && allLevelsComplete);
+
+            Debug.Log($"[LevelGrid] Checking for Coming Soon button: MaxReached={maxReachedLevel}, Displayed={displayedLevel}, Total={totalLevels}, AllComplete={allLevelsComplete}, Infinite={infiniteLevels}, AlwaysShow={alwaysShowComingSoonButton}, ShouldShow={shouldShow}");
+
+            if (shouldShow)
+            {
+                Debug.Log("[LevelGrid] All conditions met! Creating Coming Soon button...");
+                CreateComingSoonButton();
+            }
+            else
+            {
+                RemoveComingSoonButton();
+            }
+        }
+
+        private void CreateComingSoonButton()
+        {
+            // If already exists, don't create again
+            if (comingSoonButton != null)
+            {
+                Debug.Log("[LevelGrid] Coming Soon button already exists");
+                return;
+            }
+
+            if (gridContainer == null)
+            {
+                Debug.LogError("[LevelGrid] Grid container is NULL! Cannot create Coming Soon button.");
+                return;
+            }
+
+            GameObject prefabToUse = comingSoonButtonPrefab != null ? comingSoonButtonPrefab : levelButtonPrefab;
+            
+            if (prefabToUse == null)
+            {
+                Debug.LogError("[LevelGrid] Both comingSoonButtonPrefab and levelButtonPrefab are null! Cannot create Coming Soon button. Please assign at least one prefab in Inspector.");
+                return;
+            }
+
+            Debug.Log($"[LevelGrid] Instantiating Coming Soon button from prefab: {prefabToUse.name}");
+            comingSoonButton = Instantiate(prefabToUse, gridContainer);
+            comingSoonButton.name = "ComingSoonButton"; // Rename for clarity
+            
+            Debug.Log("[LevelGrid] Coming Soon button instantiated successfully");
+
+            // Setup the button
+            SetupComingSoonButton(comingSoonButton);
+            
+            // Animate the button appearance
+            AnimateComingSoonButton();
+            
+            Debug.Log("[LevelGrid] Coming Soon button setup complete!");
+        }
+
+        private void SetupComingSoonButton(GameObject buttonObj)
+        {
+            if (buttonObj == null)
+            {
+                Debug.LogError("[LevelGrid] buttonObj is null in SetupComingSoonButton!");
+                return;
+            }
+
+            Debug.Log("[LevelGrid] Setting up Coming Soon button...");
+
+            // Get or add components
+            Button button = buttonObj.GetComponent<Button>();
+            if (button == null)
+            {
+                button = buttonObj.AddComponent<Button>();
+                Debug.Log("[LevelGrid] Added Button component to Coming Soon button");
+            }
+
+            // Find text component and update it
+            TextMeshProUGUI textComponent = buttonObj.GetComponentInChildren<TextMeshProUGUI>(true); // Include inactive
+            if (textComponent == null)
+            {
+                // Try to find by common names
+                Transform[] allChildren = buttonObj.GetComponentsInChildren<Transform>(true);
+                foreach (Transform child in allChildren)
+                {
+                    TextMeshProUGUI tmp = child.GetComponent<TextMeshProUGUI>();
+                    if (tmp != null)
+                    {
+                        textComponent = tmp;
+                        break;
+                    }
+                }
+            }
+
+            if (textComponent != null)
+            {
+                textComponent.text = comingSoonText;
+                Debug.Log($"[LevelGrid] Updated Coming Soon button text to: {comingSoonText}");
+            }
+            else
+            {
+                Debug.LogWarning("[LevelGrid] Could not find TextMeshProUGUI component in Coming Soon button! Text may not be updated.");
+            }
+
+            // Make button clickable but show message on click
+            button.interactable = true;
+            button.onClick.RemoveAllListeners();
+            button.onClick.AddListener(() =>
+            {
+                SoundManager.PlaySound(SoundManager.AudioClips.buttonSound);
+#if MODULE_HAPTIC
+                Haptic.Play(Haptic.HAPTIC_HARD);
+#endif
+                Debug.Log("[LevelGrid] Coming Soon button clicked - New levels are coming soon!");
+            });
+
+            // Disable level behavior if it exists to prevent level loading
+            CrystalMapLevelBehavior levelBehavior = buttonObj.GetComponent<CrystalMapLevelBehavior>();
+            if (levelBehavior != null)
+            {
+                levelBehavior.enabled = false;
+                Debug.Log("[LevelGrid] Disabled CrystalMapLevelBehavior on Coming Soon button");
+            }
+
+            // Disable any level click handlers
+            CrystalMapLevelAbstractBehavior abstractBehavior = buttonObj.GetComponent<CrystalMapLevelAbstractBehavior>();
+            if (abstractBehavior != null)
+            {
+                abstractBehavior.enabled = false;
+                Debug.Log("[LevelGrid] Disabled CrystalMapLevelAbstractBehavior on Coming Soon button");
+            }
+
+            Debug.Log("[LevelGrid] Coming Soon button setup complete!");
+        }
+
+        private void AnimateComingSoonButton()
+        {
+            if (comingSoonButton == null) return;
+
+            RectTransform rect = comingSoonButton.GetComponent<RectTransform>();
+            if (rect != null)
+            {
+                rect.localScale = Vector3.zero;
+                
+                // Calculate delay based on button index (after all level buttons)
+                float delay = spawnedButtons.Count * buttonStaggerDelay;
+                
+                rect.DOScale(Vector3.one, 0.25f)
+                    .SetDelay(delay)
+                    .SetEasing(Ease.Type.BackOut)
+                    .OnComplete(() =>
+                    {
+                        // Add gentle pulse animation
+                        rect.transform.DOPingPongScale(1.0f, 1.05f, 0.9f,
+                            Ease.Type.QuadIn, Ease.Type.QuadOut, unscaledTime: true);
+                    });
+            }
+        }
+
+        private void RemoveComingSoonButton()
+        {
+            if (comingSoonButton != null)
+            {
+                Destroy(comingSoonButton);
+                comingSoonButton = null;
+                Debug.Log("[LevelGrid] Removed 'Coming Soon' button");
+            }
+        }
+
+        // Keep old methods for backward compatibility (but they won't be used)
+        private void CheckAndShowNewLevelsMessage()
+        {
+            // This method is now replaced by CheckAndAddComingSoonButton
+            // But keeping it for backward compatibility
+            CheckAndAddComingSoonButton();
         }
     }
 }

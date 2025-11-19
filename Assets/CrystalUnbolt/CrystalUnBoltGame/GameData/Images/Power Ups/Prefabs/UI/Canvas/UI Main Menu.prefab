@@ -1959,31 +1959,22 @@ MonoBehaviour:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
-        time: 0.0010876972
-        value: 0.0023277998
-        inSlope: 2.3251798
-        outSlope: 2.3251798
-        tangentMode: 0
+        time: 0
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 34
         weightedMode: 0
         inWeight: 0
-        outWeight: 0.027800104
+        outWeight: 0
       - serializedVersion: 3
-        time: 0.80164313
-        value: 1.0553293
-        inSlope: -0.0075463476
-        outSlope: -0.0075463476
-        tangentMode: 0
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 34
         weightedMode: 0
-        inWeight: 0.09091254
-        outWeight: 0.06290307
-      - serializedVersion: 3
-        time: 1.0007324
-        value: 0.99822235
-        inSlope: -0.64081717
-        outSlope: -0.64081717
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.14692812
+        inWeight: 0
         outWeight: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
@@ -2029,31 +2020,22 @@ MonoBehaviour:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
-        time: 0.0010876972
-        value: 0.0023277998
-        inSlope: 2.3251798
-        outSlope: 2.3251798
-        tangentMode: 0
+        time: 0
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 34
         weightedMode: 0
         inWeight: 0
-        outWeight: 0.027800104
+        outWeight: 0
       - serializedVersion: 3
-        time: 0.80164313
-        value: 1.0553293
-        inSlope: -0.0075463476
-        outSlope: -0.0075463476
-        tangentMode: 0
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 34
         weightedMode: 0
-        inWeight: 0.09091254
-        outWeight: 0.06290307
-      - serializedVersion: 3
-        time: 1.0007324
-        value: 0.99822235
-        inSlope: -0.64081717
-        outSlope: -0.64081717
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.14692812
+        inWeight: 0
         outWeight: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
@@ -6645,11 +6627,11 @@ RectTransform:
   - {fileID: 5185432449874267368}
   m_Father: {fileID: 769120103745565779}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.5}
-  m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 125, y: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -126, y: 0}
   m_SizeDelta: {x: 150, y: 148}
-  m_Pivot: {x: 0, y: 0.5}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6984521544257056923
 CanvasRenderer:
   m_ObjectHideFlags: 0

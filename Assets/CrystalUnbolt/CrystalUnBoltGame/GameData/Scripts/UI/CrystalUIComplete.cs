@@ -129,26 +129,26 @@ namespace CrystalUnbolt
 
         private IEnumerator CelebrationAnimationSequence()
         {
-            // Step 1: Animate stars one by one (0.5s)
+            // Step 1: Animate CONGRATS ribbon first
+            AnimateCongratsRibbon();
+            yield return new WaitForSeconds(0.6f);   // wait for the slide-in to feel complete
+
+            // Step 2: Animate stars one by one
             AnimateStars();
             yield return new WaitForSeconds(0.5f);
-            
-            // Step 2: Animate CONGRATS ribbon (0.3s)
-            AnimateCongratsRibbon();
-            yield return new WaitForSeconds(0.3f);
-            
-            // Step 3: Animate LEVEL COMPLETED text (0.3s)
+
+            // Step 3: Animate LEVEL COMPLETED text
             levelCompleteLabel.Show();
             yield return new WaitForSeconds(0.3f);
-            
+
             // Step 4: Show coins panel at top
             coinsPanelScalable.Show();
             yield return new WaitForSeconds(0.2f);
-            
+
             // Step 5: Show power-ups reward panel
             powerUpsRewardPanel.Show(CrystalLevelController.GetPUReward(), 0.5f);
             yield return new WaitForSeconds(0.3f);
-            
+
             // Step 6: Show reward and buttons
             if (currentReward > 0)
             {
@@ -159,13 +159,19 @@ namespace CrystalUnbolt
                         multiplyRewardButtonFade.Show();
                         multiplyRewardButton.interactable = true;
 
-                        FloatingCloud.SpawnCurrency(coinsHash, (RectTransform)rewardLabel.Transform, (RectTransform)coinsPanelScalable.Transform, 10, "", () =>
-                        {
-                            EconomyManager.Add(CurrencyType.Coins, currentReward);
-                            CrystalCloudProgressSync.PushLocalToCloud();
+                        FloatingCloud.SpawnCurrency(
+                            coinsHash,
+                            (RectTransform)rewardLabel.Transform,
+                            (RectTransform)coinsPanelScalable.Transform,
+                            10,
+                            "",
+                            () =>
+                            {
+                                EconomyManager.Add(CurrencyType.Coins, currentReward);
+                                CrystalCloudProgressSync.PushLocalToCloud();
 
-                            AnimateBottomButtons();
-                        });
+                                AnimateBottomButtons();
+                            });
                     });
                 });
             }
@@ -175,7 +181,8 @@ namespace CrystalUnbolt
                 AnimateBottomButtons();
             }
         }
-        
+
+
         private void AnimateStars()
         {
             if (stars == null || stars.Length == 0) return;

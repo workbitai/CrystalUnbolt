@@ -22,6 +22,7 @@ namespace CrystalUnbolt
         [SerializeField] float gizmoRadius;
         [SerializeField] float gizmoThickness;
         [SerializeField] Color gizmoColor;
+        [SerializeField] GameObject crystalPrefab;
         [SerializeField] GameObject screwPrefab;
         [SerializeField] List<CrystalPlankData> plankData;
         [SerializeField] Color[] layerColors;
@@ -36,6 +37,7 @@ namespace CrystalUnbolt
         private CrystalPlankLevelData[] plankDataCached;
 
         public GameObject Container { get => container; set => container = value; }
+        public GameObject CrystalPrefab { get => crystalPrefab; set => crystalPrefab = value; }
         public GameObject ScrewPrefab { get => screwPrefab; set => screwPrefab = value; }
         public List<CrystalPlankData> PlankData { get => plankData; set => plankData = value; }
         public bool IsQuickModeEnabled { get => isQuickModeEnabled; set => isQuickModeEnabled = value; }
@@ -516,10 +518,6 @@ namespace CrystalUnbolt
             holeDataCached = GetHoleData();
             plankDataCached = GetPlankData();
         }
-
-
-
-
 #endif
     }
 }

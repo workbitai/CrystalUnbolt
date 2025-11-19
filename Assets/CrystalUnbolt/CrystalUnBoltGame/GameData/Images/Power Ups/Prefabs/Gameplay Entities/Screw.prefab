@@ -394,6 +394,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: new_diamond
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b582ecea8d1f9344f9dfe895ff142c40,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -427,12 +432,12 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 2e6a69be9be1f3047bdcd46a11a9ef6e,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.9
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2e6a69be9be1f3047bdcd46a11a9ef6e,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.166
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2e6a69be9be1f3047bdcd46a11a9ef6e,
         type: 3}
@@ -482,7 +487,7 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 2e6a69be9be1f3047bdcd46a11a9ef6e,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
