@@ -21,7 +21,7 @@ MonoBehaviour:
     value: {fileID: 8300000, guid: 5a2441d0905455b41af915334218057d, type: 3}
   defaultAmount: 1
   description: Remove a plank from the board
-  requiredLevel: 1
+  requiredLevel: 2
   visualiseActiveState: 0
   backgroundColor: {r: 1, g: 1, b: 1, a: 1}
   purchaseOption: 2
