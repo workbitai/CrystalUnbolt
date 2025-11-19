@@ -1,6 +1,7 @@
 ﻿using Coffee.UIExtensions;
 using DG.Tweening;
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -92,6 +93,7 @@ namespace CrystalUnbolt
         private AnimCase gamePlayPingPong;
         private AnimCase gameLogoPingPong;
         private AnimCase showHideStoreAdButtonDelayTweenCase;
+        private readonly Dictionary<RectTransform, DG.Tweening.Tweener> bottomButtonIdleTweens = new Dictionary<RectTransform, DG.Tweening.Tweener>();
 
         [SerializeField] private ShinyEffectForUGUI[] shinies;
 
@@ -105,15 +107,6 @@ namespace CrystalUnbolt
         [SerializeField] Button profileButton;
         private Coroutine _photoLoadRoutine;
         private string _currentPhotoUrl;
-
-        private void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.F12))
-            {
-                ScreenCapture.CaptureScreenshot(
-                    "Assets/Screenshots/snap_" + System.DateTime.Now.ToString("HHmmss") + ".png");
-            }
-        }
 
         private void OnEnable()
         {
@@ -168,8 +161,8 @@ namespace CrystalUnbolt
             // iapStoreButton.Init(STORE_AD_RIGHT_OFFSET_X); // IAP Disabled!
             // noAdsButton.Init(STORE_AD_RIGHT_OFFSET_X); // Disabled - keep button at editor position
             // dailyGift_Plinko.Init(STORE_AD_RIGHT_OFFSET_X);
-            dailyBonusButton.Init(STORE_AD_RIGHT_OFFSET_X);
-            settingButton.Init(STORE_AD_RIGHT_OFFSET_X);
+          //  dailyBonusButton.Init(STORE_AD_RIGHT_OFFSET_X);
+           // settingButton.Init(STORE_AD_RIGHT_OFFSET_X);
             //  leaderBoardButton.Init(STORE_AD_RIGHT_OFFSET_X);
 
             dailyBonusButton.Button.onClick.AddListener(DailyBonusButton);
@@ -245,9 +238,9 @@ namespace CrystalUnbolt
             // Update leaderboard button state on show
             UpdateLeaderboardButtonState();
 
-            // Animate top bar (3 elements) and bottom buttons (2 buttons) together
+            // Animate top bar and bottom buttons
             AnimateTopBar();
-         
+            AnimateBottomButtons();
 
             // Show remaining buttons (only ad button now, all bottom buttons are animated)
             showHideStoreAdButtonDelayTweenCase = Tween.DelayedCall(0.5f, delegate
@@ -273,15 +266,7 @@ namespace CrystalUnbolt
                     {
                         shiny.Play(1f);
 
-                        IconAnimationHelper.PlayLockIconPremium(
-                            shiny.transform,
-                            duration: 2.2f,
-                            scaleUp: 1.08f,
-                            rotation: 4f,
-                            glowMin: 0.7f,
-                            glowMax: 1f,
-                            startDelay: 0.4f
-                        );
+                        // Only use the built-in shiny effect (no scaling/fading helpers)
                     }
                 }
 
@@ -464,10 +449,11 @@ namespace CrystalUnbolt
             }
 
             // Reset button positions first (in case they were moved off-screen)
-            ResetBottomButtonPositions();
+         //   ResetBottomButtonPositions();
 
-            // Animate top bar and bottom buttons when returning
+            // Animate top bar & bottom buttons when returning
             AnimateTopBar();
+            AnimateBottomButtons();
 
             showHideStoreAdButtonDelayTweenCase = Tween.DelayedCall(0.5f, delegate
             {
@@ -502,14 +488,14 @@ namespace CrystalUnbolt
 
             HideAdButton();
 
-            showHideStoreAdButtonDelayTweenCase = Tween.DelayedCall(0.1f, delegate
+           /* showHideStoreAdButtonDelayTweenCase = Tween.DelayedCall(0.1f, delegate
             {
                 // iapStoreButton.Hide(); // IAP Disabled!
                 dailyBonusButton.Hide();
                 //   dailyGift_Plinko.Hide();
                 settingButton.Hide();
                 // leaderBoardButton.Hide();
-            });
+            });*/
 
             CrystalMapLevelAbstractBehavior.OnLevelClicked -= OnLevelOnMapSelected;
 
@@ -712,24 +698,80 @@ namespace CrystalUnbolt
 
         private void ResetBottomButtonPositions()
         {
-            ResetButtonPosition(settingButton);
-            ResetButtonPosition(dailyBonusButton);
-            // ResetButtonPosition(dailyGift_Plinko);
+            RestoreButton(settingButton);
+            RestoreButton(dailyBonusButton);
         }
 
-        private void ResetButtonPosition(CrystalUIMainMenuButton button)
+        private void RestoreButton(CrystalUIMainMenuButton button)
         {
             if (button == null || button.Button == null) return;
 
             RectTransform buttonRect = button.Button.transform as RectTransform;
             if (buttonRect == null) return;
 
-            button.Show(true);            // restores original anchoredPosition
-            buttonRect.localScale = Vector3.zero;   // but keep invisible for animation
+            button.Show(true);
+            buttonRect.localScale = Vector3.one;
+            StopBottomButtonIdle(buttonRect);
         }
 
-        // Bottom button animation: simple scale pop + gentle idle pulse
-      
+        private void AnimateBottomButtons()
+        {
+            AnimateBottomButton(settingButton, 0f);
+            AnimateBottomButton(dailyBonusButton, 0.08f);
+        }
+
+        private void AnimateBottomButton(CrystalUIMainMenuButton button, float delay)
+        {
+            if (button == null || button.Button == null) return;
+
+            RectTransform rect = button.Button.transform as RectTransform;
+            if (rect == null) return;
+
+            button.Show(true);
+            rect.gameObject.SetActive(true);
+            StopBottomButtonIdle(rect);
+
+            rect.localScale = Vector3.one * 0.55f;
+
+            Sequence seq = DOTween.Sequence();
+            seq.SetDelay(delay);
+            seq.Append(DG.Tweening.ShortcutExtensions.DOScale(rect, Vector3.one * 1.08f, 0.25f)
+                .SetEase(DG.Tweening.Ease.OutBack));
+            seq.Append(DG.Tweening.ShortcutExtensions.DOScale(rect, Vector3.one, 0.18f)
+                .SetEase(DG.Tweening.Ease.InOutSine));
+            seq.OnComplete(() => StartBottomButtonIdle(rect));
+        }
+
+        private void StartBottomButtonIdle(RectTransform rect)
+        {
+            StopBottomButtonIdle(rect);
+
+            DG.Tweening.Tweener idleTween = DG.Tweening.ShortcutExtensions.DOScale(rect, Vector3.one * 1.03f, 0.75f)
+                .SetLoops(-1, LoopType.Yoyo)
+                .SetEase(DG.Tweening.Ease.InOutSine);
+
+            bottomButtonIdleTweens[rect] = idleTween;
+        }
+
+        private void StopBottomButtonIdle(RectTransform rect)
+        {
+            if (rect != null && bottomButtonIdleTweens.TryGetValue(rect, out DG.Tweening.Tweener tween))
+            {
+                tween?.Kill();
+                bottomButtonIdleTweens.Remove(rect);
+            }
+        }
+
+        private void StopAllBottomButtonIdles()
+        {
+            foreach (KeyValuePair<RectTransform, DG.Tweening.Tweener> pair in bottomButtonIdleTweens)
+            {
+                pair.Value?.Kill();
+            }
+
+            bottomButtonIdleTweens.Clear();
+        }
+
         #endregion
 
         #region Ad Button

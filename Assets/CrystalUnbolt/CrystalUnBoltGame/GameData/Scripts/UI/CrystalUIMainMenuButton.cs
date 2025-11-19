@@ -1,6 +1,5 @@
 #pragma warning disable 0618
 
-using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,71 +8,40 @@ namespace CrystalUnbolt
     [System.Serializable]
     public class CrystalUIMainMenuButton
     {
-        [SerializeField] RectTransform rect;
+      //  [SerializeField] RectTransform rect;
         [SerializeField] Button button;
         public Button Button => button;
-
-        [Space]
-        [SerializeField] AnimationCurve showStoreAdButtonsCurve;
-        [SerializeField] AnimationCurve hideStoreAdButtonsCurve;
-        [SerializeField] float showHideDuration;
 
         private float savedRectPosX;
         private float rectXPosBehindOfTheScreen;
 
-        private AnimCase showHideCase;
-
         public void Init(float rectXPosBehindOfTheScreen)
         {
             this.rectXPosBehindOfTheScreen = rectXPosBehindOfTheScreen;
-            savedRectPosX = rect.anchoredPosition.x;
+           // savedRectPosX = rect.anchoredPosition.x;
         }
 
         public void Show(bool immediately = false)
         {
-            if (showHideCase != null && showHideCase.IsActive) return;
-
-            if (immediately)
-            {
-                rect.anchoredPosition = rect.anchoredPosition.SetX(savedRectPosX);
-                return;
-            }
-
-            //RESET
-            rect.anchoredPosition = rect.anchoredPosition.SetX(rectXPosBehindOfTheScreen);
-
-            showHideCase = rect.DOAnchoredPosition(rect.anchoredPosition.SetX(savedRectPosX), showHideDuration).SetCurveEasing(showStoreAdButtonsCurve);
+            SetPosition(savedRectPosX);
+           // rect.localScale = Vector3.one;
         }
 
         public void Hide(bool immediately = false)
         {
-            if (showHideCase != null && showHideCase.IsActive) return;
-
-            if (immediately)
-            {
-                rect.anchoredPosition = rect.anchoredPosition.SetX(rectXPosBehindOfTheScreen);
-                return;
-            }
-
-            //RESET
-            rect.anchoredPosition = rect.anchoredPosition.SetX(savedRectPosX);
-
-            showHideCase = rect.DOAnchoredPosition(rect.anchoredPosition.SetX(rectXPosBehindOfTheScreen), showHideDuration).SetCurveEasing(hideStoreAdButtonsCurve);
+            SetPosition(rectXPosBehindOfTheScreen);
         }
 
         public void HideWithPop(bool immediately = false)
         {
-            if (showHideCase != null && showHideCase.IsActive)
-                showHideCase.Kill();
+           // rect.localScale = Vector3.zero;
+        }
 
-            if (immediately)
-            {
-                rect.localScale = Vector3.zero;
-                return;
-            }
-
-            // ???? 1 ? 0 ?? smooth shrink
-            showHideCase = rect.DOScale(Vector3.zero, 0.3f);
+        private void SetPosition(float xPos)
+        {
+          //  Vector2 pos = rect.anchoredPosition;
+        //    pos.x = xPos;
+          //  rect.anchoredPosition = pos;
         }
 
 

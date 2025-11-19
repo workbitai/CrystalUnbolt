@@ -347,15 +347,11 @@ public static class IconAnimationHelper
                                            float rotation = 4f,
                                            float glowMin = 0.7f,
                                            float glowMax = 1f,
-                                           float startDelay = 0f)
+                                           float startDelay = 0f,
+                                           bool glowOnly = false)
     {
         if (target == null) return null;
 
-        // Reset
-        target.localScale = Vector3.one * 0.7f;
-        target.localRotation = Quaternion.identity;
-
-        // Glow via CanvasGroup
         CanvasGroup glow = target.GetComponent<CanvasGroup>();
         if (glow == null)
             glow = target.gameObject.AddComponent<CanvasGroup>();
@@ -367,24 +363,33 @@ public static class IconAnimationHelper
         if (startDelay > 0)
             seq.AppendInterval(startDelay);
 
-        // Step 1 � soft upscale + tilt
+        if (glowOnly)
+        {
+            seq.Append(glow.DOFade(glowMin, duration * 0.5f).SetEase(Ease.InOutSine));
+            seq.Append(glow.DOFade(glowMax, duration * 0.5f).SetEase(Ease.InOutSine));
+            seq.SetLoops(-1, LoopType.Restart);
+            return seq;
+        }
+
+        // Reset
+        target.localScale = Vector3.one * 0.7f;
+        target.localRotation = Quaternion.identity;
+
+        // Step 1 – soft upscale + tilt
         seq.Append(target.DOScale(Vector3.one * 0.9f * scaleUp, duration * 0.25f).SetEase(Ease.OutQuad));
         seq.Join(target.DOLocalRotate(new Vector3(0, 0, rotation), duration * 0.25f).SetEase(Ease.OutQuad));
-        //  seq.Join(glow.DOFade(glowMax, duration * 0.25f));
 
-        // Step 2 � settle back to normal
+        // Step 2 – settle back to normal
         seq.Append(target.DOScale(Vector3.one * 0.7f, duration * 0.25f).SetEase(Ease.OutBack));
         seq.Join(target.DOLocalRotate(Vector3.zero, duration * 0.25f).SetEase(Ease.OutQuad));
 
-        // Step 3 � subtle breathing dip
+        // Step 3 – subtle breathing dip
         seq.Append(target.DOScale(Vector3.one * 0.8f * 0.97f, duration * 0.20f).SetEase(Ease.InOutSine));
-        // seq.Join(glow.DOFade(glowMin, duration * 0.20f));
 
-        // Step 4 � smooth restore
+        // Step 4 – smooth restore
         seq.Append(target.DOScale(Vector3.one * 0.7f, duration * 0.15f).SetEase(Ease.OutSine));
-        //  seq.Join(glow.DOFade(glowMax, duration * 0.15f));
 
-        // Step 5 � pause
+        // Step 5 – pause
         seq.AppendInterval(duration * 0.15f);
 
         seq.SetLoops(-1, LoopType.Restart);
