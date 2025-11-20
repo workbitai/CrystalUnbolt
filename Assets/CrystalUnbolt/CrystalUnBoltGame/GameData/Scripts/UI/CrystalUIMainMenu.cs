@@ -90,10 +90,10 @@ namespace CrystalUnbolt
         // private UIScaleAnimation coinsLabelScalable; // Animation removed
 
         private AnimCase tapToPlayPingPong;
-        private AnimCase gamePlayPingPong;
         private AnimCase gameLogoPingPong;
         private AnimCase showHideStoreAdButtonDelayTweenCase;
         private readonly Dictionary<RectTransform, DG.Tweening.Tweener> bottomButtonIdleTweens = new Dictionary<RectTransform, DG.Tweening.Tweener>();
+        private Coroutine playButtonHideRoutine;
 
         [SerializeField] private ShinyEffectForUGUI[] shinies;
 
@@ -554,49 +554,76 @@ namespace CrystalUnbolt
 
         public void ShowPlayButton(bool immediately = false)
         {
-            if (gamePlayPingPong != null && gamePlayPingPong.IsActive)
-                gamePlayPingPong.Kill();
+            RectTransform target = GetPlayButtonRect();
+            if (target == null) return;
 
             if (immediately)
             {
-                gamePlayRect.localScale = Vector3.one;
-
-                gamePlayPingPong = gamePlayRect.transform.DOPingPongScale(1.0f, 1.05f, 0.9f,
-                    Ease.Type.QuadIn, Ease.Type.QuadOut, unscaledTime: true);
-
+                target.localScale = Vector3.one;
                 return;
             }
 
-            // SIMPLE ANIMATION: Only clockwise rotation
-            gamePlayRect.localScale = Vector3.one; // Keep normal scale
-            gamePlayRect.localRotation = Quaternion.Euler(0, 0, 360f); // Start rotated 360 degrees
-
-            // Rotate clockwise to normal position
-            Tween.DelayedCall(0.3f, () =>
-            {
-                gamePlayRect.DOLocalRotate(Vector3.zero, 0.5f).SetEasing(Ease.Type.CubicOut).OnComplete(delegate
-                {
-                    // Start breathing pulse after rotation
-                    gamePlayPingPong = gamePlayRect.transform.DOPingPongScale(1.0f, 1.05f, 0.9f,
-                        Ease.Type.QuadIn, Ease.Type.QuadOut, unscaledTime: true);
-                });
-            });
+            target.localScale = Vector3.zero;
+            DOTween.Kill(target);
+            DG.Tweening.ShortcutExtensions.DOScale(target, Vector3.one, 0.3f)
+                .SetEase(DG.Tweening.Ease.OutBack);
         }
 
         public void HidePlayButton(bool immediately = false)
         {
-            if (gamePlayPingPong != null && gamePlayPingPong.IsActive)
-                gamePlayPingPong.Kill();
+            RectTransform target = GetPlayButtonRect();
+            if (target == null) return;
 
             if (immediately)
             {
-                gamePlayRect.localScale = Vector3.zero;
-                gamePlayRect.localRotation = Quaternion.identity;
+                target.localScale = Vector3.zero;
+                target.localRotation = Quaternion.identity;
                 return;
             }
 
-            gamePlayRect.DOScale(Vector3.zero, 0.3f).SetEasing(Ease.Type.CubicIn);
-            gamePlayRect.localRotation = Quaternion.identity; // Reset rotation on hide
+            DOTween.Kill(target);
+            DG.Tweening.ShortcutExtensions.DOScale(target, Vector3.zero, 0.2f)
+                .SetEase(DG.Tweening.Ease.InBack);
+            target.localRotation = Quaternion.identity; // Reset rotation on hide
+        }
+
+        private void TriggerPlayButtonShrink()
+        {
+            RectTransform target = GetPlayButtonRect();
+            if (target == null) return;
+
+            if (playButtonHideRoutine != null)
+                StopCoroutine(playButtonHideRoutine);
+
+            playButtonHideRoutine = StartCoroutine(ShrinkPlayButtonAfterFeedback(target));
+        }
+
+        private IEnumerator ShrinkPlayButtonAfterFeedback(RectTransform target)
+        {
+            yield return new WaitForSeconds(0.32f);
+
+            if (target != null)
+            {
+                DOTween.Kill(target);
+                DG.Tweening.ShortcutExtensions.DOScale(target, Vector3.zero, 0.22f)
+                    .SetEase(DG.Tweening.Ease.InBack);
+            }
+
+            if (playButton != null)
+                playButton.interactable = false;
+
+            playButtonHideRoutine = null;
+        }
+
+        private RectTransform GetPlayButtonRect()
+        {
+            if (gamePlayRect != null)
+                return gamePlayRect;
+
+            if (playButton != null)
+                return playButton.transform as RectTransform;
+
+            return null;
         }
 
         #endregion
@@ -805,6 +832,7 @@ namespace CrystalUnbolt
 #if MODULE_HAPTIC
             Haptic.Play(Haptic.HAPTIC_HARD);
 #endif
+            TriggerPlayButtonShrink();
 
             Debug.Log("[MainMenu] Play button clicked - loading current level!");
 

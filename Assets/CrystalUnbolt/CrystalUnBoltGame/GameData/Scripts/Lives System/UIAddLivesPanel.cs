@@ -19,6 +19,8 @@ namespace CrystalUnbolt
         [Header("Buttons")]
         [SerializeField] private Button button;
         [SerializeField] private Button closeButton;
+        [SerializeField] private Button coinButton;
+        [SerializeField] private TMP_Text coinButtonLabel;
 
         [Header("Lives UI")]
         [SerializeField] private GameObject timerGameObject;
@@ -27,26 +29,41 @@ namespace CrystalUnbolt
         [SerializeField] private TMP_Text timeText;
         [SerializeField] private AudioClip lifeRecievedAudio;
 
+        [Header("Coin Purchase")]
+        [SerializeField] private MyLivesConfig livesConfig;
+        [SerializeField] private int fallbackCoinCost = 100;
+        [SerializeField] private CurrencyType coinCurrencyType = CurrencyType.Coins;
+
         private Vector2 showPos;   // anchoredPosition at show
         private Color backColor;
 
         public bool IsOpened => canvas.enabled;
 
         private SimpleBoolCallback panelClosed;
+        private Currency coinCurrency;
+        private bool loggedMissingCurrencyManager;
 
         // --- DOTween pulse state ---
         private DG.Tweening.Tween adButtonLoop;
         private Vector3 adButtonInitScale;
+        private DG.Tweening.Tween coinButtonLoop;
+        private Vector3 coinButtonInitScale;
 
         private void OnEnable()
         {
             CrystalLivesSystem.StatusChanged += OnStatusChanged;
+            SubscribeToCoinCurrency();
+
+            if (coinButton != null && coinButtonInitScale == default)
+                coinButtonInitScale = coinButton.transform.localScale;
         }
 
         private void OnDisable()
         {
             CrystalLivesSystem.StatusChanged -= OnStatusChanged;
             StopAdButtonPulse(); // ensure kill when disabled
+            StopCoinButtonPulse();
+            UnsubscribeFromCoinCurrency();
         }
 
         public override void Init()
@@ -56,12 +73,18 @@ namespace CrystalUnbolt
 
             if (button != null) button.onClick.AddListener(OnButtonClick);
             if (closeButton != null) closeButton.onClick.AddListener(OnCloseButtonClicked);
+            if (coinButton != null) coinButton.onClick.AddListener(OnCoinButtonClick);
 
             OnStatusChanged(CrystalLivesSystem.Status);
 
             if (adbutton != null) adButtonInitScale = adbutton.localScale;
 
             panelClosed = null;
+
+            UpdateCoinButtonUI();
+
+            if (coinButton != null && coinButtonInitScale == default)
+                coinButtonInitScale = coinButton.transform.localScale;
         }
 
         public override void PlayShowAnimationMainReturn() { }
@@ -89,11 +112,13 @@ namespace CrystalUnbolt
             if (button != null) PopupHelper.ShowPopup(button.transform);
 
             StartAdButtonPulse(); // start continuous zoom
+            StartCoinButtonPulse();
         }
 
         public override void PlayHideAnimation()
         {
             StopAdButtonPulse();
+            StopCoinButtonPulse();
 
             if (backgroundImage != null)
                 backgroundImage.DOColor(Color.clear, 0.3f);
@@ -134,6 +159,8 @@ namespace CrystalUnbolt
                 if (timerGameObject) timerGameObject.SetActive(false);
                 if (fullGameObject) fullGameObject.SetActive(true);
             }
+
+            RefreshCoinButtonState();
         }
 
         public void OnCloseButtonClicked()
@@ -166,6 +193,46 @@ namespace CrystalUnbolt
             });
         }
 
+        private void OnCoinButtonClick()
+        {
+            if (!CoinRefillEnabled())
+                return;
+
+#if MODULE_HAPTIC
+            Haptic.Play(Haptic.HAPTIC_MEDIUM);
+#endif
+
+            if (CrystalLivesSystem.IsFull)
+            {
+                RefreshCoinButtonState();
+                return;
+            }
+
+            int cost = GetCoinCost();
+            if (!EnsureCoinCurrency())
+            {
+                RefreshCoinButtonState();
+                return;
+            }
+
+            if (coinCurrency.Amount < cost)
+            {
+                Debug.Log("[AddLivesPanel] Not enough coins to buy life.");
+                RefreshCoinButtonState();
+                return;
+            }
+
+            EconomyManager.Substract(coinCurrencyType, cost);
+
+            CrystalLivesSystem.AddLife(1);
+
+            if (lifeRecievedAudio != null)
+                SoundManager.PlaySound(lifeRecievedAudio);
+
+            panelClosed?.Invoke(true);
+            ScreenManager.CloseScreen<CrystalUIAddLivesPanel>();
+        }
+
         // ===== Static helpers =====
         public static void Show(SimpleBoolCallback onPanelClosed = null)
         {
@@ -191,7 +258,7 @@ namespace CrystalUnbolt
         /// <summary>
         /// adbutton par continuous zoom in/out pulse start kare.
         /// </summary>
-        public void StartAdButtonPulse(float targetScale = 1.10f, float duration = 0.25f)
+        public void StartAdButtonPulse(float targetScale = 1.10f, float duration = 0.35f)
         {
             StopAdButtonPulse();
             if (adbutton == null) return;
@@ -224,5 +291,137 @@ namespace CrystalUnbolt
         }
 
         #endregion
+
+        #region Coin Button Animation
+
+        public void StartCoinButtonPulse(float targetScale = 1.08f, float duration = 0.45f)
+        {
+            StopCoinButtonPulse();
+            if (coinButton == null || !coinButton.gameObject.activeInHierarchy) return;
+
+            RectTransform coinRect = coinButton.transform as RectTransform;
+            if (coinRect == null) return;
+
+            if (coinButtonInitScale == default)
+                coinButtonInitScale = coinRect.localScale;
+
+            coinRect.localScale = coinButtonInitScale;
+
+            coinButtonLoop = DG.Tweening.ShortcutExtensions
+                .DOScale(coinRect, coinButtonInitScale * targetScale, duration)
+                .SetEase(DG.Tweening.Ease.InOutSine)
+                .SetLoops(-1, DG.Tweening.LoopType.Yoyo)
+                .SetUpdate(true)
+                .SetLink(coinRect.gameObject);
+        }
+
+        public void StopCoinButtonPulse()
+        {
+            if (coinButtonLoop != null && DG.Tweening.TweenExtensions.IsActive(coinButtonLoop))
+                DG.Tweening.TweenExtensions.Kill(coinButtonLoop);
+
+            coinButtonLoop = null;
+
+            if (coinButton != null)
+            {
+                RectTransform coinRect = coinButton.transform as RectTransform;
+                if (coinRect != null)
+                    coinRect.localScale = (coinButtonInitScale == default) ? Vector3.one : coinButtonInitScale;
+            }
+        }
+
+        #endregion
+
+        #region Coin Helpers
+
+        private void SubscribeToCoinCurrency()
+        {
+            if (coinCurrency != null) return;
+
+            coinCurrency = EconomyManager.GetCurrency(coinCurrencyType);
+            if (coinCurrency != null)
+            {
+                coinCurrency.OnCurrencyChanged += HandleCoinCurrencyChanged;
+                loggedMissingCurrencyManager = false;
+            }
+            else
+            {
+                LogMissingCurrencyManager();
+            }
+        }
+
+        private void UnsubscribeFromCoinCurrency()
+        {
+            if (coinCurrency == null) return;
+
+            coinCurrency.OnCurrencyChanged -= HandleCoinCurrencyChanged;
+            coinCurrency = null;
+        }
+
+        private void HandleCoinCurrencyChanged(Currency currency, int _)
+        {
+            RefreshCoinButtonState();
+        }
+
+        private void UpdateCoinButtonUI()
+        {
+            if (coinButton == null) return;
+
+            bool visible = CoinRefillEnabled();
+            coinButton.gameObject.SetActive(visible);
+
+            if (!visible) return;
+
+            if (coinButtonLabel != null)
+                coinButtonLabel.text = GetCoinCost().ToString();
+
+            RefreshCoinButtonState();
+        }
+
+        private void RefreshCoinButtonState()
+        {
+            if (coinButton == null || !coinButton.gameObject.activeInHierarchy)
+                return;
+
+            bool interactable = CoinRefillEnabled() &&
+                                !CrystalLivesSystem.IsFull &&
+                                EnsureCoinCurrency() &&
+                                coinCurrency.Amount >= GetCoinCost();
+
+            coinButton.interactable = interactable;
+        }
+
+        private bool CoinRefillEnabled()
+        {
+            if (livesConfig != null && !livesConfig.allowCoinRefill)
+                return false;
+
+            return EnsureCoinCurrency();
+        }
+
+        private int GetCoinCost()
+        {
+            int cost = livesConfig != null ? livesConfig.coinCostPerLife : fallbackCoinCost;
+            return Mathf.Max(1, cost);
+        }
+
+        private bool EnsureCoinCurrency()
+        {
+            if (coinCurrency != null)
+                return true;
+
+            SubscribeToCoinCurrency();
+            return coinCurrency != null;
+        }
+
+        #endregion
+
+        private void LogMissingCurrencyManager()
+        {
+            if (loggedMissingCurrencyManager) return;
+
+            Debug.LogWarning("[AddLivesPanel] Coin manager is missing.");
+            loggedMissingCurrencyManager = true;
+        }
     }
 }

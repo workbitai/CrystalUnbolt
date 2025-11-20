@@ -76,6 +76,33 @@ namespace CrystalUnbolt
             Play(hapticData.Duration, hapticData.Intensity);
         }
 
+        private const float DEFAULT_INTENSITY_MULTIPLIER = 1.0f;
+        private const float DEFAULT_DURATION_MULTIPLIER = 1.0f;
+
+#if UNITY_ANDROID && !UNITY_EDITOR
+    // Softer haptics on Android
+    // Intensity: 50% of previous value (0.04 -> 0.02)
+    // Duration : also slightly shorter (0.20 -> 0.15)
+    private const float PLATFORM_INTENSITY_MULTIPLIER = 0.02f;
+    private const float PLATFORM_DURATION_MULTIPLIER  = 0.15f;
+#else
+        private const float PLATFORM_INTENSITY_MULTIPLIER = DEFAULT_INTENSITY_MULTIPLIER;
+        private const float PLATFORM_DURATION_MULTIPLIER = DEFAULT_DURATION_MULTIPLIER;
+#endif
+
+        internal static float PlatformIntensityMultiplier => PLATFORM_INTENSITY_MULTIPLIER;
+        internal static float PlatformDurationMultiplier => PLATFORM_DURATION_MULTIPLIER;
+
+        private static float ScaleIntensity(float intensity)
+        {
+            return Mathf.Clamp01(intensity * PLATFORM_INTENSITY_MULTIPLIER);
+        }
+
+        private static float ScaleDuration(float duration)
+        {
+            return Mathf.Max(0f, duration * PLATFORM_DURATION_MULTIPLIER);
+        }
+
         public static void Play(float duration, float intensity = 1.0f)
         {
             if (!IsActive) return;
@@ -84,9 +111,12 @@ namespace CrystalUnbolt
 
             if (duration <= 0) return;
 
+            float scaledDuration = ScaleDuration(duration);
+            if (scaledDuration <= 0) return;
+
             try
             {
-                WRAPPER.Play(duration, intensity);
+                WRAPPER.Play(scaledDuration, ScaleIntensity(intensity));
             }
             catch (System.Exception e)
             {

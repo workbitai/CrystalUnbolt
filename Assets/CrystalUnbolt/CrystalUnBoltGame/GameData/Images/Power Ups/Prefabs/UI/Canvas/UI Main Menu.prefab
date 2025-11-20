@@ -778,7 +778,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 3539992575
+    rgba: 4294967295
   m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -1653,6 +1653,7 @@ GameObject:
   - component: {fileID: 1759571055456970909}
   - component: {fileID: 1759571055456970908}
   - component: {fileID: 1759571055456970907}
+  - component: {fileID: 5571438306246027341}
   m_Layer: 5
   m_Name: Play Button
   m_TagString: Untagged
@@ -1773,6 +1774,33 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &5571438306246027341
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1759571055456970904}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac20973156fe3e74aada950e8132a945, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pressedScale: {x: 0.9, y: 0.9, z: 0.9}
+  pressDuration: 0.08
+  pressEase: 3
+  overshootScale: {x: 1.12, y: 1.12, z: 1}
+  overshootDuration: 0.07
+  reboundScale: {x: 0.98, y: 0.98, z: 1}
+  reboundDuration: 0.09
+  settleDuration: 0.08
+  releaseEase: 27
+  resetScaleOnEnable: 1
+  playClickSound: 0
+  clickSound: {fileID: 8300000, guid: e4dc0be6f9e0969408e2285529daf884, type: 3}
+  hideAfterClick: 1
+  hideDelay: 0.01
+  hideDuration: 0.2
 --- !u!1 &1759571055492703221
 GameObject:
   m_ObjectHideFlags: 0
@@ -1883,407 +1911,17 @@ MonoBehaviour:
   livesPanel: {fileID: 7381292365166720419}
   profilePanel: {fileID: 8912694132545113504}
   iapStoreButton:
-    rect: {fileID: 1759571055689426399}
     button: {fileID: 1759571055689426401}
-    showStoreAdButtonsCurve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0.0010876972
-        value: 0.0023277998
-        inSlope: 2.3251798
-        outSlope: 2.3251798
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0.027800104
-      - serializedVersion: 3
-        time: 0.80164313
-        value: 1.0553293
-        inSlope: -0.0075463476
-        outSlope: -0.0075463476
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.09091254
-        outWeight: 0.06290307
-      - serializedVersion: 3
-        time: 1.0007324
-        value: 0.99822235
-        inSlope: -0.64081717
-        outSlope: -0.64081717
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.14692812
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    hideStoreAdButtonsCurve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0.00045064278
-        value: 0.0033653975
-        inSlope: -0.52902496
-        outSlope: -0.52902496
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0.22894399
-      - serializedVersion: 3
-        time: 0.20043507
-        value: -0.052389175
-        inSlope: -0.0061826375
-        outSlope: -0.0061826375
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.09348353
-      - serializedVersion: 3
-        time: 1.0007324
-        value: 0.99822235
-        inSlope: 2.8336585
-        outSlope: 2.8336585
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.021454018
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    showHideDuration: 0.45
   dailyBonusButton:
-    rect: {fileID: 7858975954611129841}
     button: {fileID: 262113319251161530}
-    showStoreAdButtonsCurve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 34
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 1
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 34
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    hideStoreAdButtonsCurve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0.00045064278
-        value: 0.0033653975
-        inSlope: -0.52902496
-        outSlope: -0.52902496
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0.22894399
-      - serializedVersion: 3
-        time: 0.20043507
-        value: -0.052389175
-        inSlope: -0.0061826375
-        outSlope: -0.0061826375
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.09348353
-      - serializedVersion: 3
-        time: 1.0007324
-        value: 0.99822235
-        inSlope: 2.8336585
-        outSlope: 2.8336585
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.021454018
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    showHideDuration: 0.45
   settingButton:
-    rect: {fileID: 7829859226390920633}
     button: {fileID: 1469335186644398891}
-    showStoreAdButtonsCurve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 34
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 1
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 34
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    hideStoreAdButtonsCurve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0.00045064278
-        value: 0.0033653975
-        inSlope: -0.52902496
-        outSlope: -0.52902496
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0.22894399
-      - serializedVersion: 3
-        time: 0.20043507
-        value: -0.052389175
-        inSlope: -0.0061826375
-        outSlope: -0.0061826375
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.09348353
-      - serializedVersion: 3
-        time: 1.0007324
-        value: 0.99822235
-        inSlope: 2.8336585
-        outSlope: 2.8336585
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.021454018
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    showHideDuration: 0.45
   noAdsButton:
-    rect: {fileID: 1759571054613392261}
     button: {fileID: 1759571054613392263}
-    showStoreAdButtonsCurve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0.0010876972
-        value: 0.0023277998
-        inSlope: 2.3251798
-        outSlope: 2.3251798
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0.027800104
-      - serializedVersion: 3
-        time: 0.80164313
-        value: 1.0553293
-        inSlope: -0.0075463476
-        outSlope: -0.0075463476
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.09091254
-        outWeight: 0.06290307
-      - serializedVersion: 3
-        time: 1.0007324
-        value: 0.99822235
-        inSlope: -0.64081717
-        outSlope: -0.64081717
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.14692812
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    hideStoreAdButtonsCurve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0.00045064278
-        value: 0.0033653975
-        inSlope: -0.52902496
-        outSlope: -0.52902496
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0.22894399
-      - serializedVersion: 3
-        time: 0.20043507
-        value: -0.052389175
-        inSlope: -0.0061826375
-        outSlope: -0.0061826375
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.09348353
-      - serializedVersion: 3
-        time: 1.0007324
-        value: 0.99822235
-        inSlope: 2.8336585
-        outSlope: 2.8336585
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.021454018
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    showHideDuration: 0.45
   dailyGift_Plinko:
-    rect: {fileID: 6573967687192601103}
     button: {fileID: 5732262706450966993}
-    showStoreAdButtonsCurve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0.0010876972
-        value: 0.0023277998
-        inSlope: 2.3251798
-        outSlope: 2.3251798
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0.027800104
-      - serializedVersion: 3
-        time: 0.80164313
-        value: 1.0553293
-        inSlope: -0.0075463476
-        outSlope: -0.0075463476
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.09091254
-        outWeight: 0.06290307
-      - serializedVersion: 3
-        time: 1.0007324
-        value: 0.99822235
-        inSlope: -0.64081717
-        outSlope: -0.64081717
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.14692812
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    hideStoreAdButtonsCurve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0.00045064278
-        value: 0.0033653975
-        inSlope: -0.52902496
-        outSlope: -0.52902496
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0.22894399
-      - serializedVersion: 3
-        time: 0.20043507
-        value: -0.052389175
-        inSlope: -0.0061826375
-        outSlope: -0.0061826375
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.09348353
-      - serializedVersion: 3
-        time: 1.0007324
-        value: 0.99822235
-        inSlope: 2.8336585
-        outSlope: 2.8336585
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.021454018
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    showHideDuration: 0.45
   leaderBoardButton:
-    rect: {fileID: 172267410713644469}
     button: {fileID: 517170522711244760}
-    showStoreAdButtonsCurve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0.0010876972
-        value: 0.0023277998
-        inSlope: 2.3251798
-        outSlope: 2.3251798
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0.027800104
-      - serializedVersion: 3
-        time: 0.80164313
-        value: 1.0553293
-        inSlope: -0.0075463476
-        outSlope: -0.0075463476
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.09091254
-        outWeight: 0.06290307
-      - serializedVersion: 3
-        time: 1.0007324
-        value: 0.99822235
-        inSlope: -0.64081717
-        outSlope: -0.64081717
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.14692812
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    hideStoreAdButtonsCurve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0.00045064278
-        value: 0.0033653975
-        inSlope: -0.52902496
-        outSlope: -0.52902496
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0.22894399
-      - serializedVersion: 3
-        time: 0.20043507
-        value: -0.052389175
-        inSlope: -0.0061826375
-        outSlope: -0.0061826375
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.09348353
-      - serializedVersion: 3
-        time: 1.0007324
-        value: 0.99822235
-        inSlope: 2.8336585
-        outSlope: 2.8336585
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.021454018
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    showHideDuration: 0.45
   leaderboardLockedSprite: {fileID: 21300000, guid: 5f207c86090dae64eb60700cf5652072,
     type: 3}
   leaderboardUnlockedSprite: {fileID: 21300000, guid: 7ae01ca55eb4c5746ad4ba469d4bb68c,
@@ -2469,6 +2107,7 @@ GameObject:
   - component: {fileID: 225606334646899586}
   - component: {fileID: 2558306213913171157}
   - component: {fileID: 9063642605775839765}
+  - component: {fileID: 5294653231986710221}
   m_Layer: 5
   m_Name: Editbtn
   m_TagString: Untagged
@@ -2577,6 +2216,33 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &5294653231986710221
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1779071962079962623}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac20973156fe3e74aada950e8132a945, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pressedScale: {x: 0.92, y: 0.92, z: 0.92}
+  pressDuration: 0.08
+  pressEase: 4
+  overshootScale: {x: 1.12, y: 1.12, z: 1}
+  overshootDuration: 0.07
+  reboundScale: {x: 0.98, y: 0.98, z: 1}
+  reboundDuration: 0.09
+  settleDuration: 0.08
+  releaseEase: 3
+  resetScaleOnEnable: 1
+  playClickSound: 0
+  clickSound: {fileID: 0}
+  hideAfterClick: 0
+  hideDelay: 0.25
+  hideDuration: 0.2
 --- !u!1 &1949943128880916641
 GameObject:
   m_ObjectHideFlags: 0
@@ -2893,6 +2559,7 @@ GameObject:
   - component: {fileID: 4459436785097435944}
   - component: {fileID: 36043923887303028}
   - component: {fileID: 6488023175783048566}
+  - component: {fileID: 2560347545788184459}
   m_Layer: 5
   m_Name: No Button
   m_TagString: Untagged
@@ -3002,6 +2669,33 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &2560347545788184459
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2205167962377590789}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac20973156fe3e74aada950e8132a945, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pressedScale: {x: 0.92, y: 0.92, z: 0.92}
+  pressDuration: 0.08
+  pressEase: 4
+  overshootScale: {x: 1.12, y: 1.12, z: 1}
+  overshootDuration: 0.07
+  reboundScale: {x: 0.98, y: 0.98, z: 1}
+  reboundDuration: 0.09
+  settleDuration: 0.08
+  releaseEase: 3
+  resetScaleOnEnable: 1
+  playClickSound: 0
+  clickSound: {fileID: 8300000, guid: e4dc0be6f9e0969408e2285529daf884, type: 3}
+  hideAfterClick: 0
+  hideDelay: 0.25
+  hideDuration: 0.2
 --- !u!1 &2323003752570483293
 GameObject:
   m_ObjectHideFlags: 0
@@ -3637,6 +3331,7 @@ GameObject:
   - component: {fileID: 3770023370020848448}
   - component: {fileID: 5504331518279150142}
   - component: {fileID: 2767686540993092862}
+  - component: {fileID: 1357354593296003994}
   m_Layer: 5
   m_Name: Add Button
   m_TagString: Untagged
@@ -3745,6 +3440,33 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1357354593296003994
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3125967818204225340}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac20973156fe3e74aada950e8132a945, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pressedScale: {x: 0.92, y: 0.92, z: 0.92}
+  pressDuration: 0.08
+  pressEase: 4
+  overshootScale: {x: 1.12, y: 1.12, z: 1}
+  overshootDuration: 0.07
+  reboundScale: {x: 0.98, y: 0.98, z: 1}
+  reboundDuration: 0.09
+  settleDuration: 0.08
+  releaseEase: 3
+  resetScaleOnEnable: 1
+  playClickSound: 0
+  clickSound: {fileID: 0}
+  hideAfterClick: 0
+  hideDelay: 0.25
+  hideDuration: 0.2
 --- !u!1 &3255055007141336861
 GameObject:
   m_ObjectHideFlags: 0
@@ -6102,6 +5824,10 @@ MonoBehaviour:
   panelRectTransform: {fileID: 8015296446722643870}
   animationDuration: 0.3
   buttonStaggerDelay: 0.02
+  comingSoonButtonPrefab: {fileID: 5893097409434015465, guid: d94a4b4beaa3a664bbb29505d93f8dc6,
+    type: 3}
+  comingSoonText: Coming Soon..
+  alwaysShowComingSoonButton: 1
 --- !u!223 &1611506671560298921
 Canvas:
   m_ObjectHideFlags: 0
@@ -6482,6 +6208,7 @@ GameObject:
   - component: {fileID: 7997561317900204800}
   - component: {fileID: 6505305161508688347}
   - component: {fileID: 7897923115019184434}
+  - component: {fileID: 993373097478582798}
   m_Layer: 5
   m_Name: Yes Button
   m_TagString: Untagged
@@ -6591,6 +6318,33 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &993373097478582798
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7759922939096971346}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac20973156fe3e74aada950e8132a945, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pressedScale: {x: 0.92, y: 0.92, z: 0.92}
+  pressDuration: 0.08
+  pressEase: 4
+  overshootScale: {x: 1.12, y: 1.12, z: 1}
+  overshootDuration: 0.07
+  reboundScale: {x: 0.98, y: 0.98, z: 1}
+  reboundDuration: 0.09
+  settleDuration: 0.08
+  releaseEase: 3
+  resetScaleOnEnable: 1
+  playClickSound: 0
+  clickSound: {fileID: 8300000, guid: e4dc0be6f9e0969408e2285529daf884, type: 3}
+  hideAfterClick: 0
+  hideDelay: 0.25
+  hideDuration: 0.2
 --- !u!1 &7829859226390920632
 GameObject:
   m_ObjectHideFlags: 0
@@ -6605,6 +6359,7 @@ GameObject:
   - component: {fileID: 3691551729267869174}
   - component: {fileID: 1469335186644398891}
   - component: {fileID: 4451972767749044748}
+  - component: {fileID: 8193186956156775333}
   m_Layer: 0
   m_Name: SettingsPanel
   m_TagString: Untagged
@@ -6742,9 +6497,36 @@ MonoBehaviour:
   m_Width: 0.373
   m_Softness: 0.753
   m_Brightness: 0.921
-  m_Rotation: 180
+  m_Rotation: -180
   m_Highlight: 0
   m_EffectMaterial: {fileID: 2100000, guid: 2d37c4afca8784ce9ab899810e29aa9c, type: 2}
+--- !u!114 &8193186956156775333
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7829859226390920632}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac20973156fe3e74aada950e8132a945, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pressedScale: {x: 0.92, y: 0.92, z: 0.92}
+  pressDuration: 0.08
+  pressEase: 4
+  overshootScale: {x: 1.12, y: 1.12, z: 1}
+  overshootDuration: 0.07
+  reboundScale: {x: 0.98, y: 0.98, z: 1}
+  reboundDuration: 0.09
+  settleDuration: 0.08
+  releaseEase: 3
+  resetScaleOnEnable: 1
+  playClickSound: 0
+  clickSound: {fileID: 0}
+  hideAfterClick: 0
+  hideDelay: 0.25
+  hideDuration: 0.2
 --- !u!1 &8125888616760609202
 GameObject:
   m_ObjectHideFlags: 0
@@ -6758,6 +6540,7 @@ GameObject:
   - component: {fileID: 6999720555929393234}
   - component: {fileID: 262113319251161530}
   - component: {fileID: 3040263795213505686}
+  - component: {fileID: 6074069403694917940}
   m_Layer: 5
   m_Name: DailyBonusButton
   m_TagString: Untagged
@@ -6884,9 +6667,36 @@ MonoBehaviour:
   m_Width: 0.373
   m_Softness: 0.753
   m_Brightness: 0.921
-  m_Rotation: 180
+  m_Rotation: -180
   m_Highlight: 0
   m_EffectMaterial: {fileID: 2100000, guid: 2d37c4afca8784ce9ab899810e29aa9c, type: 2}
+--- !u!114 &6074069403694917940
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8125888616760609202}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac20973156fe3e74aada950e8132a945, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pressedScale: {x: 0.92, y: 0.92, z: 0.92}
+  pressDuration: 0.08
+  pressEase: 4
+  overshootScale: {x: 1.12, y: 1.12, z: 1}
+  overshootDuration: 0.07
+  reboundScale: {x: 0.98, y: 0.98, z: 1}
+  reboundDuration: 0.09
+  settleDuration: 0.08
+  releaseEase: 3
+  resetScaleOnEnable: 1
+  playClickSound: 0
+  clickSound: {fileID: 0}
+  hideAfterClick: 0
+  hideDelay: 0.25
+  hideDuration: 0.2
 --- !u!1 &8193653422961787829
 GameObject:
   m_ObjectHideFlags: 0

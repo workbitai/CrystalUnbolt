@@ -196,6 +196,7 @@ MonoBehaviour:
   closedText: {r: 0.8666667, g: 0.8666667, b: 0.8666667, a: 1}
   closedCircle: {r: 1, g: 1, b: 1, a: 1}
   enableJellyAnimation: 1
+  isInGrid: 0
   shakeStrength: 0.3
   shakeDuration: 0.5
 --- !u!1 &6331931986661760275
@@ -210,6 +211,7 @@ GameObject:
   - component: {fileID: 8552172995574736644}
   - component: {fileID: 1214439223948916323}
   - component: {fileID: 4396686588406953995}
+  - component: {fileID: 2747354213976420094}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -319,3 +321,27 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &2747354213976420094
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6331931986661760275}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac20973156fe3e74aada950e8132a945, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pressedScale: {x: 0.92, y: 0.92, z: 0.92}
+  pressDuration: 0.08
+  pressEase: 4
+  overshootScale: {x: 1.12, y: 1.12, z: 1}
+  overshootDuration: 0.07
+  reboundScale: {x: 0.98, y: 0.98, z: 1}
+  reboundDuration: 0.09
+  settleDuration: 0.08
+  releaseEase: 3
+  resetScaleOnEnable: 1
+  playClickSound: 0
+  clickSound: {fileID: 8300000, guid: dfc6f165e32b9844385a0491e41a7d65, type: 3}
