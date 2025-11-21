@@ -20,6 +20,11 @@ namespace CrystalUnbolt
         [SerializeField] SpriteRenderer shadowSpriteRenderer;
         [SerializeField] Transform visuals;
         [SerializeField] Animator animator;
+        [Header("Particles")]
+        [SerializeField] private ParticleSystem screwPickParticlesPrefab;
+        [SerializeField] private ParticleSystem screwPlaceParticlesPrefab;
+        private ParticleSystem screwPickParticlesInstance;
+        private ParticleSystem screwPlaceParticlesInstance;
 
         [SerializeField] MeshRenderer screwRenderer;
 
@@ -57,6 +62,9 @@ namespace CrystalUnbolt
                 runtimeMaterial = new Material(screwRenderer.material);
                 screwRenderer.material = runtimeMaterial;
             }
+
+            screwPickParticlesInstance = CreateParticleInstance(screwPickParticlesPrefab);
+            screwPlaceParticlesInstance = CreateParticleInstance(screwPlaceParticlesPrefab);
         }
 
         public void SetNumberTexture(int index)
@@ -243,6 +251,7 @@ namespace CrystalUnbolt
             animator.SetTrigger(EXTRACT_CRYSTAL_TRIGGER);
 
             SoundManager.PlaySound(SoundManager.AudioClips.screwPick);
+            PlayParticles(screwPickParticlesInstance);
 
 #if MODULE_HAPTIC
             Haptic.Play(Haptic.HAPTIC_HARD);
@@ -256,6 +265,7 @@ namespace CrystalUnbolt
             animator.SetFloat(EXTRACT_CRYSTAL_SPEED_MULTIPLIER_FLOAT, CrystalGameManager.Data.CrystalExtractionAnimationSpeedMultiplier);
             animator.SetTrigger(EXTRACT_CRYSTAL_TRIGGER);
             SoundManager.PlaySound(SoundManager.AudioClips.screwPick);
+            PlayParticles(screwPickParticlesInstance);
             Selected?.Invoke();
         }
 
@@ -267,6 +277,7 @@ namespace CrystalUnbolt
 
             IsPlaced = true;
             SoundManager.PlaySound(SoundManager.AudioClips.screwPlace);
+            PlayParticles(screwPlaceParticlesInstance);
 
             selectedScrew = null;
             Deselected?.Invoke();
@@ -305,6 +316,26 @@ namespace CrystalUnbolt
         public void SetScrewNumber(int num)
         {
             ScrewNumber = num;
+        }
+
+        private ParticleSystem CreateParticleInstance(ParticleSystem prefab)
+        {
+            if (prefab == null) return null;
+
+            var instance = Instantiate(prefab, transform);
+            instance.transform.localPosition = Vector3.zero;
+            instance.gameObject.SetActive(false);
+            return instance;
+        }
+
+        private void PlayParticles(ParticleSystem targetParticles)
+        {
+            if (targetParticles == null) return;
+
+            targetParticles.transform.localPosition = Vector3.zero;
+            targetParticles.gameObject.SetActive(true);
+            targetParticles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            targetParticles.Play(true);
         }
 
         public void ResetNewData()

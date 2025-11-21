@@ -92,7 +92,8 @@ namespace CrystalUnbolt
                 {
                     colliders[i].enabled = true;
                 }
-            } else
+            }
+            else
             {
                 polygonCollider.enabled = true;
             }
@@ -310,7 +311,7 @@ namespace CrystalUnbolt
 
         public void Discard(bool withParticle)
         {
-           /* if (withParticle)
+            /*if (withParticle)
             {
                 ParticleCase particleCase = CrystalParticlesController.PlayParticle("Confetti");
 

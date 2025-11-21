@@ -18,7 +18,7 @@ namespace CrystalUnbolt
         [SerializeField] private RectTransform claimButton;
         [SerializeField] private RectTransform adButton;
         [SerializeField] private Button closeButton, addCoin_WithAds;
-        [SerializeField] private AudioClip lifeRecievedAudio;
+        [SerializeField] private AudioClip lifeRecievedAudio, openChestAudioClip;
         private SimpleBoolCallback panelClosed;
 
         [Header("Timer")]
@@ -46,9 +46,11 @@ namespace CrystalUnbolt
         public Image rewardCoinIcon; // Coin icon next to reward text (optional)
         public GameObject rewardDisplayPanel; // Parent panel/object containing reward display (to hide entire panel)
 
+        [Header("Bottom Text")]
+        [SerializeField] private TMP_Text bottomInstructionText; // Text at bottom (e.g., "You can only pick one chest!")
+
         [Header("Visual Effects")]
-        public Image rayEffectImage; // Yellow ray/sunburst effect behind chosen chest
-        [SerializeField] private float rayRotationSpeed = 20f; // Rotation speed for ray effect
+        [SerializeField] private ParticleSystem chestClickParticles; // <-- Assign particle system here
 
         [Header("Rewards")]
         [SerializeField] private int safeReward = 500;
@@ -56,7 +58,7 @@ namespace CrystalUnbolt
         [SerializeField] private int riskRewardMax = 2000;
 
         [Header("Chest Scale")]
-        [SerializeField] [Range(0.5f, 1.0f)] private float chestScale = 0.8f; // Scale multiplier for chests (0.8 = 80% size)
+        [SerializeField][Range(0.5f, 1.0f)] private float chestScale = 0.8f; // Scale multiplier for chests (0.8 = 80% size)
 
         private int riskReward;
         private int chosenReward; // Store the chosen reward amount
@@ -65,10 +67,8 @@ namespace CrystalUnbolt
         private bool isRewardAvailable = false;
         private DateTime nextAvailableTime;
         private Coroutine timerCoroutine;
-        private Coroutine rayRotationCoroutine;
 
         public bool IsOpened => isPageDisplayed;
-
         private bool isInitialized = false;
 
         public override void Init()
@@ -110,12 +110,6 @@ namespace CrystalUnbolt
                 StopCoroutine(timerCoroutine);
                 timerCoroutine = null;
             }
-
-            if (rayRotationCoroutine != null)
-            {
-                StopCoroutine(rayRotationCoroutine);
-                rayRotationCoroutine = null;
-            }
         }
 
         private void InitializeDailyBonus()
@@ -149,14 +143,14 @@ namespace CrystalUnbolt
             // Hide reward display initially (especially after claiming)
             HideRewardDisplay();
 
-            // Hide ray effect initially
-            if (rayEffectImage != null)
-            {
-                rayEffectImage.gameObject.SetActive(false);
-            }
+            // Ensure particles are off initially
+            TurnOffParticles();
 
             // Enable/disable chests based on availability
             SetChestsInteractable(isRewardAvailable);
+
+            // Update bottom instruction text based on availability
+            UpdateBottomInstructionText();
         }
 
         private void CheckBonusAvailability()
@@ -186,7 +180,7 @@ namespace CrystalUnbolt
 
             // Reset chest images and scale
             Vector3 chestTargetScale = Vector3.one * chestScale;
-            
+
             if (safeChestImage != null)
             {
                 if (closedChestSprite != null)
@@ -206,17 +200,8 @@ namespace CrystalUnbolt
             // Hide reward display
             HideRewardDisplay();
 
-            // Hide and stop ray effect
-            if (rayEffectImage != null)
-            {
-                rayEffectImage.gameObject.SetActive(false);
-            }
-
-            if (rayRotationCoroutine != null)
-            {
-                StopCoroutine(rayRotationCoroutine);
-                rayRotationCoroutine = null;
-            }
+            // Turn off particles
+            TurnOffParticles();
 
             // Hide claim button initially
             if (claim_btn != null)
@@ -277,6 +262,7 @@ namespace CrystalUnbolt
                         timerLabelText.text = "REWARD AVAILABLE NOW!";
 
                     timerText.text = "00:00:00";
+                    UpdateBottomInstructionText(); // Update text when reward becomes available
                     return;
                 }
 
@@ -289,6 +275,7 @@ namespace CrystalUnbolt
                     if (timerLabelText != null)
                         timerLabelText.text = "REWARD AVAILABLE NOW!";
                     timerText.text = "00:00:00";
+                    UpdateBottomInstructionText(); // Update text when reward becomes available
                     return;
                 }
 
@@ -308,19 +295,31 @@ namespace CrystalUnbolt
             }
         }
 
+        private void UpdateBottomInstructionText()
+        {
+            if (bottomInstructionText == null) return;
+
+            if (isRewardAvailable)
+            {
+                bottomInstructionText.text = "You can only pick one chest!";
+            }
+            else
+            {
+                bottomInstructionText.text = "Come back tomorrow for your next reward!";
+            }
+        }
+
         private void OnChestClicked(bool isSafeChest)
         {
             if (hasChosen || !isRewardAvailable) return;
 
-            SoundManager.PlaySound(SoundManager.AudioClips.buttonSound);
+            if (openChestAudioClip != null)
+                SoundManager.PlaySound(openChestAudioClip);
 #if MODULE_HAPTIC
             Haptic.Play(Haptic.HAPTIC_HARD);
 #endif
 
             hasChosen = true;
-
-            // Don't disable chest buttons yet - wait until claim is clicked
-            // The hasChosen flag prevents multiple clicks
 
             // Calculate risk reward if risk chest was chosen
             if (!isSafeChest)
@@ -328,61 +327,45 @@ namespace CrystalUnbolt
                 riskReward = UnityEngine.Random.Range(riskRewardMin, riskRewardMax + 1);
             }
 
-            // Show and animate ray effect behind chosen chest
+            // Show particles behind chosen chest position
             Image selectedChestImage = isSafeChest ? safeChestImage : riskChestImage;
-            ShowRayEffect(selectedChestImage);
+            ShowParticles(selectedChestImage);
 
             // Animate chest opening
             StartCoroutine(OpenChest(isSafeChest));
         }
 
-        private void ShowRayEffect(Image targetChestImage)
+        private void ShowParticles(Image targetChestImage)
         {
-            if (rayEffectImage == null || targetChestImage == null) return;
+            if (chestClickParticles == null || targetChestImage == null) return;
 
-            // Position ray effect behind the chest
-            RectTransform rayRect = rayEffectImage.rectTransform;
             RectTransform chestRect = targetChestImage.rectTransform;
-
-            if (rayRect != null && chestRect != null)
+            if (chestRect != null)
             {
-                // Set ray to same position as chest
-                rayRect.position = chestRect.position;
-                
-                // Make sure ray renders BEHIND the chest by setting it as previous sibling
-                // Lower sibling index = renders behind/earlier in hierarchy
-                int chestIndex = chestRect.GetSiblingIndex();
-                if (chestIndex > 0)
+                chestClickParticles.transform.position = chestRect.position;
+
+                // If particles are also under the same canvas and have RectTransform,
+                // keep them behind the chest in hierarchy
+                RectTransform psRect = chestClickParticles.GetComponent<RectTransform>();
+                if (psRect != null)
                 {
-                    rayRect.SetSiblingIndex(chestIndex - 1);
-                }
-                else
-                {
-                    // If chest is first child, move ray to be first
-                    rayRect.SetAsFirstSibling();
+                    int chestIndex = chestRect.GetSiblingIndex();
+                    if (chestIndex > 0) psRect.SetSiblingIndex(chestIndex - 1);
+                    else psRect.SetAsFirstSibling();
                 }
             }
 
-            // Show ray effect with scale animation
-            rayEffectImage.gameObject.SetActive(true);
-            rayEffectImage.transform.localScale = Vector3.zero;
-            rayEffectImage.transform.DOScale(1f, 0.5f).SetEasing(Ease.Type.BackOut);
-
-            // Start rotating the ray effect
-            if (rayRotationCoroutine != null)
-                StopCoroutine(rayRotationCoroutine);
-            rayRotationCoroutine = StartCoroutine(RotateRayEffect());
+            chestClickParticles.gameObject.SetActive(true);
+            chestClickParticles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            chestClickParticles.Play(true);
         }
 
-        private IEnumerator RotateRayEffect()
+        private void TurnOffParticles()
         {
-            if (rayEffectImage == null) yield break;
+            if (chestClickParticles == null) return;
 
-            while (true)
-            {
-                rayEffectImage.transform.Rotate(0f, 0f, rayRotationSpeed * Time.deltaTime);
-                yield return null;
-            }
+            chestClickParticles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            chestClickParticles.gameObject.SetActive(false);
         }
 
         private IEnumerator OpenChest(bool isSafeChest)
@@ -392,15 +375,12 @@ namespace CrystalUnbolt
 
             if (chestImage == null) yield break;
 
-            // Store chosen reward and chest for later use
             chosenReward = rewardAmount;
             chosenChestImage = chestImage;
 
             Vector3 baseScale = Vector3.one * chestScale;
-            Vector3 nativeScale = Vector3.one; // Native/original size
             Vector3 originalScale = chestImage.transform.localScale;
 
-            // Chest closes animation (faster)
             float duration = 0.15f;
             float elapsed = 0f;
             Vector3 shrinkScale = baseScale * 0.9f;
@@ -412,19 +392,16 @@ namespace CrystalUnbolt
                 yield return null;
             }
 
-            // Swap to open chest sprite
             if (openChestSprite != null)
             {
                 chestImage.sprite = openChestSprite;
-                chestImage.SetNativeSize(); // Set native size to match the new sprite dimensions
+                chestImage.SetNativeSize();
             }
 
-            // Recalculate target scale based on open chest native size to maintain consistency
-            Vector3 targetScale = baseScale; // Use the same scale as closed chest (chestScale)
+            Vector3 targetScale = baseScale;
 
-            // Bounce back animation (faster)
             elapsed = 0f;
-            Vector3 bounceScale = targetScale * 1.1f; // Bounce to slightly larger than target
+            Vector3 bounceScale = targetScale * 1.1f;
             while (elapsed < duration)
             {
                 elapsed += Time.deltaTime;
@@ -433,31 +410,25 @@ namespace CrystalUnbolt
                 yield return null;
             }
 
-            // Return to target scale using tween for smooth animation (faster)
             chestImage.transform.DOScale(targetScale, 0.2f).SetEasing(Ease.Type.BackOut);
             yield return new WaitForSeconds(0.2f);
-            
-            // Force exact target scale to ensure precision
-            chestImage.transform.localScale = targetScale; // Maintain same scale as closed chest
 
-            // Show reward amount in single UI display (reduced delay)
+            chestImage.transform.localScale = targetScale;
+
             yield return new WaitForSeconds(0.1f);
-            
-            // Show entire reward panel if assigned
+
             if (rewardDisplayPanel != null)
             {
                 rewardDisplayPanel.SetActive(true);
                 rewardDisplayPanel.transform.localScale = Vector3.zero;
                 rewardDisplayPanel.transform.DOScale(1f, 0.3f).SetEasing(Ease.Type.BackOut);
             }
-            
-            // Update and show reward text
+
             if (rewardAmountText != null)
             {
                 rewardAmountText.gameObject.SetActive(true);
                 rewardAmountText.text = rewardAmount.ToString();
-                
-                // Animate the reward text if panel wasn't animated
+
                 if (rewardDisplayPanel == null)
                 {
                     rewardAmountText.transform.localScale = Vector3.zero;
@@ -465,12 +436,10 @@ namespace CrystalUnbolt
                 }
             }
 
-            // Show coin icon
             if (rewardCoinIcon != null)
             {
                 rewardCoinIcon.gameObject.SetActive(true);
-                
-                // Animate the coin icon if panel wasn't animated
+
                 if (rewardDisplayPanel == null)
                 {
                     rewardCoinIcon.transform.localScale = Vector3.zero;
@@ -478,7 +447,6 @@ namespace CrystalUnbolt
                 }
             }
 
-            // Show claim button (faster - no delay)
             if (claim_btn != null)
             {
                 claim_btn.gameObject.SetActive(true);
@@ -496,25 +464,21 @@ namespace CrystalUnbolt
             Haptic.Play(Haptic.HAPTIC_HARD);
 #endif
 
-            // Disable chest buttons now (after claim is clicked)
-            SetChestsInteractable(false);
-
-            // Disable claim button immediately
             if (claim_btn != null)
                 claim_btn.interactable = false;
 
-            // Play audio if available
             if (lifeRecievedAudio != null)
                 SoundManager.PlaySound(lifeRecievedAudio);
 
-            // Hide ray effect after claiming (keep visible for longer)
-            StartCoroutine(HideRayEffectAfterDelay(2.0f));
+            // Turn off particles immediately when claim is clicked
+            TurnOffParticles();
 
-            // Spawn coin animation from chest to currency display
+            SetChestsInteractable(false);
+
             if (chosenChestImage != null && currencyTargetPanel != null)
             {
                 RectTransform chestRect = chosenChestImage.rectTransform;
-                
+
                 FloatingCloud.SpawnCurrency(
                     CurrencyType.Coins.ToString(),
                     chestRect,
@@ -523,46 +487,36 @@ namespace CrystalUnbolt
                     "",
                     () =>
                     {
-                        // Add coins to player after animation completes
                         EconomyManager.Add(CurrencyType.Coins, chosenReward);
 
-                        // Save claim time
                         PlayerPrefs.SetString(PREF_LAST_BONUS_TICKS, DateTime.Now.Ticks.ToString());
                         PlayerPrefs.Save();
 
-                        // Update availability
                         isRewardAvailable = false;
                         nextAvailableTime = DateTime.Now.AddHours(COOLDOWN_HOURS);
 
-                        // Reset UI and re-enable chest buttons for next time
                         ResetUIAfterClaim();
 
                         Debug.Log($"[DailyBonus] Claimed {chosenReward} coins!");
 
-                        // Close screen after animation
                         StartCoroutine(CloseAfterDelay(0.5f));
                     }
                 );
             }
             else
             {
-                // Fallback: Add coins immediately if animation setup is missing
                 EconomyManager.Add(CurrencyType.Coins, chosenReward);
 
-                // Save claim time
                 PlayerPrefs.SetString(PREF_LAST_BONUS_TICKS, DateTime.Now.Ticks.ToString());
                 PlayerPrefs.Save();
 
-                // Update availability
                 isRewardAvailable = false;
                 nextAvailableTime = DateTime.Now.AddHours(COOLDOWN_HOURS);
 
-                // Reset UI and re-enable chest buttons for next time
                 ResetUIAfterClaim();
 
                 Debug.Log($"[DailyBonus] Claimed {chosenReward} coins! (No animation - missing references)");
 
-                // Close screen after a short delay
                 StartCoroutine(CloseAfterDelay(1.5f));
             }
         }
@@ -573,42 +527,16 @@ namespace CrystalUnbolt
             ScreenManager.CloseScreen<CrystalUIDailyBonus>();
         }
 
-        private IEnumerator HideRayEffectAfterDelay(float delay)
-        {
-            yield return new WaitForSeconds(delay);
-
-            // Stop ray rotation
-            if (rayRotationCoroutine != null)
-            {
-                StopCoroutine(rayRotationCoroutine);
-                rayRotationCoroutine = null;
-            }
-
-            // Fade out and scale down ray effect
-            if (rayEffectImage != null && rayEffectImage.gameObject.activeSelf)
-            {
-                rayEffectImage.transform.DOScale(0f, 0.3f).SetEasing(Ease.Type.BackIn)
-                    .OnComplete(() =>
-                    {
-                        if (rayEffectImage != null)
-                            rayEffectImage.gameObject.SetActive(false);
-                    });
-            }
-        }
-
         private void ResetUIAfterClaim()
         {
-            // Reset chest buttons to be interactable for next time
-            SetChestsInteractable(true);
+            SetChestsInteractable(false);
 
-            // Reset chosen state
             hasChosen = false;
             chosenReward = 0;
             chosenChestImage = null;
 
-            // Reset chest images back to closed
             Vector3 chestTargetScale = Vector3.one * chestScale;
-            
+
             if (safeChestImage != null && closedChestSprite != null)
             {
                 safeChestImage.sprite = closedChestSprite;
@@ -623,15 +551,18 @@ namespace CrystalUnbolt
                 riskChestImage.transform.localScale = chestTargetScale;
             }
 
-            // Hide reward display
             HideRewardDisplay();
 
-            // Hide claim button
+            // Ensure particles are off after claim
+            TurnOffParticles();
+
             if (claim_btn != null)
             {
                 claim_btn.gameObject.SetActive(false);
                 claim_btn.interactable = true;
             }
+
+            UpdateBottomInstructionText();
         }
 
         public void OnButtonClick()
@@ -657,7 +588,6 @@ namespace CrystalUnbolt
 
         public override void PlayShowAnimation()
         {
-            // Initial states
             if (chest != null)
                 chest.localScale = Vector3.zero;
 
@@ -672,10 +602,9 @@ namespace CrystalUnbolt
                 var color = backgroundImage.color;
                 color.a = 0f;
                 backgroundImage.color = color;
-                backgroundImage.DOFade(1f, 0.3f); // Fully opaque to block screen behind
+                backgroundImage.DOFade(1f, 0.3f);
             }
 
-            // Animate chests
             if (safeChestImage != null)
             {
                 safeChestImage.transform.localScale = Vector3.zero;
@@ -692,14 +621,12 @@ namespace CrystalUnbolt
                     .OnComplete(() => riskChestImage.transform.DOScale(targetScale, 0.1f));
             }
 
-            // Claim button
             if (claimButton != null)
             {
                 claimButton.DOScale(1.05f, 0.3f, 0.3f).SetEasing(Ease.Type.BackOut)
                     .OnComplete(() => claimButton.DOScale(1f, 0.1f));
             }
 
-            // Ad button
             if (adButton != null)
             {
                 adButton.DOScale(1.05f, 0.3f, 0.4f).SetEasing(Ease.Type.BackOut)

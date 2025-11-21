@@ -83,7 +83,7 @@ namespace CrystalUnbolt
                         if (activeParticles[i].IsForceDisabledRequired())
                         {
                             activeParticles[i].ParticleSystem.Stop();
-                            
+
                             activeParticles.RemoveAt(i);
 
                             continue;

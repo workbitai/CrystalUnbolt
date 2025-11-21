@@ -51,7 +51,11 @@ MonoBehaviour:
   shadowSpriteRenderer: {fileID: 9002816848428417934}
   visuals: {fileID: 6560607328653073279}
   animator: {fileID: 5292379583093434121}
-  screwRenderer: {fileID: 0}
+  screwPickParticlesPrefab: {fileID: 4496752473198254173, guid: b0ce530911e46774bbca841e6306755c,
+    type: 3}
+  screwPlaceParticlesPrefab: {fileID: 4496752473198254173, guid: b0ce530911e46774bbca841e6306755c,
+    type: 3}
+  screwRenderer: {fileID: 8693659095795849582}
   numberTextures:
   - {fileID: 2800000, guid: 1a6357fa999efc6409024c297d48ec11, type: 3}
   - {fileID: 2800000, guid: 3be7e15a1aa07dd4cb8e42d3a598841c, type: 3}
@@ -63,7 +67,7 @@ MonoBehaviour:
   - {fileID: 2800000, guid: e12a57d93544ef948a7252c795f1a445, type: 3}
   - {fileID: 2800000, guid: 2e9f481c8443c004c9f7e368918ddc6a, type: 3}
   - {fileID: 2800000, guid: 329c4342cc0ebde44a62696012d41986, type: 3}
-  defaultTexture: {fileID: 2800000, guid: a0816775ca5f84e4b8c608fd3a3baca1, type: 3}
+  defaultTexture: {fileID: 2800000, guid: cc725c6fa6cb95c478c1d1cb76bdb13f, type: 3}
 --- !u!135 &1218233775705368495
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -391,6 +395,12 @@ PrefabInstance:
 --- !u!4 &7560761189829878273 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 2e6a69be9be1f3047bdcd46a11a9ef6e,
+    type: 3}
+  m_PrefabInstance: {fileID: 8027526986276783594}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &8693659095795849582 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -7511558181221131132, guid: 2e6a69be9be1f3047bdcd46a11a9ef6e,
     type: 3}
   m_PrefabInstance: {fileID: 8027526986276783594}
   m_PrefabAsset: {fileID: 0}
