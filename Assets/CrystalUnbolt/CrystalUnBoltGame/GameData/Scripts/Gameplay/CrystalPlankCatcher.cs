@@ -19,5 +19,6 @@ namespace CrystalUnbolt
 
             if (plank != null && plank.IsFlying() && !plank.IsBeingDisabled) plank.Disable();
         }
+
     }
 }

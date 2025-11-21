@@ -461,7 +461,7 @@ namespace CrystalUnbolt
                 }
 
                 holeDigitIndexMap.Clear();
-                int maxBottom = 3;
+                int maxBottom = 2;
                 int activeCount = Mathf.Min(holesEmpty.Count, maxBottom);
 
                 if (activeCount > 1)
@@ -607,25 +607,72 @@ namespace CrystalUnbolt
 
         public static (string question, int answer) GenerateQuestion(int holesCount, int level, int MaxDigit)
         {
-            if (holesCount < 1) holesCount = 1;
-            if (holesCount > 6) holesCount = 6;
+            // FORCE always 2 digits
+            holesCount = 2;
+            int maxDigit = Mathf.Clamp(MaxDigit - 1, 0, 9);
 
-            int maxDigit = MaxDigit - 1;
+            int maxValue = 99;          // 10–99 possible
+            int maxDigits = 2;          // always 2 digits
 
-            int answer = GenerateValidNumber(holesCount, maxDigit);
+            List<int> candidates = new List<int>();
+
+            // only 2-digit numbers
+            for (int n = 10; n <= maxValue; n++)
+            {
+                if (IsAnswerValidTwoDigits(n, maxDigit)
+                    && !HasRepeatedDigits(n))    // <-- no 11, 22, 33, ...
+                {
+                    candidates.Add(n);
+                }
+            }
+
+
+            int answer;
+            if (candidates.Count > 0)
+                answer = candidates[rand.Next(candidates.Count)];
+            else
+                answer = GenerateValidNumber(2, maxDigit);   // fallback 2-digit
 
             (string q, int ans) = GenerateEquation(answer);
-
             return (q, ans);
         }
+        private static bool HasRepeatedDigits(int value)
+        {
+            string s = value.ToString();
+            HashSet<char> seen = new HashSet<char>();
+            foreach (char c in s)
+            {
+                if (seen.Contains(c))
+                    return true;        // same digit appears again
+                seen.Add(c);
+            }
+            return false;
+        }
 
+        private static bool IsAnswerValidTwoDigits(int value, int maxDigit)
+        {
+            if (value < 10 || value > 99) return false;
+
+            string s = value.ToString();
+            if (s.Length != 2) return false;
+
+            foreach (char c in s)
+            {
+                int d = c - '0';
+                if (d < 0 || d > maxDigit) return false;   // digit top par available hoy
+            }
+
+            return true;
+        }
+
+        // Old helper: builds a number whose digits are in [0..maxDigit]
         private static int GenerateValidNumber(int digits, int maxDigit)
         {
             List<int> availableDigits = new List<int>();
             for (int i = 0; i <= maxDigit; i++) availableDigits.Add(i);
 
             availableDigits = availableDigits.OrderBy(x => rand.Next()).ToList();
-
+                
             if (digits > 1 && availableDigits[0] == 0)
             {
                 int swapIndex = availableDigits.FindIndex(d => d != 0);
@@ -643,6 +690,22 @@ namespace CrystalUnbolt
             return number;
         }
 
+        // Check that every digit of value is <= maxDigit and digit count <= maxDigits
+        private static bool IsAnswerValidForDigits(int value, int maxDigit, int maxDigits)
+        {
+            string s = value.ToString();
+            if (s.Length > maxDigits) return false;
+
+            foreach (char c in s)
+            {
+                int d = c - '0';
+                if (d < 0 || d > maxDigit) return false;
+            }
+
+            return true;
+        }
+
+        // Very simple + / - equations only
         private static (string, int) GenerateEquation(int answer)
         {
             int a, b;
@@ -650,71 +713,42 @@ namespace CrystalUnbolt
 
             if (answer == 0)
             {
-                int choice = rand.Next(0, 3); 
+                // Always something very easy
+                int choice = rand.Next(0, 3);
                 switch (choice)
                 {
-                    case 0: 
+                    case 0:
                         a = rand.Next(1, 10);
                         q = $"{a} - {a} = ?";
                         break;
-
-                    case 1: 
-                        a = rand.Next(1, 10);
-                        q = $"{a} * 0 = ?";
-                        break;
-
-                    default: 
+                    case 1:
                         q = $"0 + 0 = ?";
+                        break;
+                    default:
+                        q = $"1 - 1 = ?";
                         break;
                 }
                 return (q, 0);
             }
 
-            if (answer == 1)
+            if (rand.Next(0, 2) == 0)
             {
-                int choice = rand.Next(0, 4); 
-                switch (choice)
-                {
-                    case 0:
-                        a = rand.Next(2, 10); 
-                        q = $"{a} - {a - 1} = ?";
-                        break;
-
-                    case 1: 
-                        q = $"1 * 1 = ?";
-                        break;
-
-                    case 2: 
-                        a = rand.Next(2, 10); 
-                        q = $"{a} / {a} = ?";
-                        break;
-
-                    default: 
-                        q = $"1 + 0 = ?";
-                        break;
-                }
-                return (q, 1);
-            }
-
-            if (rand.Next(0, 2) == 0) 
-            {
-                b = rand.Next(1, answer);
+                // Addition: a + b = answer
+                b = rand.Next(0, Math.Min(answer, 10));
                 a = answer - b;
                 q = $"{a} + {b} = ?";
             }
-            else 
+            else
             {
-                a = answer + rand.Next(1, 10);
-                b = a - answer;
+                // Subtraction: a - b = answer
+                b = rand.Next(0, 10);
+                a = answer + b;
                 q = $"{a} - {b} = ?";
             }
 
             return (q, answer);
         }
-
     }
-
-
 
     public class SimpleShaker : MonoBehaviour
     {

@@ -311,14 +311,22 @@ namespace CrystalUnbolt
 
         public void Discard(bool withParticle)
         {
-            /*if (withParticle)
+            if (withParticle)
             {
+                // Play particle from central controller
                 ParticleCase particleCase = CrystalParticlesController.PlayParticle("Confetti");
 
-                Transform particleTransform = particleCase.ParticleSystem.transform;
-                particleTransform.position = transform.position;
-                particleTransform.rotation = Quaternion.FromToRotation(Vector3.up, (Vector3.up * 10 - transform.position.SetZ(0)).normalized);
-            }*/
+                if (particleCase != null)
+                {
+                    // Place particles at this object's position
+                    Transform particleTransform = particleCase.ParticleSystem.transform;
+                    particleTransform.position = transform.position;
+
+                    // Optional: keep default rotation or use yours
+                    particleTransform.rotation = Quaternion.identity;
+                }
+            }
+
 
             for (int i = 0; i < holes.Count; i++)
             {

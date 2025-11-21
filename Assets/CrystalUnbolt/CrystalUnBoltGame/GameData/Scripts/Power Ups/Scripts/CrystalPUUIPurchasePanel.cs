@@ -1,3 +1,4 @@
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -76,8 +77,8 @@ namespace CrystalUnbolt
             ScreenManager.OnPopupWindowOpened(this);
 
             // Show power icon with final scale of 2 after animation
-            PopupHelper.ShowPopup(powerUpPurchasePreview.transform, finalScale: 2f);
-            
+            PlayPowerIconAnimation();
+
             // Show buttons with default scale (1)
             if (showCurrency) PopupHelper.ShowPopup(purchaseButton.transform);
             if (showRV) PopupHelper.ShowPopup(purchaseRVButton.transform);
@@ -117,6 +118,32 @@ namespace CrystalUnbolt
             ClosePurchasePUPanel();
 #endif
         }
+        private void PlayPowerIconAnimation()
+        {
+            Transform icon = powerUpPurchasePreview.transform;
+
+            // kill any previous tweens on icon
+            icon.DOKill(true);
+
+            icon.localScale = Vector3.zero;
+            icon.localRotation = Quaternion.identity;
+
+            var seq = DG.Tweening.DOTween.Sequence();
+
+            // POP + bounce
+            seq.Append(
+                DG.Tweening.ShortcutExtensions.DOScale(icon, 2.25f, 0.25f)
+                    .SetEase(DG.Tweening.Ease.OutBack)
+            );
+
+            // settle to normal size
+            seq.Append(
+                DG.Tweening.ShortcutExtensions.DOScale(icon, 2f, 0.18f)
+                    .SetEase(DG.Tweening.Ease.OutSine)
+            );
+        }
+
+
 
         public void ClosePurchasePUPanel()
         {
