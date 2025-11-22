@@ -52,6 +52,7 @@ namespace CrystalUnbolt
         [SerializeField] ParticleSystem fireParticles;
         // [SerializeField] GameObject starImage; // Removed - using star array animation instead
         private AnimCase noThanksAppearTween;
+        private DG.Tweening.Tween levelCompleteLabelLoop; // Store reference to stop continuous animation
 
         private int coinsHash = "Coins".GetHashCode();
         private int currentReward;
@@ -66,11 +67,11 @@ namespace CrystalUnbolt
             powerUpsRewardPanel.Init();
 
             SafeAreaHandler.RegisterRectTransform(safeAreaTransform);
-            
+
             // Initialize star positions and scales
             ResetAnimatedElements();
         }
-        
+
         private void ResetAnimatedElements()
         {
             // Reset stars to hidden state
@@ -79,14 +80,43 @@ namespace CrystalUnbolt
                 foreach (var star in stars)
                 {
                     if (star != null)
+                    {
                         star.localScale = Vector3.zero;
+                        star.gameObject.SetActive(false);
+                    }
                 }
             }
-            
+
             // Reset congrats ribbon to off-screen
             if (congratsRibbon != null)
             {
                 congratsRibbon.localScale = Vector3.one;
+                congratsRibbon.gameObject.SetActive(true); // Ensure it's active
+
+                // Get canvas for proper positioning
+                Canvas canvas = congratsRibbon.GetComponentInParent<Canvas>();
+                RectTransform canvasRect = canvas != null ? canvas.GetComponent<RectTransform>() : null;
+
+                Vector3 originalPos = congratsRibbon.anchoredPosition;
+                float offScreenOffset = 2000f;
+                if (canvasRect != null)
+                {
+                    offScreenOffset = canvasRect.rect.width * 1.5f;
+                }
+
+                congratsRibbon.anchoredPosition = new Vector3(originalPos.x - offScreenOffset, originalPos.y, 0);
+            }
+
+            // Reset level complete label
+            if (levelCompleteLabel != null)
+            {
+                levelCompleteLabel.Hide(immediately: true);
+            }
+
+            // Reset reward label
+            if (rewardLabel != null)
+            {
+                rewardLabel.Hide(immediately: true);
             }
         }
 
@@ -101,14 +131,10 @@ namespace CrystalUnbolt
         #region Show/Hide
         public override void PlayShowAnimation()
         {
-            // Play particles
-            if (starParticles != null)
-            {
-                starParticles.Play();
-                fireParticles.Play();
-            }
+            // Initialize reward amount
+            currentReward = CrystalLevelController.GetCurrentLevelReward();
 
-            // Hide all elements initially
+            // Hide all interactive elements initially
             rewardLabel.Hide(immediately: true);
             multiplyRewardButtonFade.Hide(immediately: true);
             multiplyRewardButton.interactable = false;
@@ -117,137 +143,287 @@ namespace CrystalUnbolt
             homeButtonScaleAnimation.Hide(immediately: true);
             homeButton.interactable = false;
             coinsPanelScalable.Hide(immediately: true);
+            levelCompleteLabel.Hide(immediately: true);
 
-            currentReward = CrystalLevelController.GetCurrentLevelReward();
+            // Play particle effects
+            if (starParticles != null) starParticles.Play();
+            //   if (fireParticles != null) fireParticles.Play();
 
-            // Start animation sequence
-            backgroundFade.Show(duration: 0.3f);
-            
-            // NEW ANIMATIONS - Exciting celebration sequence!
-            StartCoroutine(CelebrationAnimationSequence());
+            // Start the complete animation sequence
+            StartCoroutine(CompleteWinScreenAnimation());
         }
 
-        private IEnumerator CelebrationAnimationSequence()
+        private IEnumerator CompleteWinScreenAnimation()
         {
-            // Step 1: Animate CONGRATS ribbon first
-            AnimateCongratsRibbon();
-            yield return new WaitForSeconds(0.6f);   // wait for the slide-in to feel complete
-
-            // Step 2: Animate stars one by one
-            AnimateStars();
-            yield return new WaitForSeconds(0.5f);
-
-            // Step 3: Animate LEVEL COMPLETED text
-            levelCompleteLabel.Show();
-            yield return new WaitForSeconds(0.3f);
-
-            // Step 4: Show coins panel at top
-            coinsPanelScalable.Show();
+            // Step 1: Background fade in
+            backgroundFade.Show(duration: 0.4f);
             yield return new WaitForSeconds(0.2f);
 
-            // Step 5: Show power-ups reward panel
-            powerUpsRewardPanel.Show(CrystalLevelController.GetPUReward(), 0.5f);
+            // Step 2: Congrats ribbon slides in from left
+            AnimateCongratsRibbon();
+            yield return new WaitForSeconds(0.12f);
+
+
+            // Step 4: "Well Done!" / Level Complete label appears
+            // yield return new WaitForSeconds(0.05f);
+
+            AnimateLevelCompleteLabel();
+            yield return new WaitForSeconds(0.4f);
+            fireParticles.gameObject.SetActive(true);
+            if (fireParticles != null) fireParticles.Play();
+
+            // Step 5: Coins panel slides down from top
+            AnimateCoinsPanel();
             yield return new WaitForSeconds(0.3f);
 
-            // Step 6: Show reward and buttons
+            // Step 6: Power-ups reward panel appears
+            powerUpsRewardPanel.Show(CrystalLevelController.GetPUReward(), 0.4f);
+            yield return new WaitForSeconds(0.4f);
+
+            // Step 7: Reward label with coin counting animation
             if (currentReward > 0)
             {
-                ShowRewardLabel(currentReward, false, 0.3f, delegate
-                {
-                    rewardLabel.Transform.DOPushScale(Vector3.one * 1.1f, Vector3.one, 0.2f, 0.2f).OnComplete(delegate
-                    {
-                        multiplyRewardButtonFade.Show();
-                        multiplyRewardButton.interactable = true;
+                AnimateRewardLabel();
+                yield return new WaitForSeconds(0.5f);
 
-                        FloatingCloud.SpawnCurrency(
-                            coinsHash,
-                            (RectTransform)rewardLabel.Transform,
-                            (RectTransform)coinsPanelScalable.Transform,
-                            10,
-                            "",
-                            () =>
-                            {
-                                EconomyManager.Add(CurrencyType.Coins, currentReward);
-                                CrystalCloudProgressSync.PushLocalToCloud();
+                // Step 8: Multiply reward button fades in
+                AnimateMultiplyButton();
+                yield return new WaitForSeconds(0.3f);
 
-                                AnimateBottomButtons();
-                            });
-                    });
-                });
+                // Step 9: Spawn currency and animate bottom buttons
+                SpawnCurrencyAndShowButtons();
             }
             else
             {
-                rewardLabel.Hide(immediately: true);
+                // No reward, just show buttons
                 AnimateBottomButtons();
             }
         }
 
+        private void AnimateCongratsRibbon()
+        {
+            if (congratsRibbon == null) return;
 
-        private void AnimateStars()
+            // Make sure ribbon is active
+            congratsRibbon.gameObject.SetActive(true);
+
+            // Get the canvas to calculate proper positioning
+            Canvas canvas = congratsRibbon.GetComponentInParent<Canvas>();
+            RectTransform canvasRect = canvas != null ? canvas.GetComponent<RectTransform>() : null;
+
+            // Store the target position (where it should end up on screen)
+            // Position it in the center of the screen horizontally
+            Vector3 targetPos;
+            if (canvasRect != null)
+            {
+                // Center horizontally (x = 0 is center in canvas space)
+                float targetX = 0f; // Center of screen
+                targetPos = new Vector3(targetX, congratsRibbon.anchoredPosition.y, 0);
+            }
+            else
+            {
+                // Fallback: use center position
+                targetPos = new Vector3(0f, congratsRibbon.anchoredPosition.y, 0);
+            }
+
+            // Calculate off-screen starting position
+            float offScreenOffset = 2000f;
+            if (canvasRect != null)
+            {
+                offScreenOffset = canvasRect.rect.width * 1.2f; // Well off-screen to the left
+            }
+
+            // Start from left side, well off-screen
+            Vector3 startPos = new Vector3(targetPos.x - offScreenOffset, targetPos.y, 0);
+            congratsRibbon.anchoredPosition = startPos;
+
+            // Slide in with bounce effect
+            Sequence ribbonSeq = DOTween.Sequence();
+            ribbonSeq.Append(congratsRibbon.DOAnchorPosX(targetPos.x + 50f, 0.6f).SetEase(DG.Tweening.Ease.OutBack));
+            ribbonSeq.Append(congratsRibbon.DOAnchorPosX(targetPos.x, 0.3f).SetEase(DG.Tweening.Ease.InOutSine));
+            ribbonSeq.Join(congratsRibbon.DOPunchScale(Vector3.one * 0.15f, 0.4f, 4, 0.5f));
+        }
+
+        private void AnimateStarsSequence()
         {
             if (stars == null || stars.Length == 0) return;
-            
+
             for (int i = 0; i < stars.Length; i++)
             {
                 if (stars[i] != null)
                 {
-                    // Left (0) and Right (2) stars = 0.23 scale
-                    // Middle (1) star = 0.32 scale
-                    float finalScale = (i == 1) ? 0.32f : 0.23f;
-                    AnimateStar(stars[i], i * 0.15f, finalScale);
+                    stars[i].gameObject.SetActive(true);
+                    float finalScale = (i == 1) ? 0.32f : 0.23f; // Middle star is larger
+                    float delay = i * 0.15f;
+
+                    AnimateStarWithBounce(stars[i], delay, finalScale);
                 }
             }
         }
-        
-        private void AnimateStar(RectTransform star, float delay, float finalScale)
+
+        private void AnimateStarWithBounce(RectTransform star, float delay, float finalScale)
         {
-            // Start small and from above
-            star.localScale = Vector3.zero;
             Vector3 originalPos = star.anchoredPosition;
-            star.anchoredPosition = new Vector3(originalPos.x, originalPos.y + 200f, 0);
-            
+            star.localScale = Vector3.zero;
+            star.anchoredPosition = new Vector3(originalPos.x, originalPos.y + 300f, 0);
+
             Tween.DelayedCall(delay, () =>
             {
+                Sequence starSeq = DOTween.Sequence();
+
                 // Drop down with bounce
-                star.DOAnchorPos(originalPos, 0.5f).SetEase(DG.Tweening.Ease.OutBounce);
-                
-                // Scale up with elastic bounce to final scale
-                star.DOScale(Vector3.one * finalScale, 0.5f).SetEasing(Ease.Type.ElasticOut).OnComplete(() =>
+                starSeq.Append(star.DOAnchorPosY(originalPos.y - 30f, 0.4f).SetEase(DG.Tweening.Ease.OutBounce));
+                starSeq.Append(star.DOAnchorPosY(originalPos.y, 0.2f).SetEase(DG.Tweening.Ease.OutSine));
+
+                // Scale up with elastic effect (run separately since DOScale returns AnimCase)
+                star.DOScale(Vector3.one * finalScale * 1.3f, 0.4f).SetEasing(Ease.Type.ElasticOut).OnComplete(() =>
                 {
-                    // Small punch for extra celebration (proportional to final scale)
-                    star.DOPunchScale(Vector3.one * finalScale * 0.2f, 0.3f, 6, 0.5f);
+                    star.DOScale(Vector3.one * finalScale, 0.2f).SetEasing(Ease.Type.SineInOut).OnComplete(() =>
+                    {
+                        // Final celebration punch
+                        star.DOPunchScale(Vector3.one * finalScale * 0.25f, 0.4f, 5, 0.5f);
+                    });
                 });
             });
         }
-        
-        private void AnimateCongratsRibbon()
+
+        private void AnimateLevelCompleteLabel()
         {
-            if (congratsRibbon == null) return;
-            
-            // Start from left side of screen
-            Vector3 originalPos = congratsRibbon.anchoredPosition;
-            congratsRibbon.anchoredPosition = new Vector3(originalPos.x - 800f, originalPos.y, 0);
-            congratsRibbon.localScale = Vector3.one;
-            
-            // Slide in from left with overshoot
-            congratsRibbon.DOAnchorPos(originalPos, 0.6f).SetEase(DG.Tweening.Ease.OutBack);
+            if (levelCompleteLabel == null) return;
+
+            // Stop any existing loop animation
+            if (levelCompleteLabelLoop != null && levelCompleteLabelLoop.IsActive())
+            {
+                levelCompleteLabelLoop.Kill();
+                levelCompleteLabelLoop = null;
+            }
+
+            levelCompleteLabel.Show(1.2f, 0.3f, 0f, false, () =>
+            {
+                // Add a subtle glow effect that stops after 3 seconds
+                levelCompleteLabelLoop = levelCompleteLabel.Transform.DOPunchScale(Vector3.one * 0.05f, 0.4f, 2, 0.3f)
+                    .SetLoops(5, LoopType.Yoyo) // Loop 5 times instead of infinite
+                    .OnComplete(() =>
+                    {
+                        // Ensure it returns to normal scale after animation
+                        levelCompleteLabel.Transform.localScale = Vector3.one;
+                        levelCompleteLabelLoop = null;
+                    });
+            });
         }
-        
+
+        private void AnimateCoinsPanel()
+        {
+            if (coinsPanelScalable == null) return;
+
+            // Slide down from top with scale
+            RectTransform coinsRect = coinsPanelScalable.Transform as RectTransform;
+            if (coinsRect != null)
+            {
+                Vector3 originalPos = coinsRect.anchoredPosition;
+                coinsRect.anchoredPosition = new Vector3(originalPos.x, originalPos.y + 200f, 0);
+                coinsRect.localScale = Vector3.zero;
+
+                // Animate position and scale separately since DOScale returns AnimCase
+                coinsRect.DOAnchorPosY(originalPos.y, 0.4f).SetEase(DG.Tweening.Ease.OutBack);
+                coinsRect.DOScale(Vector3.one, 0.4f).SetEasing(Ease.Type.BackOut);
+            }
+            else
+            {
+                coinsPanelScalable.Show();
+            }
+        }
+
+        private void AnimateRewardLabel()
+        {
+            if (rewardLabel == null) return;
+
+            // Scale in with bounce
+            rewardLabel.Show(1.3f, 0.5f, 0f, false, () =>
+            {
+                // Start counting animation
+                ShowRewardLabel(currentReward, false, 0.6f, () =>
+                {
+                    // Celebration bounce after counting completes
+                    rewardLabel.Transform.DOPunchScale(Vector3.one * 0.2f, 0.4f, 6, 0.5f);
+                });
+            });
+        }
+
+        private void AnimateMultiplyButton()
+        {
+            if (multiplyRewardButtonFade == null) return;
+
+            multiplyRewardButtonFade.Show(0.5f, 0f, false, () =>
+            {
+                multiplyRewardButton.interactable = true;
+
+                // Add subtle pulse animation
+                RectTransform btnRect = multiplyRewardButton.transform as RectTransform;
+                if (btnRect != null)
+                {
+                    btnRect.DOPunchScale(Vector3.one * 0.1f, 0.5f, 2, 0.3f).SetLoops(-1, LoopType.Yoyo);
+                }
+            });
+        }
+
+        private void SpawnCurrencyAndShowButtons()
+        {
+            FloatingCloud.SpawnCurrency(
+                coinsHash,
+                (RectTransform)rewardLabel.Transform,
+                (RectTransform)coinsPanelScalable.Transform,
+                10,
+                "",
+                () =>
+                {
+                    EconomyManager.Add(CurrencyType.Coins, currentReward);
+                    CrystalCloudProgressSync.PushLocalToCloud();
+                    AnimateBottomButtons();
+                });
+        }
+
         private void AnimateBottomButtons()
         {
-            // Animate HOME and NEXT buttons with bounce
-            homeButtonScaleAnimation.Show(1.05f, 0.25f, 1f);
-            nextLevelButtonScaleAnimation.Show(1.05f, 0.25f, 1f);
+            // Animate HOME button
+            if (homeButtonScaleAnimation != null)
+            {
+                homeButtonScaleAnimation.Show(1.15f, 0.4f, 0f, false, () =>
+                {
+                    homeButton.interactable = true;
+                });
+            }
+            else
+            {
+                homeButton.interactable = true;
+            }
 
-            homeButton.interactable = true;
-            nextLevelButton.interactable = true;
+            // Animate NEXT button with slight delay
+            if (nextLevelButtonScaleAnimation != null)
+            {
+                nextLevelButtonScaleAnimation.Show(1.15f, 0.4f, 0.1f, false, () =>
+                {
+                    nextLevelButton.interactable = true;
+                });
+            }
+            else
+            {
+                nextLevelButton.interactable = true;
+            }
         }
-        
+
         public override void PlayHideAnimation()
         {
+            // Stop any running animations
+            if (levelCompleteLabelLoop != null && levelCompleteLabelLoop.IsActive())
+            {
+                levelCompleteLabelLoop.Kill();
+                levelCompleteLabelLoop = null;
+            }
+
             // Reset elements for next time
             ResetAnimatedElements();
-            
+
             ScreenManager.OnPageClosed(this);
         }
 
@@ -259,7 +435,6 @@ namespace CrystalUnbolt
         public void ShowRewardLabel(float rewardAmounts, bool immediately = false, float duration = 0.3f, Action onComplted = null)
         {
             rewardLabel.Show(immediately: immediately);
-
             if (immediately)
             {
                 rewardAmountText.text = "+" + rewardAmounts;
@@ -278,8 +453,14 @@ namespace CrystalUnbolt
 
                 onComplted?.Invoke();
             });
+            StartCoroutine(nameof(PlayWinCoinSound));
         }
 
+        IEnumerator PlayWinCoinSound()
+        {
+            yield return new WaitForSeconds(1f);
+            SoundManager.PlaySound(SoundManager.AudioClips.coinCollect);
+        }
         #endregion
 
         #region Buttons
@@ -288,7 +469,7 @@ namespace CrystalUnbolt
         {
             SoundManager.PlaySound(SoundManager.AudioClips.buttonSound);
 #if MODULE_HAPTIC
-           Haptic.Play(Haptic.HAPTIC_HARD);
+            Haptic.Play(Haptic.HAPTIC_HARD);
 #endif
             Debug.Log("Click MultiplyRewardButton");
             if (noThanksAppearTween != null && noThanksAppearTween.IsActive)
@@ -301,6 +482,7 @@ namespace CrystalUnbolt
 
             MyAdsAdapter.ShowRewardBasedVideo((bool success) =>
             {
+                Debug.Log("success" + success);
                 if (success)
                 {
                     int rewardMult = 3;
@@ -323,6 +505,7 @@ namespace CrystalUnbolt
                 }
                 else
                 {
+                    Debug.Log("else ");
                     NextLevelButton();
                 }
             });
@@ -340,7 +523,7 @@ namespace CrystalUnbolt
             {
                 SoundManager.PlaySound(SoundManager.AudioClips.buttonSound);
 #if MODULE_HAPTIC
-               Haptic.Play(Haptic.HAPTIC_HARD);
+                Haptic.Play(Haptic.HAPTIC_HARD);
 #endif
                 ScreenOverlay.Show(0.3f, () =>
                 {
@@ -359,7 +542,7 @@ namespace CrystalUnbolt
         {
             SoundManager.PlaySound(SoundManager.AudioClips.buttonSound);
 #if MODULE_HAPTIC
-           Haptic.Play(Haptic.HAPTIC_HARD);
+            Haptic.Play(Haptic.HAPTIC_HARD);
 #endif
             CrystalLivesSystem.UnlockLife(false);
 

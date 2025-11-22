@@ -59,9 +59,6 @@ namespace CrystalUnbolt
             panelRectTransform.anchoredPosition = Vector2.down * 2000;
             panelRectTransform.DOAnchoredPosition(Vector2.zero, 0.3f).SetEasing(Ease.Type.SineOut);
 
-
-
-
             ScreenManager.OnPageOpened(this);
             ScreenManager.OnPopupWindowOpened(this);
 

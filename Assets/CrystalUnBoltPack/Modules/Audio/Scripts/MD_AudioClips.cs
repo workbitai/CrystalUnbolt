@@ -11,6 +11,8 @@ namespace CrystalUnbolt
         [BoxGroup("Gameplay")]
         public AudioClip screwPlace;
         [BoxGroup("Gameplay")]
+        public AudioClip coinCollect;
+        [BoxGroup("Gameplay")]
         public AudioClip plankComplete;
         [BoxGroup("Gameplay")]
         public AudioClip plankCollision;

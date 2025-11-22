@@ -2,6 +2,7 @@ using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 using CrystalUnbolt.Map;
 
 namespace CrystalUnbolt
@@ -39,6 +40,8 @@ namespace CrystalUnbolt
         [SerializeField] CrystalReplayPopupBehavior replayPopupBehavior;
         [BoxGroup("Popups")]
         [SerializeField] CrystalStageCompletePopup stageCompletePopup;
+        [BoxGroup("Popups")]
+        [SerializeField] CrystalTimerStartPopup timerStartPopup;
 
         [BoxGroup("Message Box", "Message Box")]
         [SerializeField] CrystalMessageBox messageBox;
@@ -49,7 +52,7 @@ namespace CrystalUnbolt
 
         private AnimCase noMoreMovesCase;
         [BoxGroup("GAmeoverArrenge Maths Que Text", "GAmeoverArrenge Maths Que Text")]
-        [SerializeField] private TextMeshProUGUI queText;  
+        [SerializeField] private TextMeshProUGUI queText;
 
         private static CrystalUIGame instance;
 
@@ -69,21 +72,21 @@ namespace CrystalUnbolt
             instance = this;
         }
 
-        public static TextMeshProUGUI QueText => instance.queText; 
+        public static TextMeshProUGUI QueText => instance.queText;
         public override void Init()
         {
             if (coinsPanel != null)
                 coinsPanel.Init();
-            
+
             if (pauseButton != null)
                 pauseButton.onClick.AddListener(ShowPausePopUp);
-            
+
             if (replayButton != null)
                 replayButton.onClick.AddListener(ShowReplayPopup);
-          
+
             if (pauseButtonFadeAnimation != null)
                 pauseButtonFadeAnimation.Hide(immediately: true);
-            
+
             if (replayButtonFadeAnimation != null)
                 replayButtonFadeAnimation.Hide(immediately: true);
 
@@ -95,6 +98,12 @@ namespace CrystalUnbolt
 
             if (devOverlay != null)
                 CrystalDevPanelEnabler.RegisterPanel(devOverlay);
+
+            // Ensure timer popup starts hidden
+            if (timerStartPopup != null)
+            {
+                timerStartPopup.Hide();
+            }
 
             // Stage Panel disabled - prefabs not assigned
             // if (CrystalStagePanel != null)
@@ -112,7 +121,7 @@ namespace CrystalUnbolt
         public override void PlayShowAnimation()
         {
             Debug.Log("[CrystalUIGame] PlayShowAnimation called");
-            
+
             try
             {
                 pauseButton.gameObject.SetActive(true);
@@ -129,11 +138,69 @@ namespace CrystalUnbolt
 
                 CrystalUILevelNumberText.Show();
 
-                if (CrystalGameManager.Data.GameplayTimerEnabled)
+                // --- always hide popup + timer first ---
+                if (timerStartPopup != null)
+                    timerStartPopup.Hide(immediately: true);
+
+                if (CrystalLevelController.GameTimer != null)
                 {
-                    CrystalGameTimer.Show(CrystalLevelController.GameTimer);
+                    CrystalLevelController.GameTimer.Pause();
+                }
+                CrystalGameTimer.Hide();
+
+                // ----- GET CURRENT LEVEL NUMBER (1-based) -----
+                // Use the same save object that dev buttons use,
+                // so level number is always correct even when you replay.
+                var levelSave = DataManager.GetSaveObject<CrystalLevelSave>("level");
+                int currentLevel = (levelSave != null ? levelSave.DisplayLevelIndex : 0) + 1;
+
+                Debug.Log($"[CrystalUIGame] ===== LEVEL CHECK START =====  currentLevel = {currentLevel}");
+
+                // 1–10  =>  no timer, no popup  (always)
+                if (currentLevel <= 10)
+                {
+                    Debug.Log("[CrystalUIGame] Level <= 10 : NO TIMER, NO POPUP");
+                    // everything already hidden above
+                }
+                // 11   =>  show popup, then start timer
+                else if (currentLevel == 11)
+                {
+                    Debug.Log("[CrystalUIGame] Level 11 : show popup then start timer");
+
+                    if (CrystalGameManager.Data.GameplayTimerEnabled &&
+                        CrystalLevelController.GameTimer != null)
+                    {
+                        // timer is paused + hidden already; just show popup
+                        if (timerStartPopup != null)
+                        {
+                            StartCoroutine(ShowTimerPopupForLevel11());
+                        }
+                        else
+                        {
+                            Debug.LogWarning("[CrystalUIGame] timerStartPopup not assigned – starting timer without popup.");
+                            CrystalGameTimer.Show(CrystalLevelController.GameTimer);
+                            CrystalLevelController.GameTimer.Start();
+                        }
+                    }
+                    else
+                    {
+                        Debug.LogWarning("[CrystalUIGame] GameplayTimerEnabled is false OR GameTimer is null on level 11");
+                    }
+                }
+                // 12+  =>  timer visible and running, no popup
+                else
+                {
+                    Debug.Log("[CrystalUIGame] Level >= 12 : show timer normally");
+
+                    if (CrystalGameManager.Data.GameplayTimerEnabled &&
+                        CrystalLevelController.GameTimer != null)
+                    {
+                        CrystalGameTimer.Show(CrystalLevelController.GameTimer);
+                        CrystalLevelController.GameTimer.Start();
+                    }
                 }
 
+                Debug.Log("[CrystalUIGame] ===== LEVEL CHECK END =====");
                 ScreenManager.OnPageOpened(this);
                 Debug.Log("[CrystalUIGame] PlayShowAnimation completed successfully");
             }
@@ -156,6 +223,12 @@ namespace CrystalUnbolt
             if (CrystalGameManager.Data.GameplayTimerEnabled)
             {
                 CrystalGameTimer.Hide();
+            }
+
+            // Always hide timer popup when leaving game screen
+            if (timerStartPopup != null)
+            {
+                timerStartPopup.Hide(immediately: true);
             }
 
             if (noMoreMovesIndicator.gameObject.activeSelf) HideNoMoreMovesIndicator(true);
@@ -236,7 +309,8 @@ namespace CrystalUnbolt
             }
             else
             {
-                noMoreMovesCase = noMoreMovesIndicator.DOFade(0, 0.3f).OnComplete(() => {
+                noMoreMovesCase = noMoreMovesIndicator.DOFade(0, 0.3f).OnComplete(() =>
+                {
                     noMoreMovesIndicator.gameObject.SetActive(false);
                 });
             }
@@ -247,7 +321,7 @@ namespace CrystalUnbolt
             stageCompletePopup.Show(onMaxFade);
 
         }
-      
+
         #region Tutorial
         public void ActivateTutorial()
         {
@@ -305,12 +379,12 @@ namespace CrystalUnbolt
             CrystalLevelSave.RealLevelIndex = CrystalLevelSave.DisplayLevelIndex;
 
             CrystalGameManager.ReplayLevel();
-        }
+        }    
 
         public void NextLevelDev()
         {
             CrystalLevelSave CrystalLevelSave = DataManager.GetSaveObject<CrystalLevelSave>("level");
-            
+
             CrystalLevelSave.DisplayLevelIndex = CrystalLevelSave.DisplayLevelIndex + 1;
             if (CrystalLevelSave.DisplayLevelIndex >= CrystalLevelController.Database.AmountOfLevels)
             {
@@ -319,6 +393,34 @@ namespace CrystalUnbolt
             CrystalLevelSave.RealLevelIndex = CrystalLevelSave.DisplayLevelIndex;
 
             CrystalGameManager.ReplayLevel();
+        }
+        private IEnumerator ShowTimerPopupForLevel11()
+        {
+            Debug.Log("[CrystalUIGame] ShowTimerPopupForLevel11 coroutine started");
+
+            // small delay so UI is ready
+            yield return null;
+            yield return new WaitForSeconds(0.3f);
+
+            if (timerStartPopup == null)
+            {
+                Debug.LogError("[CrystalUIGame] timerStartPopup is NULL in coroutine");
+                yield break;
+            }
+
+            if (CrystalLevelController.GameTimer == null)
+            {
+                Debug.LogError("[CrystalUIGame] GameTimer is NULL in coroutine");
+                yield break;
+            }
+
+            // show popup and then start timer
+            timerStartPopup.Show(() =>
+            {
+                Debug.Log("[CrystalUIGame] Timer popup closed -> starting timer");
+                CrystalGameTimer.Show(CrystalLevelController.GameTimer);
+                CrystalLevelController.GameTimer.Start();
+            });
         }
         #endregion
     }

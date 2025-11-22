@@ -1,8 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
   <!-- Vibration Permission for Haptic Feedback -->
   <uses-permission android:name="android.permission.VIBRATE" />
   <application>
-    <activity android:name="com.unity3d.player.UnityPlayerActivity" android:theme="@style/UnityThemeSelector" android:exported="true">
+    <activity android:name="com.CrystalTest.demounity3d.player.UnityPlayerActivity" android:theme="@style/UnityThemeSelector" android:exported="true">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />
@@ -11,6 +12,6 @@
       <meta-data android:name="unityplayer.UnityActivity" android:value="true" />
     </activity>
     <!-- Play Services version (good to have) -->
-    <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
+    <meta-data android:name="com.CrystalTest.demogoogle.android.gms.version" android:value="@integer/google_play_services_version" />
   </application>
 </manifest>

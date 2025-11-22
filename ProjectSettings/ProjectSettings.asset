@@ -144,7 +144,7 @@ PlayerSettings:
   loadStoreDebugModeEnabled: 0
   visionOSBundleVersion: 1.0
   tvOSBundleVersion: 1.0
-  bundleVersion: 1.0.0
+  bundleVersion: 1
   preloadedAssets:
   - {fileID: 11400000, guid: f859f1ca7a1276e4597b2d1f8cd053f0, type: 2}
   - {fileID: -944628639613478452, guid: 6a14d18e4b996a945b4f9c9ffeeff850, type: 3}
@@ -169,7 +169,7 @@ PlayerSettings:
   androidMaxAspectRatio: 2.1
   androidMinAspectRatio: 1
   applicationIdentifier:
-    Android: com.crystalunbolt.solve
+    Android: com.CrystalTest.demo
     Standalone: com.crystalunbolt.solve
     iPhone: com.crystalunbolt.solve
   buildNumber:
@@ -273,8 +273,8 @@ PlayerSettings:
   AndroidTargetArchitectures: 3
   AndroidSplashScreenScale: 1
   androidSplashScreen: {fileID: 0}
-  AndroidKeystoreName: '{inproject}: UnscrewSolve.keystore'
-  AndroidKeyaliasName: unscrewsolve
+  AndroidKeystoreName: '{inproject}: CrystalKey.keystore'
+  AndroidKeyaliasName: cryst
   AndroidEnableArmv9SecurityFeatures: 0
   AndroidEnableArm64MTE: 0
   AndroidBuildApkPerCpuArchitecture: 0

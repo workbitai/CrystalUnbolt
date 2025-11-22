@@ -1,10 +1,9 @@
 <?xml version='1.0' encoding='utf-8'?>
-<resources xmlns:tools="http://schemas.android.com/tools" tools:keep="@string/gcm_defaultSenderId,@string/google_storage_bucket,@string/project_id,@string/google_api_key,@string/google_crash_reporting_api_key,@string/google_app_id,@string/default_web_client_id">
-  <string name="gcm_defaultSenderId" translatable="false">93565773157</string>
-  <string name="google_storage_bucket" translatable="false">crystalunbolt-sovel.firebasestorage.app</string>
-  <string name="project_id" translatable="false">crystalunbolt-sovel</string>
-  <string name="google_api_key" translatable="false">AIzaSyB8oRtQseZ1unnvtZ8LiI0-hoWRzea7ycQ</string>
-  <string name="google_crash_reporting_api_key" translatable="false">AIzaSyB8oRtQseZ1unnvtZ8LiI0-hoWRzea7ycQ</string>
-  <string name="google_app_id" translatable="false">1:93565773157:android:613fe670a07a59f05aed8c</string>
-  <string name="default_web_client_id" translatable="false">93565773157-hq85v1au3eh2pdqflsvl3i19ndcpo85c.apps.googleusercontent.com</string>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:keep="@string/gcm_defaultSenderId,@string/google_storage_bucket,@string/project_id,@string/google_api_key,@string/google_crash_reporting_api_key,@string/google_app_id">
+  <string name="gcm_defaultSenderId" translatable="false">1018950142156</string>
+  <string name="google_storage_bucket" translatable="false">crystaltestdemo-8bf61.firebasestorage.app</string>
+  <string name="project_id" translatable="false">crystaltestdemo-8bf61</string>
+  <string name="google_api_key" translatable="false">AIzaSyCEi0Ajve0u3SK9sfWYfF0mniGQmx0xihI</string>
+  <string name="google_crash_reporting_api_key" translatable="false">AIzaSyCEi0Ajve0u3SK9sfWYfF0mniGQmx0xihI</string>
+  <string name="google_app_id" translatable="false">1:1018950142156:android:5b7640f4e32c9ee0cb1a69</string>
 </resources>

@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   screwPick: {fileID: 8300000, guid: aa504c79614280c46a40aaf95b1b3b6b, type: 3}
   screwPlace: {fileID: 8300000, guid: aa504c79614280c46a40aaf95b1b3b6b, type: 3}
+  coinCollect: {fileID: 8300000, guid: 00e92a25dd56fa84e8f994267b9b533a, type: 3}
   plankComplete: {fileID: 8300000, guid: 40a20ada176100e4ba23576b0e8d76ad, type: 3}
   plankCollision: {fileID: 8300000, guid: 078b1ddca2edec74abb969f8869b31ac, type: 3}
   tutorialComplete: {fileID: 8300000, guid: c11f32918798b094982e7794cb9fbd64, type: 3}

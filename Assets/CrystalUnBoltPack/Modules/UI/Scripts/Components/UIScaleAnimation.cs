@@ -42,6 +42,7 @@ namespace CrystalUnbolt
 
             // RESET
             transform.localScale = Vector3.zero;
+
             scaleTweenCase = transform.DOPushScale(Vector3.one * scaleMultiplier, Vector3.one, duration * 0.64f, duration * 0.36f, Ease.Type.CubicOut, Ease.Type.CubicIn, delay).OnComplete(() =>
             {
                 onCompleted?.Invoke();

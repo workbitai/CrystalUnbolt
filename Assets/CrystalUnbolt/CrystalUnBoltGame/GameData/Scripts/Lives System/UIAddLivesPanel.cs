@@ -20,11 +20,10 @@ namespace CrystalUnbolt
         [SerializeField] private Button button;
         [SerializeField] private Button closeButton;
         [SerializeField] private Button coinButton;
-        [SerializeField] private TMP_Text coinButtonLabel;
+      //  [SerializeField] private TMP_Text coinButtonLabel;
 
         [Header("Lives UI")]
         [SerializeField] private GameObject timerGameObject;
-        [SerializeField] private GameObject fullGameObject;
         [SerializeField] private TMP_Text livesAmountText;
         [SerializeField] private TMP_Text timeText;
         [SerializeField] private AudioClip lifeRecievedAudio;
@@ -149,7 +148,7 @@ namespace CrystalUnbolt
             if (status.NewLifeTimerEnabled)
             {
                 if (timerGameObject) timerGameObject.SetActive(true);
-                if (fullGameObject) fullGameObject.SetActive(false);
+               // if (fullGameObject) fullGameObject.SetActive(false);
 
                 if (timeText != null)
                     timeText.text = CrystalLivesSystem.GetFormatedTime(status.NewLifeTime);
@@ -157,7 +156,7 @@ namespace CrystalUnbolt
             else
             {
                 if (timerGameObject) timerGameObject.SetActive(false);
-                if (fullGameObject) fullGameObject.SetActive(true);
+              //  if (fullGameObject) fullGameObject.SetActive(true);
             }
 
             RefreshCoinButtonState();
@@ -372,8 +371,8 @@ namespace CrystalUnbolt
 
             if (!visible) return;
 
-            if (coinButtonLabel != null)
-                coinButtonLabel.text = GetCoinCost().ToString();
+           /* if (coinButtonLabel != null)
+                coinButtonLabel.text = GetCoinCost().ToString();*/
 
             RefreshCoinButtonState();
         }

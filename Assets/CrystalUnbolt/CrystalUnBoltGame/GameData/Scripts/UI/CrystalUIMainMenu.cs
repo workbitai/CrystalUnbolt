@@ -104,7 +104,7 @@ namespace CrystalUnbolt
         private const string GUEST_NAME_KEY = "profile_guest_name";
         private const string GUEST_AVATAR_KEY = "profile_guest_avatar";
         [BoxGroup("Buttons", "Buttons")]
-        [SerializeField] Button profileButton;
+        [SerializeField] Button profileButton, profileBtn_Second;
         private Coroutine _photoLoadRoutine;
         private string _currentPhotoUrl;
 
@@ -161,8 +161,8 @@ namespace CrystalUnbolt
             // iapStoreButton.Init(STORE_AD_RIGHT_OFFSET_X); // IAP Disabled!
             // noAdsButton.Init(STORE_AD_RIGHT_OFFSET_X); // Disabled - keep button at editor position
             // dailyGift_Plinko.Init(STORE_AD_RIGHT_OFFSET_X);
-          //  dailyBonusButton.Init(STORE_AD_RIGHT_OFFSET_X);
-           // settingButton.Init(STORE_AD_RIGHT_OFFSET_X);
+            //  dailyBonusButton.Init(STORE_AD_RIGHT_OFFSET_X);
+            // settingButton.Init(STORE_AD_RIGHT_OFFSET_X);
             //  leaderBoardButton.Init(STORE_AD_RIGHT_OFFSET_X);
 
             dailyBonusButton.Button.onClick.AddListener(DailyBonusButton);
@@ -173,6 +173,7 @@ namespace CrystalUnbolt
             playButton.onClick.AddListener(PlayButton);
             gamePlayButton.onClick.AddListener(TapToPlayResetButton);
             profileButton.onClick.AddListener(ProfileOpenButton);
+            profileBtn_Second.onClick.AddListener(ProfileOpenButton);
             leaderBoardButton.Button.onClick.AddListener(LeaderBoardButton);
 
             if (privacyYesButton != null) privacyYesButton.onClick.AddListener(OnPrivacyYesClicked);
@@ -449,7 +450,7 @@ namespace CrystalUnbolt
             }
 
             // Reset button positions first (in case they were moved off-screen)
-         //   ResetBottomButtonPositions();
+            //   ResetBottomButtonPositions();
 
             // Animate top bar & bottom buttons when returning
             AnimateTopBar();
@@ -488,14 +489,14 @@ namespace CrystalUnbolt
 
             HideAdButton();
 
-           /* showHideStoreAdButtonDelayTweenCase = Tween.DelayedCall(0.1f, delegate
-            {
-                // iapStoreButton.Hide(); // IAP Disabled!
-                dailyBonusButton.Hide();
-                //   dailyGift_Plinko.Hide();
-                settingButton.Hide();
-                // leaderBoardButton.Hide();
-            });*/
+            /* showHideStoreAdButtonDelayTweenCase = Tween.DelayedCall(0.1f, delegate
+             {
+                 // iapStoreButton.Hide(); // IAP Disabled!
+                 dailyBonusButton.Hide();
+                 //   dailyGift_Plinko.Hide();
+                 settingButton.Hide();
+                 // leaderBoardButton.Hide();
+             });*/
 
             CrystalMapLevelAbstractBehavior.OnLevelClicked -= OnLevelOnMapSelected;
 
@@ -901,7 +902,7 @@ namespace CrystalUnbolt
 
         public CrystalUIProfilePage UIProfilePage;
 
-        private void ProfileOpenButton()
+        public void ProfileOpenButton()
         {
             var profilePage = ScreenManager.GetPage<CrystalUIProfilePage>();
             if (profilePage == null)

@@ -619,6 +619,16 @@ namespace CrystalUnbolt
 
         private static void InitTimer()
         {
+            int levelNumber = DisplayedLevelIndex + 1; // 1-based level number
+            Debug.Log($"[Timer] InitTimer called - DisplayedLevelIndex: {DisplayedLevelIndex}, Level Number: {levelNumber}");
+            
+            // Skip timer for levels 1-10 (DisplayedLevelIndex 0-9)
+            if (DisplayedLevelIndex < 10)
+            {
+                Debug.Log($"[Timer] Skipping timer for level {levelNumber} (levels 1-10 have no timer)");
+                return;
+            }
+
             if (CrystalGameManager.Data.GameplayTimerEnabled)
             {
                 float time = CrystalGameManager.Data.GameplayTimerValue;
@@ -626,7 +636,22 @@ namespace CrystalUnbolt
                 if (stage.TimerOverrideEnabled) time = stage.TimerOverride;
 
                 GameTimer.SetMaxTime(time);
-                GameTimer.Start();
+                
+                // For level 11 ONLY (DisplayedLevelIndex == 10), don't start the timer yet - it will be started after popup
+                if (DisplayedLevelIndex == 10 && levelNumber == 11) // Level 11 (0-based index 10)
+                {
+                    Debug.Log($"[Timer] Level 11 detected (index {DisplayedLevelIndex}) - Timer initialized but NOT started, waiting for popup");
+                    // Don't start yet - will be started after popup in CrystalUIGame
+                }
+                else
+                {
+                    GameTimer.Start();
+                    Debug.Log($"[Timer] Timer started for level {levelNumber} (index {DisplayedLevelIndex})");
+                }
+            }
+            else
+            {
+                Debug.Log($"[Timer] Timer is disabled in game settings");
             }
         }
 
