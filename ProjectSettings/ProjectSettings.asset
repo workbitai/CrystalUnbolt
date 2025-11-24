@@ -169,7 +169,7 @@ PlayerSettings:
   androidMaxAspectRatio: 2.1
   androidMinAspectRatio: 1
   applicationIdentifier:
-    Android: com.CrystalTest.demo
+    Android: com.crystalunbolt.solve
     Standalone: com.crystalunbolt.solve
     iPhone: com.crystalunbolt.solve
   buildNumber:
@@ -896,7 +896,7 @@ PlayerSettings:
     PS4: DOTWEEN
     PS5: DOTWEEN
     QNX: DOTWEEN
-    Standalone: MODULE_INPUT_SYSTEM;MODULE_TMP;MODULE_POWERUPS;MODULE_HAPTIC;DOTWEEN;MODULE_IAP;MODULE_ADMOB;MODULE_IDFA
+    Standalone: MODULE_INPUT_SYSTEM;MODULE_TMP;MODULE_POWERUPS;MODULE_HAPTIC;DOTWEEN;MODULE_IAP;MODULE_ADMOB;MODULE_IDFA;TEST
     VisionOS: DOTWEEN
     WebGL: DOTWEEN
     Windows Store Apps: DOTWEEN
