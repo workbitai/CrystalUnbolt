@@ -1096,7 +1096,7 @@ MonoBehaviour:
     particlePrefab: {fileID: 6393692314122666616, guid: 3342f429a0178114bb58cd406d5dcf80,
       type: 3}
   - particleName: Tutorial Complete
-    particlePrefab: {fileID: 179446, guid: dfa14883224916b4fb7a88d6a3b2eb6a, type: 3}
+    particlePrefab: {fileID: 179446, guid: 3c5d87d5228ffc546b53d534eaac963d, type: 3}
 --- !u!114 &1060784215
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5493,10 +5493,6 @@ PrefabInstance:
     - {fileID: 3256327241501974240, guid: 1582c4aaa5a0e3541bd669f9af9b2f90, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 3229595248177995774, guid: 1582c4aaa5a0e3541bd669f9af9b2f90,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 7685625500847839245}
     - targetCorrespondingSourceObject: {fileID: 4987974080694870924, guid: 1582c4aaa5a0e3541bd669f9af9b2f90,
         type: 3}
       insertIndex: -1
@@ -5533,12 +5529,6 @@ GameObject:
 --- !u!1 &7685625500847839240 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3896966791314085352, guid: 1582c4aaa5a0e3541bd669f9af9b2f90,
-    type: 3}
-  m_PrefabInstance: {fileID: 7685625500847839237}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &7685625500847839241 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3229595248177995774, guid: 1582c4aaa5a0e3541bd669f9af9b2f90,
     type: 3}
   m_PrefabInstance: {fileID: 7685625500847839237}
   m_PrefabAsset: {fileID: 0}
@@ -5623,29 +5613,6 @@ MonoBehaviour:
   hideAfterClick: 0
   hideDelay: 0.25
   hideDuration: 0.2
---- !u!114 &7685625500847839245
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7685625500847839241}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Version: 3
-  m_UsePipelineSettings: 1
-  m_AdditionalLightsShadowResolutionTier: 2
-  m_LightLayerMask: 1
-  m_RenderingLayers: 1
-  m_CustomShadowLayers: 0
-  m_ShadowLayerMask: 1
-  m_ShadowRenderingLayers: 1
-  m_LightCookieSize: {x: 1, y: 1}
-  m_LightCookieOffset: {x: 0, y: 0}
-  m_SoftShadowQuality: 0
 --- !u!224 &7921812722490943923 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7921812722436507108, guid: f498ec5c4d8606d44b8576c76181fe5a,
