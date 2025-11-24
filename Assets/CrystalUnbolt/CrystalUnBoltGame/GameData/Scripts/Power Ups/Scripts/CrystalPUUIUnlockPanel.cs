@@ -56,7 +56,7 @@ namespace CrystalUnbolt
             powerUpPurchaseDescriptionText.text = settings.Description;
 
             powerUpPurchasePreview.transform.localScale = new Vector3(0.6f, 0.6f, 0.6f);
-            powerUpPurchasePreview.transform.DOScale(1.0f, 0.25f).SetEasing(Ease.Type.BackOut);
+            powerUpPurchasePreview.transform.DOScale(2.0f, 0.25f).SetEasing(Ease.Type.BackOut);
         }
 
         public void ClosePanel()

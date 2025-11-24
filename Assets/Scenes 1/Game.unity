@@ -345,6 +345,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 9106204053559549603, guid: 3a46546fade48fd4d9c3cb9f4361436f,
+        type: 3}
+      propertyPath: useFormattedAmount
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -542,6 +547,11 @@ PrefabInstance:
     - target: {fileID: 2190345316695701631, guid: 8853cd9e4a8b89c4fa2181d39cc66863,
         type: 3}
       propertyPath: playOnAwake
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2463264474176107707, guid: 8853cd9e4a8b89c4fa2181d39cc66863,
+        type: 3}
+      propertyPath: useFormattedAmount
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4573151942524387154, guid: 8853cd9e4a8b89c4fa2181d39cc66863,
@@ -1433,7 +1443,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5733f53fc932094784f16db6688e107, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  databaseUrl: https://crystalunbolt-sovel-default-rtdb.asia-southeast1.firebasedatabase.app/
+  databaseUrl: https://console.firebase.google.com/project/crystaltestdemo-8bf61/database/crystaltestdemo-8bf61-default-rtdb/data/~2F
   defaultLevel: 1
   defaultCoins: 100
   guestNameKey: profile_guest_name
@@ -1452,7 +1462,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc3ede9392b828742ad957fed7721532, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  webClientId: 1018950142156-munsmopr0fs8r0bgcfqf2t9s2vk5aeqh.apps.googleusercontent.com
+  webClientId: 93565773157-hq85v1au3eh2pdqflsvl3i19ndcpo85c.apps.googleusercontent.com
   loginButton: {fileID: 2466326698965444306}
   CrystalAppleLoginButton: {fileID: 0}
   logoutButton: {fileID: 2466326698965444305}
@@ -2970,6 +2980,11 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 52.288
       objectReference: {fileID: 0}
+    - target: {fileID: 7705836053914711491, guid: b5f6cc9f0ef59d34b9f4a1e24115de70,
+        type: 3}
+      propertyPath: useFormattedAmount
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8106020585707003491, guid: b5f6cc9f0ef59d34b9f4a1e24115de70,
         type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -3137,6 +3152,11 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -73.795
       objectReference: {fileID: 0}
+    - target: {fileID: 6046068960127395846, guid: f498ec5c4d8606d44b8576c76181fe5a,
+        type: 3}
+      propertyPath: useFormattedAmount
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7149555764472219053, guid: f498ec5c4d8606d44b8576c76181fe5a,
         type: 3}
       propertyPath: m_IsActive
@@ -3262,6 +3282,12 @@ PrefabInstance:
       propertyPath: timerStartPopup
       value: 
       objectReference: {fileID: 4874895436536460197}
+    - target: {fileID: 8424146788299533676, guid: f498ec5c4d8606d44b8576c76181fe5a,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 63542d40242d2894a8d1fca1d4e231b1,
+        type: 3}
     m_RemovedComponents:
     - {fileID: 1991927823744650949, guid: f498ec5c4d8606d44b8576c76181fe5a, type: 3}
     m_RemovedGameObjects: []
@@ -5153,7 +5179,7 @@ PrefabInstance:
     - target: {fileID: 357866804715805285, guid: 1582c4aaa5a0e3541bd669f9af9b2f90,
         type: 3}
       propertyPath: numberScrewScale
-      value: 1.25
+      value: 1.32
       objectReference: {fileID: 0}
     - target: {fileID: 357866804715805285, guid: 1582c4aaa5a0e3541bd669f9af9b2f90,
         type: 3}
@@ -5435,6 +5461,11 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 26
       objectReference: {fileID: 0}
+    - target: {fileID: 5163734477977951404, guid: 1582c4aaa5a0e3541bd669f9af9b2f90,
+        type: 3}
+      propertyPath: useFormattedAmount
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5446801590092838754, guid: 1582c4aaa5a0e3541bd669f9af9b2f90,
         type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -5471,6 +5502,11 @@ PrefabInstance:
       propertyPath: 'stars.Array.data[2]'
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 6934673929739542775, guid: 1582c4aaa5a0e3541bd669f9af9b2f90,
+        type: 3}
+      propertyPath: coinsPanelScalable.transform
+      value: 
+      objectReference: {fileID: 7685625500847839241}
     - target: {fileID: 7323481847119722110, guid: 1582c4aaa5a0e3541bd669f9af9b2f90,
         type: 3}
       propertyPath: m_Sprite
@@ -5529,6 +5565,12 @@ GameObject:
 --- !u!1 &7685625500847839240 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3896966791314085352, guid: 1582c4aaa5a0e3541bd669f9af9b2f90,
+    type: 3}
+  m_PrefabInstance: {fileID: 7685625500847839237}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &7685625500847839241 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 7514117043476847362, guid: 1582c4aaa5a0e3541bd669f9af9b2f90,
     type: 3}
   m_PrefabInstance: {fileID: 7685625500847839237}
   m_PrefabAsset: {fileID: 0}

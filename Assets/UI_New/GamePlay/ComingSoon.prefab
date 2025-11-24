@@ -221,7 +221,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 898388214413063003}
-  - component: {fileID: 2648213092670077993}
   m_Layer: 5
   m_Name: ComingSoon
   m_TagString: Untagged
@@ -249,31 +248,6 @@ RectTransform:
   m_AnchoredPosition: {x: 91, y: -88}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &2648213092670077993
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5893097409434015465}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a284977f83e443245b2eb32c184fb5bf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  button: {fileID: 4396686588406953995}
-  levelNumber: {fileID: 3296614535918104550}
-  innerCircle: {fileID: 1214439223948916323}
-  reachedText: {r: 1, g: 1, b: 1, a: 1}
-  reachedCircle: {r: 1, g: 0.8392157, b: 0.09803922, a: 1}
-  openedText: {r: 1, g: 1, b: 1, a: 1}
-  openedCircle: {r: 0.38431373, g: 0.8784314, b: 0.47843137, a: 1}
-  closedText: {r: 0.8666667, g: 0.8666667, b: 0.8666667, a: 1}
-  closedCircle: {r: 1, g: 1, b: 1, a: 1}
-  enableJellyAnimation: 1
-  isInGrid: 0
-  shakeStrength: 0.3
-  shakeDuration: 0.5
 --- !u!1 &6331931986661760275
 GameObject:
   m_ObjectHideFlags: 0

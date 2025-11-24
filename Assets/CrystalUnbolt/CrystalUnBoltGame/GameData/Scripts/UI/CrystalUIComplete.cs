@@ -20,9 +20,7 @@ namespace CrystalUnbolt
         [BoxGroup("Level Complete")]
         [SerializeField] RectTransform congratsRibbon;
         [BoxGroup("Level Complete")]
-        [SerializeField] RectTransform[] stars; // Array of 3 stars
 
-        [BoxGroup("CrystalReward", "CrystalReward")]
         [SerializeField] UIScaleAnimation rewardLabel;
         [BoxGroup("CrystalReward", "CrystalReward")]
         [SerializeField] TextMeshProUGUI rewardAmountText;
@@ -74,19 +72,6 @@ namespace CrystalUnbolt
 
         private void ResetAnimatedElements()
         {
-            // Reset stars to hidden state
-            if (stars != null)
-            {
-                foreach (var star in stars)
-                {
-                    if (star != null)
-                    {
-                        star.localScale = Vector3.zero;
-                        star.gameObject.SetActive(false);
-                    }
-                }
-            }
-
             // Reset congrats ribbon to off-screen
             if (congratsRibbon != null)
             {
@@ -243,50 +228,7 @@ namespace CrystalUnbolt
             ribbonSeq.Append(congratsRibbon.DOAnchorPosX(targetPos.x, 0.3f).SetEase(DG.Tweening.Ease.InOutSine));
             ribbonSeq.Join(congratsRibbon.DOPunchScale(Vector3.one * 0.15f, 0.4f, 4, 0.5f));
         }
-
-        private void AnimateStarsSequence()
-        {
-            if (stars == null || stars.Length == 0) return;
-
-            for (int i = 0; i < stars.Length; i++)
-            {
-                if (stars[i] != null)
-                {
-                    stars[i].gameObject.SetActive(true);
-                    float finalScale = (i == 1) ? 0.32f : 0.23f; // Middle star is larger
-                    float delay = i * 0.15f;
-
-                    AnimateStarWithBounce(stars[i], delay, finalScale);
-                }
-            }
-        }
-
-        private void AnimateStarWithBounce(RectTransform star, float delay, float finalScale)
-        {
-            Vector3 originalPos = star.anchoredPosition;
-            star.localScale = Vector3.zero;
-            star.anchoredPosition = new Vector3(originalPos.x, originalPos.y + 300f, 0);
-
-            Tween.DelayedCall(delay, () =>
-            {
-                Sequence starSeq = DOTween.Sequence();
-
-                // Drop down with bounce
-                starSeq.Append(star.DOAnchorPosY(originalPos.y - 30f, 0.4f).SetEase(DG.Tweening.Ease.OutBounce));
-                starSeq.Append(star.DOAnchorPosY(originalPos.y, 0.2f).SetEase(DG.Tweening.Ease.OutSine));
-
-                // Scale up with elastic effect (run separately since DOScale returns AnimCase)
-                star.DOScale(Vector3.one * finalScale * 1.3f, 0.4f).SetEasing(Ease.Type.ElasticOut).OnComplete(() =>
-                {
-                    star.DOScale(Vector3.one * finalScale, 0.2f).SetEasing(Ease.Type.SineInOut).OnComplete(() =>
-                    {
-                        // Final celebration punch
-                        star.DOPunchScale(Vector3.one * finalScale * 0.25f, 0.4f, 5, 0.5f);
-                    });
-                });
-            });
-        }
-
+       
         private void AnimateLevelCompleteLabel()
         {
             if (levelCompleteLabel == null) return;

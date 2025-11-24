@@ -60,13 +60,7 @@ namespace CrystalUnbolt
         private Sequence iconSeq;
         [Group("Refs")]
         [SerializeField] Image clockImg;
-        private void OnEnable()
-        {
-        }
-
-        private void OnDisable()
-        {
-        }
+        
         private void Awake()
         {
             instance = this;
@@ -112,9 +106,101 @@ namespace CrystalUnbolt
 
         private void OnDestroy()
         {
+            // Unsubscribe from events
+            CrystalLevelController.LevelLoaded -= OnLevelLoaded;
+            
             // Stage Panel disabled
             // if (CrystalStagePanel != null)
             //     CrystalStagePanel.Unload();
+        }
+
+        private void OnEnable()
+        {
+            // Subscribe to level loaded event to handle timer/popup after level is actually loaded
+            CrystalLevelController.LevelLoaded += OnLevelLoaded;
+        }
+
+        private void OnDisable()
+        {
+            // Unsubscribe from level loaded event
+            CrystalLevelController.LevelLoaded -= OnLevelLoaded;
+        }
+
+        private void OnLevelLoaded()
+        {
+            // Handle timer and popup AFTER level is actually loaded
+            // This ensures DisplayLevelIndex is correct (especially when loading from grid)
+            Debug.Log("[CrystalUIGame] OnLevelLoaded event received - handling timer/popup");
+            HandleTimerAndPopupForCurrentLevel();
+        }
+
+        private void HandleTimerAndPopupForCurrentLevel()
+        {
+            // Get the current level (1-based) - this is now accurate because level is loaded
+            int currentLevel = CrystalLevelController.DisplayedLevelIndex + 1;
+            
+            Debug.Log($"[CrystalUIGame] HandleTimerAndPopupForCurrentLevel - Level: {currentLevel}");
+
+            // Always hide popup and timer first
+            if (timerStartPopup != null)
+                timerStartPopup.Hide(immediately: true);
+
+            if (CrystalLevelController.GameTimer != null)
+            {
+                CrystalLevelController.GameTimer.Pause();
+            }
+            CrystalGameTimer.Hide();
+
+            // Levels 1-10: No timer bar, no popup
+            if (currentLevel <= 10)
+            {
+                Debug.Log("[CrystalUIGame] Level <= 10 : NO TIMER BAR, NO POPUP");
+                // Timer and popup are already hidden above - nothing more to do
+                return;
+            }
+
+            // Level 11: Show popup first, then show timer bar after popup is closed
+            if (currentLevel == 11)
+            {
+                Debug.Log("[CrystalUIGame] Level 11 : Show popup, then show timer bar after popup closes");
+
+                if (CrystalGameManager.Data.GameplayTimerEnabled &&
+                    CrystalLevelController.GameTimer != null)
+                {
+                    // Timer is paused + hidden already; show popup first
+                    if (timerStartPopup != null)
+                    {
+                        // Start coroutine with retry mechanism
+                        StartCoroutine(ShowTimerPopupForLevel11WithRetry());
+                    }
+                    else
+                    {
+                        Debug.LogWarning("[CrystalUIGame] timerStartPopup not assigned - starting timer without popup.");
+                        // Fallback: show timer directly if popup is not assigned
+                        CrystalGameTimer.Show(CrystalLevelController.GameTimer);
+                        CrystalLevelController.GameTimer.Start();
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning("[CrystalUIGame] GameplayTimerEnabled is false OR GameTimer is null on level 11");
+                }
+                return;
+            }
+
+            // Level 12+: Timer bar visible and running, no popup
+            if (currentLevel >= 12)
+            {
+                Debug.Log("[CrystalUIGame] Level >= 12 : Show timer bar normally (no popup)");
+
+                if (CrystalGameManager.Data.GameplayTimerEnabled &&
+                    CrystalLevelController.GameTimer != null)
+                {
+                    // Show timer bar and start it immediately
+                    CrystalGameTimer.Show(CrystalLevelController.GameTimer);
+                    CrystalLevelController.GameTimer.Start();
+                }
+            }
         }
 
         #region Show/Hide
@@ -138,7 +224,7 @@ namespace CrystalUnbolt
 
                 CrystalUILevelNumberText.Show();
 
-                // --- always hide popup + timer first ---
+                // --- always hide popup + timer first (will be shown later in HandleTimerAndPopupForCurrentLevel) ---
                 if (timerStartPopup != null)
                     timerStartPopup.Hide(immediately: true);
 
@@ -148,59 +234,15 @@ namespace CrystalUnbolt
                 }
                 CrystalGameTimer.Hide();
 
-                // ----- GET CURRENT LEVEL NUMBER (1-based) -----
-                // Use the same save object that dev buttons use,
-                // so level number is always correct even when you replay.
-                var levelSave = DataManager.GetSaveObject<CrystalLevelSave>("level");
-                int currentLevel = (levelSave != null ? levelSave.DisplayLevelIndex : 0) + 1;
-
-                Debug.Log($"[CrystalUIGame] ===== LEVEL CHECK START =====  currentLevel = {currentLevel}");
-
-                // 1–10  =>  no timer, no popup  (always)
-                if (currentLevel <= 10)
-                {
-                    Debug.Log("[CrystalUIGame] Level <= 10 : NO TIMER, NO POPUP");
-                    // everything already hidden above
-                }
-                // 11   =>  show popup, then start timer
-                else if (currentLevel == 11)
-                {
-                    Debug.Log("[CrystalUIGame] Level 11 : show popup then start timer");
-
-                    if (CrystalGameManager.Data.GameplayTimerEnabled &&
-                        CrystalLevelController.GameTimer != null)
-                    {
-                        // timer is paused + hidden already; just show popup
-                        if (timerStartPopup != null)
-                        {
-                            StartCoroutine(ShowTimerPopupForLevel11());
-                        }
-                        else
-                        {
-                            Debug.LogWarning("[CrystalUIGame] timerStartPopup not assigned – starting timer without popup.");
-                            CrystalGameTimer.Show(CrystalLevelController.GameTimer);
-                            CrystalLevelController.GameTimer.Start();
-                        }
-                    }
-                    else
-                    {
-                        Debug.LogWarning("[CrystalUIGame] GameplayTimerEnabled is false OR GameTimer is null on level 11");
-                    }
-                }
-                // 12+  =>  timer visible and running, no popup
-                else
-                {
-                    Debug.Log("[CrystalUIGame] Level >= 12 : show timer normally");
-
-                    if (CrystalGameManager.Data.GameplayTimerEnabled &&
-                        CrystalLevelController.GameTimer != null)
-                    {
-                        CrystalGameTimer.Show(CrystalLevelController.GameTimer);
-                        CrystalLevelController.GameTimer.Start();
-                    }
-                }
-
-                Debug.Log("[CrystalUIGame] ===== LEVEL CHECK END =====");
+                // NOTE: Timer and popup logic is now handled in HandleTimerAndPopupForCurrentLevel()
+                // which is called from OnLevelLoaded() event AFTER the level is actually loaded.
+                // This ensures DisplayLevelIndex is correct when checking the level.
+                // 
+                // For levels loaded from grid, PlayShowAnimation() is called BEFORE LoadLevel() sets DisplayLevelIndex,
+                // so we defer the timer/popup logic until after the level is loaded.
+                
+                Debug.Log("[CrystalUIGame] PlayShowAnimation - Timer/popup will be handled after level loads via OnLevelLoaded event");
+                
                 ScreenManager.OnPageOpened(this);
                 Debug.Log("[CrystalUIGame] PlayShowAnimation completed successfully");
             }
@@ -394,17 +436,58 @@ namespace CrystalUnbolt
 
             CrystalGameManager.ReplayLevel();
         }
-        private IEnumerator ShowTimerPopupForLevel11()
+        private IEnumerator ShowTimerPopupForLevel11WithRetry()
         {
-            Debug.Log("[CrystalUIGame] ShowTimerPopupForLevel11 coroutine started");
+            Debug.Log("[CrystalUIGame] ShowTimerPopupForLevel11WithRetry coroutine started");
 
-            // small delay so UI is ready
+            // Wait a few frames to ensure level is fully loaded and DisplayedLevelIndex is set
             yield return null;
-            yield return new WaitForSeconds(0.3f);
+            yield return null;
+            
+            // Retry mechanism: Wait up to 1 second for level to be properly set
+            int maxRetries = 10;
+            int retryCount = 0;
+            int currentLevel = 0;
+            
+            while (retryCount < maxRetries)
+            {
+                currentLevel = CrystalLevelController.DisplayedLevelIndex + 1;
+                Debug.Log($"[CrystalUIGame] Retry {retryCount + 1}/{maxRetries} - Current level: {currentLevel}");
+                
+                if (currentLevel == 11)
+                {
+                    Debug.Log("[CrystalUIGame] Level 11 confirmed! Proceeding with popup.");
+                    break;
+                }
+                
+                yield return new WaitForSeconds(0.1f);
+                retryCount++;
+            }
+
+            // Final check - if still not level 11, abort
+            if (currentLevel != 11)
+            {
+                Debug.LogWarning($"[CrystalUIGame] Level is {currentLevel}, not 11. Aborting popup. Showing timer directly as fallback.");
+                // Fallback: show timer directly if we're past level 11
+                if (currentLevel > 11 && CrystalLevelController.GameTimer != null)
+                {
+                    CrystalGameTimer.Show(CrystalLevelController.GameTimer);
+                    CrystalLevelController.GameTimer.Start();
+                }
+                yield break;
+            }
+            
+            yield return new WaitForSeconds(0.2f); // Additional small delay for UI stability
 
             if (timerStartPopup == null)
             {
-                Debug.LogError("[CrystalUIGame] timerStartPopup is NULL in coroutine");
+                Debug.LogError("[CrystalUIGame] timerStartPopup is NULL in coroutine - showing timer directly");
+                // Fallback: show timer directly if popup is missing
+                if (CrystalLevelController.GameTimer != null)
+                {
+                    CrystalGameTimer.Show(CrystalLevelController.GameTimer);
+                    CrystalLevelController.GameTimer.Start();
+                }
                 yield break;
             }
 
@@ -414,13 +497,41 @@ namespace CrystalUnbolt
                 yield break;
             }
 
-            // show popup and then start timer
+            // Ensure popup is not hidden before showing
+            if (timerStartPopup != null)
+            {
+                timerStartPopup.Hide(immediately: true);
+            }
+            yield return new WaitForSeconds(0.1f);
+
+            // Show popup - when user closes it, show timer bar and start timer
+            Debug.Log("[CrystalUIGame] About to show timer popup for level 11");
             timerStartPopup.Show(() =>
             {
-                Debug.Log("[CrystalUIGame] Timer popup closed -> starting timer");
-                CrystalGameTimer.Show(CrystalLevelController.GameTimer);
-                CrystalLevelController.GameTimer.Start();
+                Debug.Log("[CrystalUIGame] Timer popup closed -> showing timer bar and starting timer");
+                // Show timer bar UI on top
+                if (CrystalGameTimer != null && CrystalLevelController.GameTimer != null)
+                {
+                    CrystalGameTimer.Show(CrystalLevelController.GameTimer);
+                    CrystalLevelController.GameTimer.Start();
+                }
+                else
+                {
+                    Debug.LogError("[CrystalUIGame] CrystalGameTimer or GameTimer is null when trying to show timer");
+                }
             });
+
+            // Verify popup actually showed (safety check)
+            yield return new WaitForSeconds(0.2f);
+            if (timerStartPopup != null && !timerStartPopup.IsOpened)
+            {
+                Debug.LogWarning("[CrystalUIGame] Popup did not show properly - showing timer directly as fallback");
+                if (CrystalLevelController.GameTimer != null)
+                {
+                    CrystalGameTimer.Show(CrystalLevelController.GameTimer);
+                    CrystalLevelController.GameTimer.Start();
+                }
+            }
         }
         #endregion
     }

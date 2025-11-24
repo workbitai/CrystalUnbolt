@@ -35,9 +35,12 @@ namespace CrystalUnbolt
         
         private void OnEnable()
         {
-            // If popup is enabled but we're not on Level 11, hide it immediately
-            if (canvas != null && !canvas.enabled)
+            // Safety check: If popup GameObject is enabled but we're not on Level 11, ensure it's hidden
+            int currentLevel = CrystalLevelController.DisplayedLevelIndex + 1;
+            if (currentLevel != 11)
             {
+                // Force hide if not on level 11
+                if (canvas != null) canvas.enabled = false;
                 if (fadeImage != null) fadeImage.SetAlpha(0);
                 if (panel != null) panel.anchoredPosition = Vector2.down * 2000;
             }
@@ -45,11 +48,26 @@ namespace CrystalUnbolt
 
         public void Show(GameCallback onContinue = null)
         {
-            // Note: Level check is done in CrystalUIGame before calling Show()
+            // Safety check: Only show popup on level 11
             int currentLevel = CrystalLevelController.DisplayedLevelIndex + 1;
             int displayedIndex = CrystalLevelController.DisplayedLevelIndex;
             
             Debug.Log($"[TimerStartPopup] Show() called - Level: {currentLevel}, Index: {displayedIndex}");
+            
+            // CRITICAL: Only show popup on level 11, hide immediately for any other level
+            // Note: This check is a safety net - the main check should be in CrystalUIGame
+            if (currentLevel != 11)
+            {
+                Debug.LogWarning($"[TimerStartPopup] Popup should only show on level 11, but current level is {currentLevel}. Hiding immediately.");
+                Hide(immediately: true);
+                // Still invoke callback to show timer if we're past level 11
+                if (currentLevel > 11 && onContinue != null)
+                {
+                    Debug.Log("[TimerStartPopup] Level > 11, invoking callback to show timer directly");
+                    onContinue.Invoke();
+                }
+                return;
+            }
             
             onContinueCallback = onContinue;
             

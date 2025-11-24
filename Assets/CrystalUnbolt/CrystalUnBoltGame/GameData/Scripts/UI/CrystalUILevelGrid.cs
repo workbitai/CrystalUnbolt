@@ -551,11 +551,23 @@ namespace CrystalUnbolt
 
         private void OnLevelFromGridClicked(int levelIndex)
         {
-            // Unsubscribe to prevent multiple calls
-            CrystalMapLevelAbstractBehavior.OnLevelClicked -= OnLevelFromGridClicked;
+            // Ignore clicks on locked / invalid levels
+            int maxUnlockedIndex = CrystalLevelController.MaxReachedLevelIndex;
 
+            // levelIndex < 0  => invalid
+            // levelIndex > maxUnlockedIndex => locked button
+            if (levelIndex < 0 || levelIndex > maxUnlockedIndex)
+            {
+                Debug.Log($"[LevelGrid] Click on locked/invalid level index {levelIndex + 1}, ignoring.");
+                // Do NOT unsubscribe here so we can still receive clicks on valid levels later.
+                return;
+            }
+
+            // Valid & unlocked level -> proceed
+            CrystalMapLevelAbstractBehavior.OnLevelClicked -= OnLevelFromGridClicked;
             OnLevelButtonClicked(levelIndex);
         }
+
 
         private void OnLevelButtonClicked(int levelIndex)
         {

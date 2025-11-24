@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace CrystalUnbolt
 {
@@ -11,6 +12,13 @@ namespace CrystalUnbolt
 
         public void AddTween(AnimCase tweenCase)
         {
+            // Safety check: DelayedCall can return null if delay <= 0
+            if (tweenCase == null)
+            {
+                Debug.LogWarning("[TweenCaseCollection] Attempted to add null tween case. This can happen when DelayedCall is called with delay <= 0.");
+                return;
+            }
+
             tweenCase.OnComplete(OnTweenCaseComplete);
 
             tweenCases.Add(tweenCase);

@@ -850,6 +850,18 @@ namespace CrystalUnbolt
 
         private void OnLevelOnMapSelected(int levelId)
         {
+            // Block clicks on locked / invalid levels
+            int maxUnlockedIndex = CrystalLevelController.MaxReachedLevelIndex;
+                 
+            // levelId < 0 -> invalid
+            // levelId > maxUnlockedIndex -> locked
+            if (levelId < 0 || levelId > maxUnlockedIndex)
+            {
+                Debug.Log($"[MainMenu] Click on locked/invalid level {levelId + 1}, ignoring.");
+                return;
+            }
+
+            // Valid, unlocked level -> play
             OnPlayTriggered(levelId);
         }
 

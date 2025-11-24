@@ -350,7 +350,10 @@ namespace CrystalUnbolt
             }
             Debug.Log("Visual   =>  " + visuals.name);
             Debug.Log("Visual   =>  " + visuals.localScale);
+            
+            // Reset both visuals scale and transform scale to ensure consistency
             visuals.localScale = Vector3.one * 1.20f;
+            transform.localScale = Vector3.one; // Reset transform scale to default (fixes issue where some screws had 1.25 scale from previous level)
 
 
         }

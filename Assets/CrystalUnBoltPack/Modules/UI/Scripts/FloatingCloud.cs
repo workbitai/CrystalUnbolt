@@ -204,105 +204,137 @@ namespace CrystalUnbolt
 
             public void PlayAnimation()
             {
-                RectTransform targetRectTransform = targetTransform;
+                RectTransform targetRect = targetTransform;
 
                 tweenCaseCollection = Tween.BeginTweenCaseCollection();
 
-                // Play appear sound
                 if (floatingCloudData.AppearAudioClip != null)
                     SoundManager.PlaySound(floatingCloudData.AppearAudioClip);
 
                 float cloudRadius = floatingCloudData.CloudRadius;
                 Vector3 centerPoint = rectTransform.position;
 
-                int finishedElementsAmount = 0;
+                int completed = 0;
+                float pitch = 0.9f;
+                bool rewardApplied = false;
 
-                float defaultPitch = 0.9f;
-                bool currencyHittedTarget = false;
+                float perCoinDelay = 0.12f; // DELAY between coin spawns
+
                 for (int i = 0; i < elementsAmount; i++)
                 {
-                    AnimCase currencyTweenCase = null;
-                    GameObject elementObject = floatingCloudData.Pool.GetPooledObject();
+                    int index = i;
 
-                    RectTransform elementRectTransform = (RectTransform)elementObject.transform;
-
-                    elementRectTransform.SetParent(fakeTargetTransform);
-
-                    elementRectTransform.position = centerPoint;
-                    elementRectTransform.localRotation = Quaternion.identity;
-                    elementRectTransform.localScale = Vector3.one;
-
-                    elementsList.Add(elementRectTransform);
-
-                    Image elementImage = elementObject.GetComponent<Image>();
-                    elementImage.color = Color.white.SetAlpha(0);
-
-                    float moveTime = Random.Range(0.6f, 0.8f);
-
-                    elementImage.DOFade(1, 0.2f, unscaledTime: true);
-                    elementRectTransform.DOAnchoredPosition(elementRectTransform.anchoredPosition + (Random.insideUnitCircle * cloudRadius), moveTime, unscaledTime: true).SetEasing(Ease.Type.CubicOut).OnComplete(delegate
-                    {
-                        tweenCaseCollection.AddTween(Tween.DelayedCall(0.1f, delegate
+                    // Delay BEFORE spawning the coin
+                    tweenCaseCollection.AddTween(
+                        Tween.DelayedCall(index * perCoinDelay, () =>
                         {
-                            tweenCaseCollection.AddTween(elementRectTransform.DOScale(0.3f, 0.5f, unscaledTime: true).SetEasing(Ease.Type.ExpoIn));
-                            tweenCaseCollection.AddTween(elementRectTransform.DOLocalMove(Vector3.zero, 0.5f, unscaledTime: true).SetEasing(Ease.Type.SineIn).OnComplete(delegate
-                            {
-                                if (!currencyHittedTarget)
+                            AnimCase curveTween = null;
+
+                            // === Spawn Coin ===
+                            GameObject obj = floatingCloudData.Pool.GetPooledObject();
+                            RectTransform coin = (RectTransform)obj.transform;
+
+                            coin.SetParent(fakeTargetTransform);
+                            coin.position = centerPoint;
+                            coin.localScale = Vector3.one;
+                            coin.localRotation = Quaternion.identity;
+
+                            elementsList.Add(coin);
+
+                            Image img = obj.GetComponent<Image>();
+                            img.color = new Color(1, 1, 1, 0);
+
+                            // Fade in
+                            tweenCaseCollection.AddTween(
+                                img.DOFade(1f, 0.18f, unscaledTime: true)
+                            );
+
+                            // Small random outward pop
+                            Vector2 burstOffset = UnityEngine.Random.insideUnitCircle * cloudRadius;
+                            tweenCaseCollection.AddTween(
+                                coin.DOAnchoredPosition(coin.anchoredPosition + burstOffset, 0.35f, unscaledTime: true)
+                                .SetEasing(Ease.Type.CubicOut)
+                                .OnComplete(() =>
                                 {
-                                    if (onCurrencyHittedTarget != null)
-                                        onCurrencyHittedTarget.Invoke();
+                                    // === CURVED ARC ANIMATION ===
 
-                                    currencyHittedTarget = true;
-                                }
+                                    Vector3 start = coin.localPosition;
+                                    Vector3 end = Vector3.zero;
 
-                                bool punchTarget = true;
-                                if (currencyTweenCase != null)
-                                {
-                                    if (currencyTweenCase.State < 0.8f)
+                                    // midpoint for ARC
+                                    Vector3 midpoint = (start + end) * 0.5f;
+                                    midpoint.y += 120f; // height of curve
+
+                                    float travelTime = 0.55f;
+                                    float t = 0f;
+
+                                    curveTween = Tween.DoFloat(0f, 1f, travelTime, (value) =>
                                     {
-                                        punchTarget = false;
-                                    }
-                                    else
+                                        t = value;
+
+                                        // Quadratic Bezier curve
+                                        Vector3 p0 = start;
+                                        Vector3 p1 = midpoint;
+                                        Vector3 p2 = end;
+
+                                        Vector3 pos =
+                                            (1 - t) * (1 - t) * p0 +
+                                            2 * (1 - t) * t * p1 +
+                                            t * t * p2;
+
+                                        coin.localPosition = pos;
+
+                                    }, unscaledTime: true)
+                                    .SetEasing(Ease.Type.SineIn)
+                                    .OnComplete(() =>
                                     {
-                                        currencyTweenCase.Kill();
-                                    }
-                                }
+                                        // Apply reward ONCE
+                                        if (!rewardApplied)
+                                        {
+                                            rewardApplied = true;
+                                            onCurrencyHittedTarget?.Invoke();
+                                        }
 
-                                if (punchTarget)
-                                {
-                                    // Play collect sound
-                                    if (floatingCloudData.CollectAudioClip != null)
-                                        SoundManager.PlaySound(floatingCloudData.CollectAudioClip, pitch: defaultPitch);
+                                        // landing sound
+                                        if (floatingCloudData.CollectAudioClip != null)
+                                            SoundManager.PlaySound(floatingCloudData.CollectAudioClip, pitch);
 
-                                    defaultPitch += 0.01f;
+                                        pitch += 0.015f;
 
-                                    currencyTweenCase = targetRectTransform.DOScale(1.2f, 0.15f, unscaledTime: true).OnComplete(delegate
-                                    {
-                                        currencyTweenCase = targetRectTransform.DOScale(1.0f, 0.1f, unscaledTime: true);
+                                        // UI punch
+                                        tweenCaseCollection.AddTween(
+                                            targetRect.DOScale(1.2f, 0.15f, unscaledTime: true)
+                                            .OnComplete(() =>
+                                            {
+                                                tweenCaseCollection.AddTween(
+                                                    targetRect.DOScale(1f, 0.1f, unscaledTime: true)
+                                                );
+                                            })
+                                        );
 
-                                        tweenCaseCollection.AddTween(currencyTweenCase);
+                                        // return coin to pool
+                                        coin.SetParent(floatingCloudData.Pool.ObjectsContainer);
+                                        obj.SetActive(false);
+
+                                        completed++;
+                                        if (completed >= elementsAmount)
+                                        {
+                                            FloatingCloud.OnAnimationFinished(this);
+                                            GameObject.Destroy(fakeTargetTransform.gameObject);
+                                        }
                                     });
 
-                                    tweenCaseCollection.AddTween(currencyTweenCase);
-                                }
-
-                                elementObject.transform.SetParent(floatingCloudData.Pool.ObjectsContainer);
-                                elementObject.SetActive(false);
-
-                                finishedElementsAmount++;
-                                if (finishedElementsAmount >= elementsAmount)
-                                {
-                                    FloatingCloud.OnAnimationFinished(this);
-
-                                    GameObject.Destroy(fakeTargetTransform.gameObject);
-                                }
-                            }));
-                        }, unscaledTime: true));
-                    });
+                                    tweenCaseCollection.AddTween(curveTween);
+                                })
+                            );
+                        }, unscaledTime: true)
+                    );
                 }
 
                 Tween.EndTweenCaseCollection();
             }
+
+
 
             public void Clear()
             {
