@@ -1,4 +1,4 @@
-// Assets/_RemoteConfig/RCAdsSync.cs
+﻿// Assets/_RemoteConfig/RCAdsSync.cs
 using Firebase.RemoteConfig;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,12 +7,11 @@ using System.Reflection;
 using System.Threading;          // <-- for SemaphoreSlim
 using System.Threading.Tasks;
 using UnityEngine;
-using CrystalUnbolt;
 
 [DefaultExecutionOrder(-9000)]
-public class CrystalRCAdsSync : MonoBehaviour
+public class bitai_RCAdsSync : MonoBehaviour
 {
-    public CrystalRCProfile profile;
+    public RCProfile profile;
     public static event System.Action OnAppliedStatic;
 
     private bool _isSyncing;     // re-entrancy guard
@@ -34,7 +33,7 @@ public class CrystalRCAdsSync : MonoBehaviour
 
         try
         {
-            var dep = await CrystalRCBootstrap.Ensure();
+            var dep = await RCBootstrap.Ensure();
             if (dep != Firebase.DependencyStatus.Available)
             {
                 ApplyToMonetization(profile.defAndroidAppId, profile.defiOSAppId, profile.defLevelPlayAndroidKey, profile.defLevelPlayiOSKey, profile.defUnityAdsAndroidId, profile.defUnityAdsiOSId, profile.defBannerAndroid, profile.defBanneriOS, profile.defInterstitialAndroid, profile.defInterstitialiOS, profile.defRewardAndroid, profile.defRewardiOS, profile.defAppOpenAndroid, profile.defAppOpeniOS);
@@ -83,8 +82,8 @@ public class CrystalRCAdsSync : MonoBehaviour
             }
 #endif
 
-            // Serialize RC fetch/activate across the whole app (shared lock in CrystalRCBootstrap)
-            await CrystalRCBootstrap.RcLock.WaitAsync();
+            // Serialize RC fetch/activate across the whole app (shared lock in RCBootstrap)
+            await RCBootstrap.RcLock.WaitAsync();
             try
             {
                 Debug.Log("[RC][ADS] FetchAsync");
@@ -95,7 +94,7 @@ public class CrystalRCAdsSync : MonoBehaviour
             }
             finally
             {
-                CrystalRCBootstrap.RcLock.Release();
+                RCBootstrap.RcLock.Release();
             }
 
             ReadAndApply();
@@ -140,8 +139,8 @@ public class CrystalRCAdsSync : MonoBehaviour
         var appOpeniOS = V(profile.kAppOpeniOS, profile.defAppOpeniOS);
 
         ApplyToMonetization(androidAppId, iosAppId, levelPlayAndroidKey, levelPlayiOSKey, unityAdsAndroidId, unityAdsiOSId, bannerAndroid, banneriOS, interAndroid, interiOS, rewardAndroid, rewardiOS, appOpenAndroid, appOpeniOS);
-        Debug.Log($"[RC][ADS] Applied ? androidAppId={androidAppId}, iosAppId={iosAppId}, bannerAndroid={bannerAndroid}, banneriOS={banneriOS}, interAndroid={interAndroid}, interiOS={interiOS}, rewardAndroid={rewardAndroid}, rewardiOS={rewardiOS}, appOpenAndroid={appOpenAndroid}, appOpeniOS={appOpeniOS}");
-        Debug.Log($"[RC][ADS] Raw Firebase values ? kAndroidAppId={FirebaseRemoteConfig.DefaultInstance.GetValue(profile.kAndroidAppId).StringValue}, kiOSAppId={FirebaseRemoteConfig.DefaultInstance.GetValue(profile.kiOSAppId).StringValue}");
+        Debug.Log($"[RC][ADS] Applied → androidAppId={androidAppId}, iosAppId={iosAppId}, bannerAndroid={bannerAndroid}, banneriOS={banneriOS}, interAndroid={interAndroid}, interiOS={interiOS}, rewardAndroid={rewardAndroid}, rewardiOS={rewardiOS}, appOpenAndroid={appOpenAndroid}, appOpeniOS={appOpeniOS}");
+        Debug.Log($"[RC][ADS] Raw Firebase values → kAndroidAppId={FirebaseRemoteConfig.DefaultInstance.GetValue(profile.kAndroidAppId).StringValue}, kiOSAppId={FirebaseRemoteConfig.DefaultInstance.GetValue(profile.kiOSAppId).StringValue}");
 
         OnAppliedStatic?.Invoke();
     }
@@ -152,7 +151,7 @@ public class CrystalRCAdsSync : MonoBehaviour
         
         var ms = profile.monetizationSettings; 
         if (ms == null) { 
-            Debug.LogError("[RC][ADS] MonetizationSettings not linked in CrystalRCProfile!"); 
+            Debug.LogError("[RC][ADS] MonetizationSettings not linked in RCProfile!"); 
             return; 
         }
         Debug.Log($"[RC][ADS] MonetizationSettings found: {ms.name}");
@@ -246,7 +245,7 @@ public class CrystalRCAdsSync : MonoBehaviour
         UnityEditor.EditorUtility.SetDirty(ms);
         UnityEditor.AssetDatabase.SaveAssets();
 #endif
-        // Debug.Log($"[RC][ADS] fieldsUpdated�{changed}");
+        // Debug.Log($"[RC][ADS] fieldsUpdated≈{changed}");
     }
 
     // fuzzy setter: set any string field whose name contains all 'must' tokens and any of 'anyOf' tokens
@@ -287,7 +286,7 @@ public class CrystalRCAdsSync : MonoBehaviour
         if (f != null && f.FieldType == typeof(string)) {
             var oldValue = f.GetValue(obj)?.ToString();
             f.SetValue(obj, val);
-            Debug.Log($"[RC][ADS] Set {obj.GetType().Name}.{field}: '{oldValue}' ? '{val}'");
+            Debug.Log($"[RC][ADS] Set {obj.GetType().Name}.{field}: '{oldValue}' → '{val}'");
         } else {
             Debug.Log($"[RC][ADS] Field not found: {obj.GetType().Name}.{field}");
         }

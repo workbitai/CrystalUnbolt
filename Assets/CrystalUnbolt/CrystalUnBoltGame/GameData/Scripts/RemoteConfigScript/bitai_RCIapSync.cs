@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -6,12 +6,11 @@ using System.Threading.Tasks;
 using System.Threading;                     
 using Firebase.RemoteConfig;
 using UnityEngine;
-using CrystalUnbolt;
 
 [DefaultExecutionOrder(-8999)]
-public class CrystalRCIapSync : MonoBehaviour
+public class bitai_RCIapSync : MonoBehaviour
 {
-    public CrystalRCProfile profile;
+    public RCProfile profile;
 
     bool _isSyncing;                        
 
@@ -32,7 +31,7 @@ public class CrystalRCIapSync : MonoBehaviour
 
         try
         {
-            var dep = await CrystalRCBootstrap.Ensure();
+            var dep = await RCBootstrap.Ensure();
             if (dep != Firebase.DependencyStatus.Available)
             {
                 ApplyDefaults();
@@ -67,7 +66,7 @@ public class CrystalRCIapSync : MonoBehaviour
                 return;
             }
 #endif
-            await CrystalRCBootstrap.RcLock.WaitAsync();
+            await RCBootstrap.RcLock.WaitAsync();
             try
             {
                 Debug.Log("[RC][IAP] FetchAsync");
@@ -77,7 +76,7 @@ public class CrystalRCIapSync : MonoBehaviour
             }
             finally
             {
-                CrystalRCBootstrap.RcLock.Release();
+                RCBootstrap.RcLock.Release();
             }
 
             ReadAndApply();
@@ -119,7 +118,7 @@ public class CrystalRCIapSync : MonoBehaviour
         var gBig = V(profile.kGoldBigA, profile.defGoldBigA);
         var puPack = V(profile.kPuPackA, profile.defPuPackA);
 
-        Debug.Log($"[RC][IAP] Read ? noAds={noAds}, starter={starter}, small={gSmall}, med={gMed}, big={gBig}, puPack={puPack}");
+        Debug.Log($"[RC][IAP] Read → noAds={noAds}, starter={starter}, small={gSmall}, med={gMed}, big={gBig}, puPack={puPack}");
 
         WriteToMonetization(noAds, profile.hintNoAds);
         WriteToMonetization(starter, profile.hintStarter);

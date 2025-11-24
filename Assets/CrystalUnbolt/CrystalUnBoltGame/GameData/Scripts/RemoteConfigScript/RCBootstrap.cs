@@ -3,7 +3,7 @@ using Firebase;
 using System.Threading;
 using System.Threading.Tasks;
 
-public static class CrystalRCBootstrap
+public static class RCBootstrap
 {
     static Task<DependencyStatus> _t;
     public static Task<DependencyStatus> Ensure() =>

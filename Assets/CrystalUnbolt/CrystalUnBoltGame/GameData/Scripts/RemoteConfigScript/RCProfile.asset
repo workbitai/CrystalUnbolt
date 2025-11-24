@@ -24,21 +24,21 @@ MonoBehaviour:
   defInterstitialAndroid: test-inter
   defRewardAndroid: test-reward
   defAppOpenAndroid: 
-  kNoAdsA: ''
-  kStarterA: ''
-  kGoldSmallA: ''
-  kGoldMediumA: ''
-  kGoldBigA: ''
-  kPuPackA: ''
-  defNoAdsA: ''
-  defStarterA: ''
-  defGoldSmallA: ''
-  defGoldMediumA: ''
-  defGoldBigA: ''
-  defPuPackA: ''
-  hintNoAds: ''
-  hintStarter: ''
-  hintGoldSmall: ''
-  hintGoldMedium: ''
-  hintGoldBig: ''
-  hintPuPack: ''
+  kNoAdsA: UnScrewlogic_noads
+  kStarterA: UnScrewlogic_starter
+  kGoldSmallA: iap_goldsmall_android
+  kGoldMediumA: iap_goldmedium_android
+  kGoldBigA: iap_goldbig_android
+  kPuPackA: iap_pupack_android
+  defNoAdsA: com.screwlogic.noads
+  defStarterA: com.screwlogic.starter
+  defGoldSmallA: com.screwlogic.goldsmall
+  defGoldMediumA: iap_goldmedium_android
+  defGoldBigA: com.screwlogic.goldbig
+  defPuPackA: com.screwlogic.pupack
+  hintNoAds: NoAds
+  hintStarter: Starter
+  hintGoldSmall: GoldSmall
+  hintGoldMedium: GoldMedium
+  hintGoldBig: GoldBig
+  hintPuPack: PUPack

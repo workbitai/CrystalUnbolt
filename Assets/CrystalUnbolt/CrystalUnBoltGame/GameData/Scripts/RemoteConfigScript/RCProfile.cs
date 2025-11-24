@@ -1,9 +1,8 @@
 using System;
 using UnityEngine;
-using CrystalUnbolt;
 
 [CreateAssetMenu(fileName = "RCProfile", menuName = "Game/Remote Config Profile")]
-public class CrystalRCProfile : ScriptableObject
+public class RCProfile : ScriptableObject
 {
     [Header("General")]
     [Tooltip("Editor me har Play par fresh fetch (0s cache).")]
@@ -12,8 +11,8 @@ public class CrystalRCProfile : ScriptableObject
     [Tooltip("Fetch/Bind ko thoda delay do takki first-frame smooth rahe.")]
     public float startDelaySeconds = 0.8f;
 
-    // [Header("Link Monetization Settings (assign once)")]
-    // public MonetizationSettings monetizationSettings; // Old system removed!
+    [Header("Link Monetization Settings (assign once)")]
+    public MonetizationSettings monetizationSettings;
 
     [Header("Remote Config Keys - App IDs")]
     public string kAndroidAppId = "admob_android_app_id";
@@ -53,28 +52,27 @@ public class CrystalRCProfile : ScriptableObject
     public string defRewardiOS = "ca-app-pub-3940256099942544/1712485313";
     public string defAppOpeniOS = "";
 
-    // IAP REMOVED - No in-app purchases in this version
-    // [Header("Remote Config Keys - IAP (Android)")]
-    // public string kNoAdsA = "CrystalUnboltLogic_noads";
-    // public string kStarterA = "CrystalUnboltLogic_starter";
-    // public string kGoldSmallA = "iap_goldsmall_android";
-    // public string kGoldMediumA = "iap_goldmedium_android";
-    // public string kGoldBigA = "iap_goldbig_android";
-    // public string kPuPackA = "iap_pupack_android";
+    [Header("Remote Config Keys - IAP (Android)")]
+    public string kNoAdsA = "UnScrewlogic_noads";
+    public string kStarterA = "UnScrewlogic_starter";
+    public string kGoldSmallA = "iap_goldsmall_android";
+    public string kGoldMediumA = "iap_goldmedium_android";
+    public string kGoldBigA = "iap_goldbig_android";
+    public string kPuPackA = "iap_pupack_android";
 
-    // [Header("Defaults (used if RC empty)")]
-    // public string defNoAdsA = "noads";
-    // public string defStarterA = "starterpackage";
-    // public string defGoldSmallA = "goldsmall";
-    // public string defGoldMediumA = "goldmedium";
-    // public string defGoldBigA = "goldbig";
-    // public string defPuPackA = "pupack";
+    [Header("Defaults (used if RC empty)")]
+    public string defNoAdsA = "noads";
+    public string defStarterA = "starterpackage";
+    public string defGoldSmallA = "goldsmall";
+    public string defGoldMediumA = "goldmedium";
+    public string defGoldBigA = "goldbig";
+    public string defPuPackA = "pupack";
 
-    // [Header("IAP: Product name hints (match by contains)")]
-    // public string hintNoAds = "NoAds";
-    // public string hintStarter = "Starter";
-    // public string hintGoldSmall = "GoldSmall";
-    // public string hintGoldMedium = "GoldMedium";
-    // public string hintGoldBig = "GoldBig";
-    // public string hintPuPack = "PUPack";
+    [Header("IAP: Product name hints (match by contains)")]
+    public string hintNoAds = "NoAds";
+    public string hintStarter = "Starter";
+    public string hintGoldSmall = "GoldSmall";
+    public string hintGoldMedium = "GoldMedium";
+    public string hintGoldBig = "GoldBig";
+    public string hintPuPack = "PUPack";
 }
