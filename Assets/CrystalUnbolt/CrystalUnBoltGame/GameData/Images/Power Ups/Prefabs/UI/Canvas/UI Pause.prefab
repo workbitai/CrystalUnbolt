@@ -444,6 +444,7 @@ GameObject:
   - component: {fileID: 272780645668365978}
   - component: {fileID: 8260702143524123643}
   - component: {fileID: 6338369527410531090}
+  - component: {fileID: 4771596020495671428}
   m_Layer: 5
   m_Name: Quit Button
   m_TagString: Untagged
@@ -552,6 +553,33 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &4771596020495671428
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1315457796728804586}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac20973156fe3e74aada950e8132a945, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pressedScale: {x: 0.92, y: 0.92, z: 0.92}
+  pressDuration: 0.08
+  pressEase: 4
+  overshootScale: {x: 1.12, y: 1.12, z: 1}
+  overshootDuration: 0.07
+  reboundScale: {x: 0.98, y: 0.98, z: 1}
+  reboundDuration: 0.09
+  settleDuration: 0.08
+  releaseEase: 3
+  resetScaleOnEnable: 1
+  playClickSound: 0
+  clickSound: {fileID: 0}
+  hideAfterClick: 0
+  hideDelay: 0.25
+  hideDuration: 0.2
 --- !u!1 &1390425732003637663
 GameObject:
   m_ObjectHideFlags: 0
@@ -2078,6 +2106,7 @@ GameObject:
   - component: {fileID: 3839055958562673365}
   - component: {fileID: 8829135343059102822}
   - component: {fileID: 6458373583106842197}
+  - component: {fileID: 10975508346598484}
   m_Layer: 5
   m_Name: Continue Button
   m_TagString: Untagged
@@ -2186,6 +2215,33 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &10975508346598484
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7478560079481988148}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac20973156fe3e74aada950e8132a945, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pressedScale: {x: 0.92, y: 0.92, z: 0.92}
+  pressDuration: 0.08
+  pressEase: 4
+  overshootScale: {x: 1.12, y: 1.12, z: 1}
+  overshootDuration: 0.07
+  reboundScale: {x: 0.98, y: 0.98, z: 1}
+  reboundDuration: 0.09
+  settleDuration: 0.08
+  releaseEase: 3
+  resetScaleOnEnable: 1
+  playClickSound: 0
+  clickSound: {fileID: 0}
+  hideAfterClick: 0
+  hideDelay: 0.25
+  hideDuration: 0.2
 --- !u!1 &7725986832232397295
 GameObject:
   m_ObjectHideFlags: 0
@@ -2622,6 +2678,7 @@ GameObject:
   - component: {fileID: 4296220293503161793}
   - component: {fileID: 8766049514118656776}
   - component: {fileID: 7941720801741341287}
+  - component: {fileID: 3380741942037663867}
   m_Layer: 5
   m_Name: Close Button
   m_TagString: Untagged
@@ -2730,6 +2787,33 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &3380741942037663867
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8446493216467269634}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac20973156fe3e74aada950e8132a945, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pressedScale: {x: 0.92, y: 0.92, z: 0.92}
+  pressDuration: 0.08
+  pressEase: 4
+  overshootScale: {x: 1.12, y: 1.12, z: 1}
+  overshootDuration: 0.07
+  reboundScale: {x: 0.98, y: 0.98, z: 1}
+  reboundDuration: 0.09
+  settleDuration: 0.08
+  releaseEase: 3
+  resetScaleOnEnable: 1
+  playClickSound: 0
+  clickSound: {fileID: 0}
+  hideAfterClick: 0
+  hideDelay: 0.25
+  hideDuration: 0.2
 --- !u!1 &8503338745566204058
 GameObject:
   m_ObjectHideFlags: 0

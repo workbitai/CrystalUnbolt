@@ -228,7 +228,7 @@ namespace CrystalUnbolt
             ribbonSeq.Append(congratsRibbon.DOAnchorPosX(targetPos.x, 0.3f).SetEase(DG.Tweening.Ease.InOutSine));
             ribbonSeq.Join(congratsRibbon.DOPunchScale(Vector3.one * 0.15f, 0.4f, 4, 0.5f));
         }
-       
+
         private void AnimateLevelCompleteLabel()
         {
             if (levelCompleteLabel == null) return;
