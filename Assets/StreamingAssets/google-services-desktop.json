@@ -1,36 +1,47 @@
 {
   "project_info": {
-    "project_number": "93565773157",
-    "firebase_url": "https://crystalunbolt-sovel-default-rtdb.asia-southeast1.firebasedatabase.app",
-    "project_id": "crystalunbolt-sovel",
-    "storage_bucket": "crystalunbolt-sovel.firebasestorage.app"
+    "project_number": "103085306880",
+    "firebase_url": "https://crystalunbolt-default-rtdb.firebaseio.com",
+    "project_id": "crystalunbolt",
+    "storage_bucket": "crystalunbolt.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:93565773157:ios:2a8fcc59165f6b9e5aed8c",
+        "mobilesdk_app_id": "1:103085306880:android:2619032a0ec263499d14e5",
         "android_client_info": {
-          "package_name": "com.crystalstudio.crystalunbolt.solve"
-        }
-      },
-      "api_key": [
-        {
-          "current_key": "AIzaSyDuvGEB5xMAaeE5TevQ5kQE0mGcX4D_GWo"
-        }
-      ],
-      "services": {
-        "analytics_service": {
-          "status": 0
-        },
-        "appinvite_service": {
-          "status": 1
+          "package_name": "com.crystalunbolt.solve"
         }
       },
       "oauth_client": [
         {
-          "client_id": "93565773157-higsouqskt9oiveh7sahv6o3mqlqq0uo.apps.googleusercontent.com"
+          "client_id": "103085306880-tbhq169tr2ffg71dp9supa4jismbeff4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.crystalunbolt.solve",
+            "certificate_hash": "8126bdbd8a377e92a808b59773f4304d57cd3064"
+          }
+        },
+        {
+          "client_id": "103085306880-up55u6qltmlsff2hut882fh37bdl94vp.apps.googleusercontent.com",
+          "client_type": 3
         }
-      ]
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBN3TyWISgYAgvD2Rg06FmB7KIns7pvvtk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "103085306880-up55u6qltmlsff2hut882fh37bdl94vp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"

@@ -1105,8 +1105,6 @@ MonoBehaviour:
   - particleName: Confetti
     particlePrefab: {fileID: 6393692314122666616, guid: 3342f429a0178114bb58cd406d5dcf80,
       type: 3}
-  - particleName: Tutorial Complete
-    particlePrefab: {fileID: 179446, guid: 3c5d87d5228ffc546b53d534eaac963d, type: 3}
 --- !u!114 &1060784215
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1444,7 +1442,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5733f53fc932094784f16db6688e107, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  databaseUrl: https://console.firebase.google.com/project/crystaltestdemo-8bf61/database/crystaltestdemo-8bf61-default-rtdb/data/~2F
+  databaseUrl: https://crystalunbolt-default-rtdb.firebaseio.com/
   defaultLevel: 1
   defaultCoins: 100
   guestNameKey: profile_guest_name
@@ -1463,7 +1461,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc3ede9392b828742ad957fed7721532, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  webClientId: 93565773157-hq85v1au3eh2pdqflsvl3i19ndcpo85c.apps.googleusercontent.com
+  webClientId: 103085306880-up55u6qltmlsff2hut882fh37bdl94vp.apps.googleusercontent.com
   autoSignInOnStart: 1
   loginButton: {fileID: 2466326698965444306}
   appleLoginButton: {fileID: 0}
@@ -2741,6 +2739,16 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 164993365581600085, guid: b5f6cc9f0ef59d34b9f4a1e24115de70,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 925
+      objectReference: {fileID: 0}
+    - target: {fileID: 164993365581600085, guid: b5f6cc9f0ef59d34b9f4a1e24115de70,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 775
+      objectReference: {fileID: 0}
     - target: {fileID: 555267660247118344, guid: b5f6cc9f0ef59d34b9f4a1e24115de70,
         type: 3}
       propertyPath: m_RaycastTarget
@@ -2931,6 +2939,12 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4974346243081124676, guid: b5f6cc9f0ef59d34b9f4a1e24115de70,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: c7f7fa9f381bef04193697191516b3df,
+        type: 3}
     - target: {fileID: 5051337779374616087, guid: b5f6cc9f0ef59d34b9f4a1e24115de70,
         type: 3}
       propertyPath: m_sharedMaterial

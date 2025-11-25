@@ -38,7 +38,8 @@ namespace CrystalUnbolt
 
             coinsText.text = CrystalGameManager.Data.ReplayStageCost.ToString();
 
-            if (CrystalGameManager.Data.GameplayTimerEnabled) CrystalLevelController.GameTimer.Pause();
+            if (CrystalLevelController.ShouldRunTimerForCurrentLevel() && CrystalLevelController.GameTimer != null)
+                CrystalLevelController.GameTimer.Pause();
 
             retryImage.DORotate(
      new Vector3(0, 0, 360),   
@@ -60,7 +61,8 @@ namespace CrystalUnbolt
             {
                 canvas.enabled = false;
 
-                if (CrystalGameManager.Data.GameplayTimerEnabled) CrystalLevelController.GameTimer.Resume();
+                if (CrystalLevelController.ShouldRunTimerForCurrentLevel() && CrystalLevelController.GameTimer != null)
+                    CrystalLevelController.GameTimer.Resume();
             });
 
             ScreenManager.OnPopupWindowClosed(this);

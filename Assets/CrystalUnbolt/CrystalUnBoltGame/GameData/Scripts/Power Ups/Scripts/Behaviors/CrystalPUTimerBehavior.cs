@@ -17,21 +17,27 @@ namespace CrystalUnbolt
 
         public override bool IsActive()
         {
-            return CrystalGameManager.Data.GameplayTimerEnabled;
+            return CrystalLevelController.ShouldRunTimerForCurrentLevel();
         }
 
         public override bool Activate()
         {
             IsBusy = true;
 
-            CrystalLevelController.GameTimer.Pause();
+            if (CrystalLevelController.ShouldRunTimerForCurrentLevel() && CrystalLevelController.GameTimer != null)
+            {
+                CrystalLevelController.GameTimer.Pause();
+            }
 
             timer = new CrystalPUTimer(timerSettings.TimeFreezeDuration, () =>
             {
                 timer = null;
                 IsBusy = false;
 
-                CrystalLevelController.GameTimer.Resume();
+                if (CrystalLevelController.ShouldRunTimerForCurrentLevel() && CrystalLevelController.GameTimer != null)
+                {
+                    CrystalLevelController.GameTimer.Resume();
+                }
             });
 
             return true;

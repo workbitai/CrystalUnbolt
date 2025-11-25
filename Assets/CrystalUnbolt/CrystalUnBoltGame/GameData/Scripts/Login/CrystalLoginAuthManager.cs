@@ -15,7 +15,7 @@ namespace CrystalUnbolt
     /// </summary>
     public class CrystalLoginAuthManager : MonoBehaviour
     {
-        private const string DEFAULT_WEB_CLIENT_ID = "93565773157-hq85v1au3eh2pdqflsvl3i19ndcpo85c.apps.googleusercontent.com";
+        private const string DEFAULT_WEB_CLIENT_ID = "103085306880-up55u6qltmlsff2hut882fh37bdl94vp.apps.googleusercontent.com";
 
         [Header("Firebase / Google")]
         [Tooltip("Web OAuth client id (client_type=3 from Firebase console).")]

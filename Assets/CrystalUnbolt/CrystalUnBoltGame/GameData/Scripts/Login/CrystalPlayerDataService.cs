@@ -26,7 +26,7 @@ namespace CrystalUnbolt
     {
         [Header("Firebase Realtime Database")]
         [Tooltip("Firebase Console ? Realtime Database ? Database URL (e.g. https://<project-id>-default-rtdb.firebaseio.com/ OR https://<project-id>.<region>.firebasedatabase.app/)")]
-        [SerializeField] private string databaseUrl = "https://crystalunbolt-sovel-default-rtdb.asia-southeast1.firebasedatabase.app/";
+        [SerializeField] private string databaseUrl = "https://crystalunbolt-default-rtdb.firebaseio.com/";
 
         [Header("Defaults for new users")]
         public int defaultLevel = 1;

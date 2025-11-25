@@ -41,7 +41,7 @@ namespace CrystalUnbolt
             backgroundImage.SetAlpha(0);
             backgroundImage.DOFade(0.3f, 0.3f);
 
-            if (CrystalGameManager.Data.GameplayTimerEnabled)
+            if (CrystalLevelController.ShouldRunTimerForCurrentLevel() && CrystalLevelController.GameTimer != null)
                 CrystalLevelController.GameTimer.Pause();
 
             ScreenManager.OnPageOpened(this);
@@ -123,7 +123,7 @@ namespace CrystalUnbolt
 #endif
             ScreenManager.CloseScreen<CrystalUIPause>(() =>
             {
-                if (CrystalGameManager.Data.GameplayTimerEnabled)
+                if (CrystalLevelController.ShouldRunTimerForCurrentLevel() && CrystalLevelController.GameTimer != null)
                     CrystalLevelController.GameTimer.Resume();
             });
         }

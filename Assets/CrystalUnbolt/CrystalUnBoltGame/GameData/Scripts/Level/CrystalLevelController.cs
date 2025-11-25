@@ -617,41 +617,48 @@ namespace CrystalUnbolt
 
         #region Timer
 
+        public static bool ShouldRunTimerForCurrentLevel()
+        {
+            // Timer only runs if globally enabled AND we're on level 11 or higher (index >= 10)
+            if (!CrystalGameManager.Data.GameplayTimerEnabled) return false;
+
+            return DisplayedLevelIndex >= 10;
+        }
+
         private static void InitTimer()
         {
             int levelNumber = DisplayedLevelIndex + 1; // 1-based level number
             Debug.Log($"[Timer] InitTimer called - DisplayedLevelIndex: {DisplayedLevelIndex}, Level Number: {levelNumber}");
             
             // Skip timer for levels 1-10 (DisplayedLevelIndex 0-9)
-            if (DisplayedLevelIndex < 10)
+            if (!ShouldRunTimerForCurrentLevel())
             {
                 Debug.Log($"[Timer] Skipping timer for level {levelNumber} (levels 1-10 have no timer)");
                 return;
             }
 
-            if (CrystalGameManager.Data.GameplayTimerEnabled)
+            if (!CrystalGameManager.Data.GameplayTimerEnabled)
             {
-                float time = CrystalGameManager.Data.GameplayTimerValue;
+                Debug.Log($"[Timer] Timer is disabled in game settings");
+                return;
+            }
 
-                if (stage.TimerOverrideEnabled) time = stage.TimerOverride;
+            float time = CrystalGameManager.Data.GameplayTimerValue;
 
-                GameTimer.SetMaxTime(time);
-                
-                // For level 11 ONLY (DisplayedLevelIndex == 10), don't start the timer yet - it will be started after popup
-                if (DisplayedLevelIndex == 10 && levelNumber == 11) // Level 11 (0-based index 10)
-                {
-                    Debug.Log($"[Timer] Level 11 detected (index {DisplayedLevelIndex}) - Timer initialized but NOT started, waiting for popup");
-                    // Don't start yet - will be started after popup in CrystalUIGame
-                }
-                else
-                {
-                    GameTimer.Start();
-                    Debug.Log($"[Timer] Timer started for level {levelNumber} (index {DisplayedLevelIndex})");
-                }
+            if (stage.TimerOverrideEnabled) time = stage.TimerOverride;
+
+            GameTimer.SetMaxTime(time);
+            
+            // For level 11 ONLY (DisplayedLevelIndex == 10), don't start the timer yet - it will be started after popup
+            if (DisplayedLevelIndex == 10 && levelNumber == 11) // Level 11 (0-based index 10)
+            {
+                Debug.Log($"[Timer] Level 11 detected (index {DisplayedLevelIndex}) - Timer initialized but NOT started, waiting for popup");
+                // Don't start yet - will be started after popup in CrystalUIGame
             }
             else
             {
-                Debug.Log($"[Timer] Timer is disabled in game settings");
+                GameTimer.Start();
+                Debug.Log($"[Timer] Timer started for level {levelNumber} (index {DisplayedLevelIndex})");
             }
         }
 
