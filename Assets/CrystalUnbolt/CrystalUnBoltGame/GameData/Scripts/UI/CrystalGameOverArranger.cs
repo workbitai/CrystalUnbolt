@@ -1,3 +1,4 @@
+
 using DG.Tweening;
 using System;
 using System.Collections;
@@ -16,17 +17,10 @@ namespace CrystalUnbolt
         private static int activeBasehole;
         private static int screwIndex = 0;
 
-        [Header("Number Screw Settings")]
-        [SerializeField] private float numberScrewScale = 1.2f;   // <- you control this in Inspector
-
         public static CrystalGameOverArranger instance;
 
         private Coroutine _periodicShakeRoutine;
         public static float PeriodicShakeInterval = 2f;
-
-        // Controls overall screw/holes arrangement animation speed
-        [Header("Animation")]
-        [SerializeField] private float arrangementSpeed = 1f;
 
         public GameObject _wrongAnswerMessageObj;
 
@@ -50,13 +44,13 @@ namespace CrystalUnbolt
             if (CrystalUIGame.QueText != null && CrystalUIGame.QueText.gameObject != null)
             {
                 CrystalUIGame.QueText.gameObject.SetActive(false);
-                CrystalUIGame.QueText.text = "";
             }
 
             StopPeriodicShakeLoop();
             HideWrongAnswerMessage();
 
-            Debug.Log("[Puzzle] CrystalGameOverArranger state RESET");
+            CrystalUIGame.QueText.text = "";
+            Debug.Log("[Puzzle] CrystalGameOverArranger state RESET ?");
         }
 
         static bool AreAnyPuzzleHolesEmpty()
@@ -153,6 +147,7 @@ namespace CrystalUnbolt
         static void VibrateLight()
         {
 #if UNITY_IOS && !UNITY_EDITOR
+            // Use proper iOS haptic system
             try
             {
                 if (Haptic.IsInitialized && Haptic.IsActive)
@@ -164,7 +159,7 @@ namespace CrystalUnbolt
                     Handheld.Vibrate();
                 }
             }
-            catch { }
+            catch { /* ignore */ }
 #elif UNITY_ANDROID && !UNITY_EDITOR
             try { Handheld.Vibrate(); } catch { }
 #else
@@ -224,6 +219,7 @@ namespace CrystalUnbolt
             }
         }
 
+
         public static void CheckGameOver()
         {
             Debug.Log("IsPuzzleModeActive  =>  " + IsPuzzleModeActive);
@@ -265,9 +261,9 @@ namespace CrystalUnbolt
             Debug.Log("allPlaced  =>  " + allPlaced);
             if (!allPlaced) return;
 
-            Debug.Log("[Puzzle] All screws placed, now checking sequence...");
+            Debug.Log("[Puzzle] All screws placed ?, Now checking sequence...");
 
-            Debug.Log("[Puzzle] ==== Current Hole / Index Mapping ====");
+            Debug.Log("[Puzzle] ==== Current Hole ? Index Mapping ====");
             foreach (var pair in holeDigitIndexMap.OrderBy(p => p.Value))
             {
                 Debug.Log($"[Puzzle] Hole: {pair.Key.name} | Index: {pair.Value} | PlacedNumber: {(pair.Key is CrystalHoleController hh ? hh.PlacedNumber : -99)}");
@@ -281,12 +277,12 @@ namespace CrystalUnbolt
                 {
                     if (h.PlacedNumber < 0)
                     {
-                        Debug.Log("[Puzzle] Some hole is empty, cannot validate yet!");
+                        Debug.Log("[Puzzle ?] Some hole is empty, cannot validate yet!");
                         return;
                     }
 
                     builtAnswer += h.PlacedNumber.ToString();
-                    Debug.Log($"[Puzzle] Hole {h.name} Index {pair.Value} -> Digit {h.PlacedNumber}");
+                    Debug.Log($"[Puzzle] Hole {h.name} Index {pair.Value} ? Digit {h.PlacedNumber}");
                 }
             }
 
@@ -294,7 +290,7 @@ namespace CrystalUnbolt
 
             if (!int.TryParse(builtAnswer, out int userAnswer))
             {
-                Debug.LogError($"[Puzzle] BuiltAnswer invalid: {builtAnswer}");
+                Debug.LogError($"[Puzzle ?] BuiltAnswer invalid: {builtAnswer}");
                 return;
             }
 
@@ -304,14 +300,14 @@ namespace CrystalUnbolt
 
             if (userAnswer == correctAnswer)
             {
-                Debug.Log("[Puzzle] Correct Answer!");
+                Debug.Log("[Puzzle ?] Correct Answer! ??");
                 StopPeriodicShakeLoop();
                 HideWrongAnswerMessage();
                 CrystalLevelController.OnPuzzleCompleted();
             }
             else
             {
-                Debug.Log("[Puzzle] Wrong Answer! Try Again...");
+                Debug.Log("[Puzzle ?] Wrong Answer! Try Again...");
 
                 ShakePlacedScrews(screws, duration: 0.35f, posStrength: 0.015f, rotStrength: 10f);
                 VibrateLight();
@@ -355,7 +351,7 @@ namespace CrystalUnbolt
         {
             if (CrystalUIGame.QueText == null)
             {
-                Debug.LogError("[Puzzle] queText reference missing in UIManager inspector!");
+                Debug.LogError("[Puzzle ?] queText reference missing in UIManager inspector!");
                 return;
             }
 
@@ -369,18 +365,7 @@ namespace CrystalUnbolt
         {
             if (CrystalLevelController.StageLoader == null || !CrystalLevelController.StageLoader.StageLoaded) return;
 
-            // read desired screw scale from instance
-            float numberScale = 1.2f;
-            if (instance != null && instance.numberScrewScale > 0f)
-                numberScale = instance.numberScrewScale;
-
-            // animation speed (higher = faster)
-            float speed = (instance != null && instance.arrangementSpeed > 0f)
-                          ? instance.arrangementSpeed
-                          : 1f;
-            float inv = 1f / speed;
-
-            float startDelay = 2f * inv;
+            float startDelay = 2f;
 
             DOVirtual.DelayedCall(startDelay, () =>
             {
@@ -476,7 +461,7 @@ namespace CrystalUnbolt
                 }
 
                 holeDigitIndexMap.Clear();
-                int maxBottom = 2;
+                int maxBottom = 3;
                 int activeCount = Mathf.Min(holesEmpty.Count, maxBottom);
 
                 if (activeCount > 1)
@@ -493,6 +478,7 @@ namespace CrystalUnbolt
                 for (int i = 0; i < holesEmpty.Count; i++)
                 {
                     CrystalBaseHole hole = holesEmpty[i];
+
 
                     if (activeIndex >= maxBottom)
                     {
@@ -511,30 +497,20 @@ namespace CrystalUnbolt
 
                 screwIndex = 0;
                 int screwCounter = 0;
-
-                // FIRST MOVE: screws fly into their top/bottom row positions
                 for (int index = 0; index < visiblePairs.Count; index++)
                 {
                     var screw = visiblePairs[index].Key;
                     var hole = visiblePairs[index].Value;
 
                     float xPos, yPos;
-                    if (index < topRowCount)
-                    {
-                        xPos = topStartX + index * gapX;
-                        yPos = topRowY;
-                    }
-                    else
-                    {
-                        int b = index - topRowCount;
-                        xPos = bottomStartX + b * gapX;
-                        yPos = topRowY - 2f;
-                    }
+                    if (index < topRowCount) { xPos = topStartX + index * gapX; yPos = topRowY; }
+                    else { int b = index - topRowCount; xPos = bottomStartX + b * gapX; yPos = topRowY - 2f; }
 
                     Vector3 targetPos = new Vector3(xPos, yPos, 0f);
-                    float delay = screwCounter * 0.3f * inv;
+                    float delay = screwCounter * 0.3f;
 
                     var screwLocal = screw;
+                    var holeLocal = hole;
                     var targetPosLocal = targetPos;
                     float delayLocal = delay;
 
@@ -542,19 +518,16 @@ namespace CrystalUnbolt
                     {
                         screwLocal.ForceSelect();
                         Sequence seq = DOTween.Sequence();
-                        screwLocal.transform.DOMove(targetPosLocal, 0.5f * inv);
-
-                        // force screw (and its number) to the configured scale
-                        var t = screwLocal.transform;
-                        t.localScale = new Vector3(numberScale, numberScale, t.localScale.z);
+                        screwLocal.transform.DOMove(targetPosLocal, 0.5f);
+                        screwLocal.transform.GetChild(0).DOScale(holeLocal.transform.localScale * 2f, 0.2f);
+                        seq.Play();
                     });
 
                     screwIndex++;
                     screwCounter++;
                 }
 
-                // Move holes into their desired world positions
-                float holesStartDelay = (visiblePairs.Count * 0.3f + 0.1f) * inv;
+                float holesStartDelay = (visiblePairs.Count * 0.3f) + 0.1f;
                 foreach (var kv in holeTargetPositions)
                 {
                     var hole = kv.Key;
@@ -565,15 +538,13 @@ namespace CrystalUnbolt
 
                     DOVirtual.DelayedCall(holesStartDelay, () =>
                     {
-                        t.DOMove(targetPosLocal, 0.3f * inv);
-                        t.DOScale(t.localScale * 1.4f, 0.3f * inv);
+                        t.DOMove(targetPosLocal, 0.3f);
+                        t.DOScale(t.localScale * 1.4f, 0.3f);
                     });
                 }
 
-                // SECOND MOVE: numbered screws drop exactly to hole positions
                 int screwMoveIndex = 0;
-                float holeToScrewDelay = 0.5f * inv;
-
+                float holeToScrewDelay = .5f;
                 for (int i = 0; i < visiblePairs.Count; i++)
                 {
                     var screw = visiblePairs[i].Key;
@@ -581,24 +552,18 @@ namespace CrystalUnbolt
 
                     if (holeTargetPositions.TryGetValue(hole, out Vector3 holePos))
                     {
-                        float delay = holesStartDelay + holeToScrewDelay + (screwMoveIndex * 0.1f * inv);
+                        float delay = holesStartDelay + holeToScrewDelay + (screwMoveIndex * 0.1f);
 
                         var screwLocal = screw;
+                        var holeLocal = hole;
                         var holePosLocal = holePos;
                         int currentIndex = screwMoveIndex;
 
                         DOVirtual.DelayedCall(delay, () =>
                         {
                             screwLocal.SetNumberTexture(currentIndex);
-                            screwLocal.transform.DOMove(
-                                new Vector3(holePosLocal.x, holePosLocal.y, screwLocal.transform.position.z),
-                                0.2f * inv
-                            );
-
-                            // again enforce the same scale on the whole screw
-                            var t = screwLocal.transform;
-                            t.localScale = new Vector3(numberScale, numberScale, t.localScale.z);
-
+                            screwLocal.transform.DOMove(new Vector3(holePosLocal.x, holePosLocal.y, screwLocal.transform.position.z), 0.2f);
+                            screwLocal.transform.GetChild(0).DOScale(holeLocal.transform.localScale * 1.5f, 0.1f);
                             screwLocal.Deselect();
                         });
 
@@ -608,8 +573,7 @@ namespace CrystalUnbolt
 
                 ScreenManager.GetPage<CrystalUIGame>()?.SetReplayButtonInteractable(false);
 
-                float totalAnimTime = holesStartDelay + holeToScrewDelay + (visiblePairs.Count * 0.1f * inv) + 0.3f * inv;
-
+                float totalAnimTime = holesStartDelay + holeToScrewDelay + (visiblePairs.Count * 0.1f) + 0.3f;
                 DOVirtual.DelayedCall(totalAnimTime, () =>
                 {
                     int holesCount = Mathf.Max(1, activeBasehole);
@@ -633,71 +597,26 @@ namespace CrystalUnbolt
                 });
             });
         }
+
+
     }
 
-    // --------------------- Question Generator ---------------------
     public static class QuestionGenerator
     {
         private static System.Random rand = new System.Random();
 
         public static (string question, int answer) GenerateQuestion(int holesCount, int level, int MaxDigit)
         {
-            // FORCE always 2 digits
-            holesCount = 2;
-            int maxDigit = Mathf.Clamp(MaxDigit - 1, 0, 9);
+            if (holesCount < 1) holesCount = 1;
+            if (holesCount > 6) holesCount = 6;
 
-            int maxValue = 99;          // 10–99 possible
-            int maxDigits = 2;          // always 2 digits
+            int maxDigit = MaxDigit - 1;
 
-            List<int> candidates = new List<int>();
-
-            // only 2-digit numbers
-            for (int n = 10; n <= maxValue; n++)
-            {
-                if (IsAnswerValidTwoDigits(n, maxDigit)
-                    && !HasRepeatedDigits(n))    // no 11, 22, 33, ...
-                {
-                    candidates.Add(n);
-                }
-            }
-
-            int answer;
-            if (candidates.Count > 0)
-                answer = candidates[rand.Next(candidates.Count)];
-            else
-                answer = GenerateValidNumber(2, maxDigit);   // fallback 2-digit
+            int answer = GenerateValidNumber(holesCount, maxDigit);
 
             (string q, int ans) = GenerateEquation(answer);
+
             return (q, ans);
-        }
-
-        private static bool HasRepeatedDigits(int value)
-        {
-            string s = value.ToString();
-            HashSet<char> seen = new HashSet<char>();
-            foreach (char c in s)
-            {
-                if (seen.Contains(c))
-                    return true;
-                seen.Add(c);
-            }
-            return false;
-        }
-
-        private static bool IsAnswerValidTwoDigits(int value, int maxDigit)
-        {
-            if (value < 10 || value > 99) return false;
-
-            string s = value.ToString();
-            if (s.Length != 2) return false;
-
-            foreach (char c in s)
-            {
-                int d = c - '0';
-                if (d < 0 || d > maxDigit) return false;
-            }
-
-            return true;
         }
 
         private static int GenerateValidNumber(int digits, int maxDigit)
@@ -724,20 +643,6 @@ namespace CrystalUnbolt
             return number;
         }
 
-        private static bool IsAnswerValidForDigits(int value, int maxDigit, int maxDigits)
-        {
-            string s = value.ToString();
-            if (s.Length > maxDigits) return false;
-
-            foreach (char c in s)
-            {
-                int d = c - '0';
-                if (d < 0 || d > maxDigit) return false;
-            }
-
-            return true;
-        }
-
         private static (string, int) GenerateEquation(int answer)
         {
             int a, b;
@@ -752,37 +657,69 @@ namespace CrystalUnbolt
                         a = rand.Next(1, 10);
                         q = $"{a} - {a} = ?";
                         break;
+
                     case 1:
-                        q = $"0 + 0 = ?";
+                        a = rand.Next(1, 10);
+                        q = $"{a} * 0 = ?";
                         break;
+
                     default:
-                        q = $"1 - 1 = ?";
+                        q = $"0 + 0 = ?";
                         break;
                 }
                 return (q, 0);
             }
 
+            if (answer == 1)
+            {
+                int choice = rand.Next(0, 4);
+                switch (choice)
+                {
+                    case 0:
+                        a = rand.Next(2, 10);
+                        q = $"{a} - {a - 1} = ?";
+                        break;
+
+                    case 1:
+                        q = $"1 * 1 = ?";
+                        break;
+
+                    case 2:
+                        a = rand.Next(2, 10);
+                        q = $"{a} / {a} = ?";
+                        break;
+
+                    default:
+                        q = $"1 + 0 = ?";
+                        break;
+                }
+                return (q, 1);
+            }
+
             if (rand.Next(0, 2) == 0)
             {
-                b = rand.Next(0, Math.Min(answer, 10));
+                b = rand.Next(1, answer);
                 a = answer - b;
                 q = $"{a} + {b} = ?";
             }
             else
             {
-                b = rand.Next(0, 10);
-                a = answer + b;
+                a = answer + rand.Next(1, 10);
+                b = a - answer;
                 q = $"{a} - {b} = ?";
             }
 
             return (q, answer);
         }
+
     }
 
-    // --------------------- SimpleShaker ---------------------
+
+
     public class SimpleShaker : MonoBehaviour
     {
         Coroutine _shakeRoutine;
+
 
         public void Shake(float duration = 0.35f, float posStrength = 0.015f, float rotStrength = 10f)
         {

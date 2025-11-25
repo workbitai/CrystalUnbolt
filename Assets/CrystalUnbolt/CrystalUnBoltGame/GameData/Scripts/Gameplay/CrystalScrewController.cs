@@ -20,17 +20,12 @@ namespace CrystalUnbolt
         [SerializeField] SpriteRenderer shadowSpriteRenderer;
         [SerializeField] Transform visuals;
         [SerializeField] Animator animator;
-        [Header("Particles")]
-        [SerializeField] private ParticleSystem screwPickParticlesPrefab;
-        [SerializeField] private ParticleSystem screwPlaceParticlesPrefab;
-        private ParticleSystem screwPickParticlesInstance;
-        private ParticleSystem screwPlaceParticlesInstance;
 
         [SerializeField] MeshRenderer screwRenderer;
 
         [SerializeField] Texture[] numberTextures;
 
-        private Material runtimeMaterial; 
+        private Material runtimeMaterial;
 
         private List<CrystalHoleController> connectedHoles = new List<CrystalHoleController>();
 
@@ -62,9 +57,6 @@ namespace CrystalUnbolt
                 runtimeMaterial = new Material(screwRenderer.material);
                 screwRenderer.material = runtimeMaterial;
             }
-
-            screwPickParticlesInstance = CreateParticleInstance(screwPickParticlesPrefab);
-            screwPlaceParticlesInstance = CreateParticleInstance(screwPlaceParticlesPrefab);
         }
 
         public void SetNumberTexture(int index)
@@ -243,7 +235,7 @@ namespace CrystalUnbolt
 
         public void Select()
         {
-           
+
             if (selectedScrew != null) selectedScrew.Deselect();
             selectedScrew = this;
 
@@ -251,7 +243,6 @@ namespace CrystalUnbolt
             animator.SetTrigger(EXTRACT_CRYSTAL_TRIGGER);
 
             SoundManager.PlaySound(SoundManager.AudioClips.screwPick);
-            PlayParticles(screwPickParticlesInstance);
 
 #if MODULE_HAPTIC
             Haptic.Play(Haptic.HAPTIC_HARD);
@@ -265,7 +256,6 @@ namespace CrystalUnbolt
             animator.SetFloat(EXTRACT_CRYSTAL_SPEED_MULTIPLIER_FLOAT, CrystalGameManager.Data.CrystalExtractionAnimationSpeedMultiplier);
             animator.SetTrigger(EXTRACT_CRYSTAL_TRIGGER);
             SoundManager.PlaySound(SoundManager.AudioClips.screwPick);
-            PlayParticles(screwPickParticlesInstance);
             Selected?.Invoke();
         }
 
@@ -277,7 +267,6 @@ namespace CrystalUnbolt
 
             IsPlaced = true;
             SoundManager.PlaySound(SoundManager.AudioClips.screwPlace);
-            PlayParticles(screwPlaceParticlesInstance);
 
             selectedScrew = null;
             Deselected?.Invoke();
@@ -318,26 +307,6 @@ namespace CrystalUnbolt
             ScrewNumber = num;
         }
 
-        private ParticleSystem CreateParticleInstance(ParticleSystem prefab)
-        {
-            if (prefab == null) return null;
-
-            var instance = Instantiate(prefab, transform);
-            instance.transform.localPosition = Vector3.zero;
-            instance.gameObject.SetActive(false);
-            return instance;
-        }
-
-        private void PlayParticles(ParticleSystem targetParticles)
-        {
-            if (targetParticles == null) return;
-
-            targetParticles.transform.localPosition = Vector3.zero;
-            targetParticles.gameObject.SetActive(true);
-            targetParticles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-            targetParticles.Play(true);
-        }
-
         public void ResetNewData()
         {
             PlacedNumber = -1;
@@ -350,10 +319,7 @@ namespace CrystalUnbolt
             }
             Debug.Log("Visual   =>  " + visuals.name);
             Debug.Log("Visual   =>  " + visuals.localScale);
-            
-            // Reset both visuals scale and transform scale to ensure consistency
             visuals.localScale = Vector3.one * 1.20f;
-            transform.localScale = Vector3.one; // Reset transform scale to default (fixes issue where some screws had 1.25 scale from previous level)
 
 
         }
