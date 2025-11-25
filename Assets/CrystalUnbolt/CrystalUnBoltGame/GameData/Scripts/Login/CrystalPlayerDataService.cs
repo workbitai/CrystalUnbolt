@@ -64,7 +64,7 @@ namespace CrystalUnbolt
             {
                 if (root != null) return true;
 
-                var dep = await CrystalRCBootstrap.Ensure();
+                var dep = await RCBootstrap.Ensure();
                 if (dep != DependencyStatus.Available)
                 {
                     Debug.LogError($"[DB] Firebase dependencies not available: {dep}");

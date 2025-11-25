@@ -19,7 +19,7 @@ namespace CrystalUnbolt
         {
             Debug.Log("[FCM] Init�");
 
-            var dep = await CrystalRCBootstrap.Ensure(); // single source of truth
+            var dep = await RCBootstrap.Ensure(); // single source of truth
             if (dep != DependencyStatus.Available)
             {
                 Debug.LogError("[FCM] Firebase deps not available: " + dep);

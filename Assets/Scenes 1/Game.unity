@@ -1194,6 +1194,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7ff99c0dadc5fe4ba8aa7e95cbe8444, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  profile: {fileID: 0}
 --- !u!1 &1342934056
 GameObject:
   m_ObjectHideFlags: 0
@@ -1463,16 +1464,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   webClientId: 93565773157-hq85v1au3eh2pdqflsvl3i19ndcpo85c.apps.googleusercontent.com
+  autoSignInOnStart: 1
   loginButton: {fileID: 2466326698965444306}
-  CrystalAppleLoginButton: {fileID: 0}
+  appleLoginButton: {fileID: 0}
   logoutButton: {fileID: 2466326698965444305}
   deleteButton: {fileID: 626643019}
-  yesDeleteButton: {fileID: 2127774120}
+  confirmDeleteButton: {fileID: 0}
   userLabel: {fileID: 2466326698965444304}
   mainMenuHeader: {fileID: 1759571054150073496}
   uiSettings: {fileID: 3970967373277936251}
   dataService: {fileID: 1397410328}
-  CrystalAppleAuthManager: {fileID: 0}
+  appleAuthManager: {fileID: 0}
 --- !u!114 &1397410330
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1577,6 +1579,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f60618ee0f172c40a2a7d4b62f749e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  profile: {fileID: 0}
 --- !u!114 &1732659226
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1927,18 +1930,6 @@ MonoBehaviour:
   hideAfterClick: 0
   hideDelay: 0.25
   hideDuration: 0.2
---- !u!114 &2127774120 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2300851768291194011, guid: 07feb29e1db3d5c4382c0389ea9bf614,
-    type: 3}
-  m_PrefabInstance: {fileID: 2466326698965444303}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &2144233036
 GameObject:
   m_ObjectHideFlags: 0
@@ -3097,6 +3088,16 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 5178066047858781992}
     m_Modifications:
+    - target: {fileID: 678626312444148845, guid: f498ec5c4d8606d44b8576c76181fe5a,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 420
+      objectReference: {fileID: 0}
+    - target: {fileID: 678626312444148845, guid: f498ec5c4d8606d44b8576c76181fe5a,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 420
+      objectReference: {fileID: 0}
     - target: {fileID: 1705293082020077687, guid: f498ec5c4d8606d44b8576c76181fe5a,
         type: 3}
       propertyPath: m_LocalScale.x

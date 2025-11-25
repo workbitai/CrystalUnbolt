@@ -231,7 +231,7 @@ namespace CrystalUnbolt
 public static class PopupHelper
 {
   
-    public static void ShowPopup(Transform popup, float duration = 0.6f, float overshoot = 1.2f, float finalScale = 1f)
+    public static void ShowPopup(Transform popup, float duration = 0.6f, float overshoot = 1.2f, float finalScale = 2f)
     {
         popup.localScale = Vector3.zero;
 

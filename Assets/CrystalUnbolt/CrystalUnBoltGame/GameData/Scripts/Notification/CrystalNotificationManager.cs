@@ -127,7 +127,7 @@ namespace CrystalUnbolt
 
         private async void InitFirebase()
         {
-            var dep = await CrystalRCBootstrap.Ensure();
+            var dep = await RCBootstrap.Ensure();
             if (dep == DependencyStatus.Available)
             {
                 Debug.Log("Firebase Ready.");

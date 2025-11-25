@@ -14,16 +14,36 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   devForceFreshFetch: 1
   startDelaySeconds: 0.8
-  monetizationSettings: {fileID: 11400000, guid: 1ff4813fd0ca8d44e81c074b2653c333,
+  monetizationSettings: {fileID: 11400000, guid: 10028b3498066d94f80790eb6aee0888,
     type: 2}
+  kAndroidAppId: admob_android_app_id
+  kiOSAppId: admob_ios_app_id
+  kLevelPlayAndroidKey: levelplay_android_app_key
+  kLevelPlayiOSKey: levelplay_ios_app_key
+  kUnityAdsAndroidId: unity_ads_android_app_id
+  kUnityAdsiOSId: unity_ads_ios_app_id
   kBannerAndroid: admob_banner_id_android
   kInterstitialAndroid: admob_interstitial_id_android
   kRewardAndroid: admob_reward_id_android
   kAppOpenAndroid: app_open_ads
+  kBanneriOS: admob_banner_id_ios
+  kInterstitialiOS: admob_interstitial_id_ios
+  kRewardiOS: admob_reward_id_ios
+  kAppOpeniOS: app_open_ads_ios
+  defAndroidAppId: 
+  defiOSAppId: 
+  defLevelPlayAndroidKey: 
+  defLevelPlayiOSKey: 
+  defUnityAdsAndroidId: 
+  defUnityAdsiOSId: 
   defBannerAndroid: test-banner
   defInterstitialAndroid: test-inter
   defRewardAndroid: test-reward
   defAppOpenAndroid: 
+  defBanneriOS: ca-app-pub-3940256099942544/2934735716
+  defInterstitialiOS: ca-app-pub-3940256099942544/4411468910
+  defRewardiOS: ca-app-pub-3940256099942544/1712485313
+  defAppOpeniOS: 
   kNoAdsA: UnScrewlogic_noads
   kStarterA: UnScrewlogic_starter
   kGoldSmallA: iap_goldsmall_android

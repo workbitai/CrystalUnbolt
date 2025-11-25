@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93daa29ab6f60e44ab215dbfeaf0faa4, type: 3}
+  m_Name: MonetizationSettings
+  m_EditorClassIdentifier: 
+  AdsSettings:
+    AdMobContainer:
+      androidAppId: ca-app-pub-3940256099942544~3347511713
+      iosAppId: ca-app-pub-3940256099942544~1458002511
+      androidBannerId: ca-app-pub-3940256099942544/6300978111
+      iOSBannerId: ca-app-pub-3940256099942544/2934735716
+      androidInterstitialId: ca-app-pub-3940256099942544/1033173712
+      iOSInterstitialId: ca-app-pub-3940256099942544/4411468910
+      androidRewardedId: ca-app-pub-3940256099942544/5224354917
+      iOSRewardedId: ca-app-pub-3940256099942544/1712485313
+    LevelPlayContainer:
+      androidAppKey: 
+      iOSAppKey: 
+    UnityAdsContainer:
+      androidAppID: 
+      iOSAppID: 
+  IAPSettings:
+    storeItems: []
